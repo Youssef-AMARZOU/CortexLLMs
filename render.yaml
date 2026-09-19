@@ -3,7 +3,7 @@ services:
     name: cortexllms
     runtime: node
     plan: free
-    buildCommand: npm install
+    buildCommand: npm install && mkdir -p data && node seed.js
     startCommand: node server.js
     envVars:
       - key: NODE_ENV
