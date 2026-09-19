@@ -138,21 +138,11 @@ footer{padding:60px 0 32px;border-top:1px solid var(--bdr)}
 <a href="#" class="nav-logo"><span class="lm">CortexLLMs</span><span class="la">.io</span></a>
 <div class="nav-links">
 <div class="nav-item"><a href="#accueil" class="nav-link">Accueil</a></div>
-<div class="nav-item">
-<a class="nav-link">Ingenierie IA <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></a>
-<div class="dropdown">
-<a href="#ia" class="dd-item"><div class="dd-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 014 4v1h2a2 2 0 012 2v2a2 2 0 01-2 2h-2v1a4 4 0 01-8 0v-1H6a2 2 0 01-2-2V9a2 2 0 012-2h2V6a4 4 0 014-4z"/></svg></div><div class="dd-text"><h4>Ingenierie IA/ML</h4><p>Preparation aux entretiens IA/ML</p></div></a>
-<a href="#ia" class="dd-item"><div class="dd-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div><div class="dd-text"><h4>LLMs &amp; Transformers</h4><p>Modeles de langage et architectures</p></div></a>
-</div></div>
-<div class="nav-item">
-<a class="nav-link">DevOps <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></a>
-<div class="dropdown">
-<a href="#devops" class="dd-item"><div class="dd-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-4V6l-8 8 8 8v-4h4a2 2 0 002-2v-4a2 2 0 00-2-2z"/></svg></div><div class="dd-text"><h4>CI/CD &amp; Pipelines</h4><p>Integration et deploiement continus</p></div></a>
-<a href="#devops" class="dd-item"><div class="dd-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="dd-text"><h4>Conteneurs &amp; Orchestration</h4><p>Docker, Kubernetes et plus</p></div></a>
-</div></div>
-<div class="nav-item"><a href="#system-design" class="nav-link">System Design</a></div>
-<div class="nav-item"><a href="#dsa" class="nav-link">Patterns DSA</a></div>
-<div class="nav-item"><a href="#entreprises" class="nav-link">Entreprises</a></div>
+<div class="nav-item"><a href="pages/ai-engineering.html" class="nav-link">Ingenierie IA <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></a></div>
+<div class="nav-item"><a href="pages/devops.html" class="nav-link">DevOps</a></div>
+<div class="nav-item"><a href="pages/system-design.html" class="nav-link">System Design</a></div>
+<div class="nav-item"><a href="pages/dsa.html" class="nav-link">Patterns DSA</a></div>
+<div class="nav-item"><a href="pages/entreprises.html" class="nav-link">Entreprises</a></div>
 <div class="nav-item"><a href="/pages/login.html" class="nav-cta">Se connecter</a></div>
 <div class="nav-item"><a href="/pages/register.html" class="nav-cta" style="background:var(--acc-l);border:1px solid var(--acc);margin-left:8px">S'inscrire</a></div>
 <div class="nav-item" id="nav-dashboard" style="display:none"><a href="/pages/dashboard.html" class="nav-cta" style="background:var(--acc-l);border:1px solid var(--acc)">Tableau de bord</a></div>
@@ -164,11 +154,11 @@ footer{padding:60px 0 32px;border-top:1px solid var(--bdr)}
 <div class="mobile-nav" id="mobileNav">
 <div class="mns"><div class="mns-t">Navigation</div>
 <a href="#accueil" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/></svg>Accueil</a>
-<a href="#ia" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 014 4v1h2a2 2 0 012 2v2a2 2 0 01-2 2h-2v1a4 4 0 01-8 0v-1H6a2 2 0 01-2-2V9a2 2 0 012-2h2V6a4 4 0 014-4z"/></svg>Ingenierie IA</a>
-<a href="#devops" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-4V6l-8 8 8 8v-4h4a2 2 0 002-2v-4a2 2 0 00-2-2z"/></svg>DevOps</a>
-<a href="#system-design" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>System Design</a>
-<a href="#dsa" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Patterns DSA</a>
-<a href="#entreprises" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>Recherche Entreprises</a>
+<a href="pages/ai-engineering.html" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 014 4v1h2a2 2 0 012 2v2a2 2 0 01-2 2h-2v1a4 4 0 01-8 0v-1H6a2 2 0 01-2-2V9a2 2 0 012-2h2V6a4 4 0 014-4z"/></svg>Ingenierie IA</a>
+<a href="pages/devops.html" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-4V6l-8 8 8 8v-4h4a2 2 0 002-2v-4a2 2 0 00-2-2z"/></svg>DevOps</a>
+<a href="pages/system-design.html" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>System Design</a>
+<a href="pages/dsa.html" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Patterns DSA</a>
+<a href="pages/entreprises.html" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>Recherche Entreprises</a>
 </div>
 <div class="mn-div"></div>
 <div class="mns"><div class="mns-t">Ressources</div>
@@ -215,7 +205,7 @@ footer{padding:60px 0 32px;border-top:1px solid var(--bdr)}
 <div class="cat-count">120+ questions</div>
 <h3>Ingenierie IA</h3>
 <p>Preparation aux entretiens IA/ML : apprentissage automatique, reseaux de neurones, LLMs et systemes de recommandation.</p>
-<a href="#ia" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+<a href="pages/ai-engineering.html" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
 </div>
 
 <div class="cat-card scroll-reveal">
@@ -223,7 +213,7 @@ footer{padding:60px 0 32px;border-top:1px solid var(--bdr)}
 <div class="cat-count">85+ questions</div>
 <h3>DevOps</h3>
 <p>Maitrisez les entretiens DevOps : CI/CD, conteneurs, orchestration, infrastructure as code et monitoring.</p>
-<a href="#devops" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+<a href="pages/devops.html" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
 </div>
 
 <div class="cat-card scroll-reveal">
@@ -231,7 +221,7 @@ footer{padding:60px 0 32px;border-top:1px solid var(--bdr)}
 <div class="cat-count">200+ guides</div>
 <h3>System Design</h3>
 <p>Low Level Design &amp; System Design : architecture de systemes distribues, mise a l'echelle et conception d'APIs.</p>
-<a href="#system-design" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+<a href="pages/system-design.html" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
 </div>
 
 <div class="cat-card scroll-reveal">
@@ -239,7 +229,7 @@ footer{padding:60px 0 32px;border-top:1px solid var(--bdr)}
 <div class="cat-count">31 patterns</div>
 <h3>Patterns DSA</h3>
 <p>Maitriser tous les patterns DSA (DSA-31, CP-11) : tris, graphes, DP, two pointers, sliding window et plus.</p>
-<a href="#dsa" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+<a href="pages/dsa.html" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
 </div>
 
 <div class="cat-card scroll-reveal">
@@ -247,7 +237,7 @@ footer{padding:60px 0 32px;border-top:1px solid var(--bdr)}
 <div class="cat-count">50+ entreprises</div>
 <h3>Recherche Entreprises</h3>
 <p>Conventions communes des ingenieurs logiciel : processus de recrutement, attentes et conseils par entreprise.</p>
-<a href="#entreprises" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+<a href="pages/entreprises.html" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
 </div>
 
 <div class="cat-card scroll-reveal">

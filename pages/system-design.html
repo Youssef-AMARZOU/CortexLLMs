@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Design - CortexLLMs.io</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0d0d0f;
+            --bg-secondary: #111114;
+            --card: #1a1a2e;
+            --card-hover: #1f1f35;
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
+            --accent-dark: #2563eb;
+            --accent-glow: rgba(59, 130, 246, 0.15);
+            --accent-glow-strong: rgba(59, 130, 246, 0.25);
+            --text: #e4e4e7;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border: #27272a;
+            --border-light: #3f3f46;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #a855f7;
+            --cyan: #06b6d4;
+            --orange: #f97316;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Source Serif 4', Georgia, serif;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.2s;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(13, 13, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-cortex {
+            color: var(--text);
+        }
+
+        .logo-io {
+            color: var(--accent);
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .nav a {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .nav a:hover {
+            color: var(--text);
+            background: var(--card);
+        }
+
+        .nav a.active {
+            color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-login {
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-login:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-signup {
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #fff;
+            background: var(--accent);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-signup:hover {
+            background: var(--accent-light);
+            transform: translateY(-1px);
+        }
+
+        /* ===== MAIN LAYOUT ===== */
+        .main-layout {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 72px;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: sticky;
+            top: 72px;
+            width: 280px;
+            min-width: 280px;
+            height: calc(100vh - 72px);
+            overflow-y: auto;
+            padding: 1.5rem;
+            border-right: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: 2px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 1.75rem;
+        }
+
+        .sidebar-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            padding: 0 0.5rem;
+        }
+
+        .sidebar-progress {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            border: 1px solid var(--border);
+        }
+
+        .sidebar-progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .sidebar-progress-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .sidebar-progress-value {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .sidebar-modules {
+            list-style: none;
+        }
+
+        .sidebar-module {
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-module-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.65rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .sidebar-module-link:hover {
+            background: var(--card);
+            color: var(--text);
+        }
+
+        .sidebar-module-link.active {
+            background: var(--accent-glow);
+            color: var(--accent);
+        }
+
+        .sidebar-module-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .sidebar-module-icon.m1 {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent);
+        }
+
+        .sidebar-module-icon.m2 {
+            background: rgba(168, 85, 247, 0.15);
+            color: var(--purple);
+        }
+
+        .sidebar-module-icon.m3 {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--cyan);
+        }
+
+        .sidebar-module-meta {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .sidebar-lesson-list {
+            list-style: none;
+            margin-top: 0.5rem;
+            padding-left: 2.75rem;
+        }
+
+        .sidebar-lesson {
+            position: relative;
+        }
+
+        .sidebar-lesson::before {
+            content: '';
+            position: absolute;
+            left: -1.25rem;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: var(--border);
+        }
+
+        .sidebar-lesson a {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            transition: all 0.15s;
+        }
+
+        .sidebar-lesson a:hover {
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .sidebar-lesson a.active {
+            color: var(--accent);
+        }
+
+        .sidebar-lesson .dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--border-light);
+            flex-shrink: 0;
+        }
+
+        .sidebar-lesson a.active .dot {
+            background: var(--accent);
+        }
+
+        .sidebar-links {
+            list-style: none;
+        }
+
+        .sidebar-links li a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .sidebar-links li a:hover {
+            background: var(--card);
+            color: var(--text);
+        }
+
+        .sidebar-links li a .icon {
+            font-size: 1rem;
+        }
+
+        /* ===== CONTENT ===== */
+        .content {
+            flex: 1;
+            min-width: 0;
+            padding: 2.5rem 3rem;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            margin-bottom: 3rem;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            background: var(--accent-glow);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 1.25rem;
+        }
+
+        .hero-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero h1 {
+            font-size: 2.75rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 .gradient-text {
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 680px;
+            line-height: 1.7;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.75rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hero-stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .hero-stat-icon.blue {
+            background: rgba(59, 130, 246, 0.12);
+            color: var(--accent);
+        }
+
+        .hero-stat-icon.purple {
+            background: rgba(168, 85, 247, 0.12);
+            color: var(--purple);
+        }
+
+        .hero-stat-icon.cyan {
+            background: rgba(6, 182, 212, 0.12);
+            color: var(--cyan);
+        }
+
+        .hero-stat-icon.orange {
+            background: rgba(249, 115, 22, 0.12);
+            color: var(--orange);
+        }
+
+        .hero-stat-text strong {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .hero-stat-text span {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== MODULE SECTION ===== */
+        .module-section {
+            margin-bottom: 3.5rem;
+        }
+
+        .module-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .module-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .module-number {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .module-number.m1 {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.05));
+            color: var(--accent);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .module-number.m2 {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.05));
+            color: var(--purple);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .module-number.m3 {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.05));
+            color: var(--cyan);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .module-title-group h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .module-title-group p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+
+        .module-quiz-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 1.1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .module-quiz-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .module-quiz-btn .icon {
+            font-size: 0.95rem;
+        }
+
+        /* ===== LESSON CARDS ===== */
+        .lessons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1rem;
+        }
+
+        .lesson-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.35rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: transparent;
+            transition: background 0.25s;
+        }
+
+        .lesson-card:hover {
+            border-color: var(--border-light);
+            background: var(--card-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .lesson-card.m1:hover::before {
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+        }
+
+        .lesson-card.m2:hover::before {
+            background: linear-gradient(90deg, var(--purple), #c084fc);
+        }
+
+        .lesson-card.m3:hover::before {
+            background: linear-gradient(90deg, var(--cyan), #22d3ee);
+        }
+
+        .lesson-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .lesson-number {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .lesson-number.m1 { color: var(--accent); }
+        .lesson-number.m2 { color: var(--purple); }
+        .lesson-number.m3 { color: var(--cyan); }
+
+        .lesson-difficulty {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.2rem 0.6rem;
+            border-radius: 100px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .difficulty-facile {
+            background: rgba(34, 197, 94, 0.12);
+            color: var(--success);
+        }
+
+        .difficulty-moyen {
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--warning);
+        }
+
+        .difficulty-avance {
+            background: rgba(239, 68, 68, 0.12);
+            color: var(--danger);
+        }
+
+        .lesson-card h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+            color: var(--text);
+        }
+
+        .lesson-card p {
+            font-size: 0.83rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .lesson-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .lesson-duration {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .lesson-duration .icon {
+            font-size: 0.85rem;
+        }
+
+        .lesson-arrow {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+            transition: all 0.2s;
+            font-size: 0.85rem;
+        }
+
+        .lesson-card:hover .lesson-arrow {
+            background: var(--accent);
+            color: #fff;
+            transform: translateX(2px);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem 3rem;
+            margin-top: 2rem;
+        }
+
+        .footer-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .footer-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                padding: 2rem 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .lessons-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .header-inner {
+                padding: 0 1rem;
+            }
+
+            .hero h1 {
+                font-size: 1.75rem;
+            }
+
+            .hero-stats {
+                gap: 1rem;
+            }
+
+            .module-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+    <div class="header-inner">
+        <a href="#" class="logo">
+            <span class="logo-cortex">Cortex</span><span class="logo-io">LLMs.io</span>
+        </a>
+        <nav class="nav">
+            <a href="#">Accueil</a>
+            <a href="#">Ingenierie IA</a>
+            <a href="#">DevOps</a>
+            <a href="#" class="active">System Design</a>
+            <a href="#">DSA</a>
+            <a href="#">Entreprises</a>
+        </nav>
+        <div class="header-actions">
+            <button class="btn-login">Connexion</button>
+            <button class="btn-signup">Commencer</button>
+        </div>
+    </div>
+</header>
+
+<!-- ===== MAIN LAYOUT ===== -->
+<div class="main-layout">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-progress">
+                <div class="sidebar-progress-header">
+                    <span class="sidebar-progress-label">Progression</span>
+                    <span class="sidebar-progress-value">0 / 30</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-title">Modules</div>
+            <ul class="sidebar-modules">
+                <li class="sidebar-module">
+                    <a href="#module1" class="sidebar-module-link active">
+                        <div class="sidebar-module-icon m1">01</div>
+                        <div>
+                            <div>Concepts Fondamentaux</div>
+                            <div class="sidebar-module-meta">10 lecons</div>
+                        </div>
+                    </a>
+                </li>
+                <li class="sidebar-module">
+                    <a href="#module2" class="sidebar-module-link">
+                        <div class="sidebar-module-icon m2">02</div>
+                        <div>
+                            <div>Systemes Distribues</div>
+                            <div class="sidebar-module-meta">10 lecons</div>
+                        </div>
+                    </a>
+                </li>
+                <li class="sidebar-module">
+                    <a href="#module3" class="sidebar-module-link">
+                        <div class="sidebar-module-icon m3">03</div>
+                        <div>
+                            <div>Conception de Systemes</div>
+                            <div class="sidebar-module-meta">10 lecons</div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-title">Ressources</div>
+            <ul class="sidebar-links">
+                <li><a href="#"><span class="icon">&#x1F4DD;</span> Quiz par module</a></li>
+                <li><a href="#"><span class="icon">&#x1F4CA;</span> Tableau de progression</a></li>
+                <li><a href="#"><span class="icon">&#x1F6E0;</span> Outils de conception</a></li>
+                <li><a href="#"><span class="icon">&#x1F4AC;</span> Communaute</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- ===== CONTENT ===== -->
+    <main class="content">
+
+        <!-- ===== HERO ===== -->
+        <section class="hero">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                Parcours System Design
+            </div>
+            <h1>
+                <span class="gradient-text">System Design</span><br>
+                Maitrisez les entretiens LLD & HLD
+            </h1>
+            <p class="hero-subtitle">
+                Devenez un expert en conception de systemes a grande echelle. Du low-level design au high-level design, preparez vos entretiens techniques avec des lecons detaillees, des etudes de cas concrets et des exercices pratiques.
+            </p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-icon blue">&#x1F4D6;</div>
+                    <div class="hero-stat-text">
+                        <strong>30 Lecons</strong>
+                        <span>Contenu complet</span>
+                    </div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-icon purple">&#x1F9E0;</div>
+                    <div class="hero-stat-text">
+                        <strong>3 Modules</strong>
+                        <span>Parcours structure</span>
+                    </div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-icon cyan">&#x1F3AF;</div>
+                    <div class="hero-stat-text">
+                        <strong>3 Quiz</strong>
+                        <span>Auto-evaluation</span>
+                    </div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-icon orange">&#x23F1;</div>
+                    <div class="hero-stat-text">
+                        <strong>~25h</strong>
+                        <span>Temps estime</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== MODULE 1 ===== -->
+        <section id="module1" class="module-section">
+            <div class="module-header">
+                <div class="module-header-left">
+                    <div class="module-number m1">01</div>
+                    <div class="module-title-group">
+                        <h2>Concepts Fondamentaux</h2>
+                        <p>Les piliers de la conception de systemes</p>
+                    </div>
+                </div>
+                <button class="module-quiz-btn">
+                    <span class="icon">&#x1F4CB;</span>
+                    Quiz Module 1
+                </button>
+            </div>
+
+            <div class="lessons-grid">
+                <!-- Lesson 1.1 -->
+                <div class="lesson-card m1">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m1">Lecon 1.1</span>
+                        <span class="lesson-difficulty difficulty-facile">Facile</span>
+                    </div>
+                    <h3>Load Balancing</h3>
+                    <p>Round Robin, Least Connections, IP Hash, consistent hashing et health checks. Apprenez a distribuer efficacement le trafic entre serveurs pour une haute disponibilite.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 45 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 1.2 -->
+                <div class="lesson-card m1">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m1">Lecon 1.2</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>Caching</h3>
+                    <p>Redis, Memcached, CDN et strategies d'invalidation du cache : TTL, write-through, write-behind et read-through pour optimiser les performances.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 60 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 1.3 -->
+                <div class="lesson-card m1">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m1">Lecon 1.3</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>Base de donnees SQL</h3>
+                    <p>Normalisation, indexes, ACID, transactions, replication et sharding. Maitrisez les bases de donnees relationnelles et leur configuration pour les systemes distribues.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 70 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 1.4 -->
+                <div class="lesson-card m1">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m1">Lecon 1.4</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>Base de donnees NoSQL</h3>
+                    <p>Document, key-value, column-family et graph databases. Comprenez le theoreme CAP et les cas d'utilisation de chaque type de base de donnees NoSQL.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 55 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 1.5 -->
+                <div class="lesson-card m1">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m1">Lecon 1.5</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>Message Queues</h3>
+                    <p>Kafka, RabbitMQ, SQS, pub/sub et architecture event-driven. Decouvrez comment decoupler les composants et gerer les flux de messages a haute echelle.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 55 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 1.6 -->
+                <div class="lesson-card m1">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m1">Lecon 1.6</span>
+                        <span class="lesson-difficulty difficulty-avance">Avance</span>
+                    </div>
+                    <h3>API Design</h3>
+                    <p>REST, GraphQL, gRPC, rate limiting, versioning et pagination. Concevez des API robustes, scalables et bien documentees pour vos systemes.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 65 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 1.7 -->
+                <div class="lesson-card m1">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m1">Lecon 1.7</span>
+                        <span class="lesson-difficulty difficulty-avance">Avance</span>
+                    </div>
+                    <h3>Repartition de charge</h3>
+                    <p>Scaling horizontal vs vertical, DNS et distribution geographique. Apprenez a concevoir des architectures capables de gerer des millions d'utilisateurs.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 50 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 1.8 -->
+                <div class="lesson-card m1">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m1">Lecon 1.8</span>
+                        <span class="lesson-difficulty difficulty-avance">Avance</span>
+                    </div>
+                    <h3>Securite systeme</h3>
+                    <p>Authentication, authorization, OAuth, JWT et chiffrement at rest/transit. Implementez des mecanismes de securite solides dans vos systemes distribues.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 60 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 1.9 -->
+                <div class="lesson-card m1">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m1">Lecon 1.9</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>Monitoring et observabilite</h3>
+                    <p>Metrics, logs, traces, alerting, SLIs/SLOs/SLAs. Mettez en place une observabilite complete pour detecter et resoudre les problemes rapidement.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 50 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 1.10 -->
+                <div class="lesson-card m1">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m1">Lecon 1.10</span>
+                        <span class="lesson-difficulty difficulty-avance">Avance</span>
+                    </div>
+                    <h3>Haute disponibilite</h3>
+                    <p>Redondance, failover, disaster recovery, RTO/RPO. Concevez des systemes tolérants aux pannes avec un temps d'arret minimal.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 55 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== MODULE 2 ===== -->
+        <section id="module2" class="module-section">
+            <div class="module-header">
+                <div class="module-header-left">
+                    <div class="module-number m2">02</div>
+                    <div class="module-title-group">
+                        <h2>Systemes Distribues</h2>
+                        <p>Les defis de la distribution et de la coherence</p>
+                    </div>
+                </div>
+                <button class="module-quiz-btn">
+                    <span class="icon">&#x1F4CB;</span>
+                    Quiz Module 2
+                </button>
+            </div>
+
+            <div class="lessons-grid">
+                <!-- Lesson 2.1 -->
+                <div class="lesson-card m2">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m2">Lecon 2.1</span>
+                        <span class="lesson-difficulty difficulty-avance">Avance</span>
+                    </div>
+                    <h3>Theoreme CAP</h3>
+                    <p>Consistency, Availability, Partition tolerance et les compromis impossibles. Comprenez les fondements theoriques des systemes distribues.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 45 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 2.2 -->
+                <div class="lesson-card m2">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m2">Lecon 2.2</span>
+                        <span class="lesson-difficulty difficulty-avance">Avance</span>
+                    </div>
+                    <h3>Consensus</h3>
+                    <p>Paxos, Raft, Two-Phase Commit et Three-Phase Commit. Decouvrez les algorithmes de consensus qui garantissent la coherence dans les systemes distribues.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 65 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 2.3 -->
+                <div class="lesson-card m2">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m2">Lecon 2.3</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>Partitionnement</h3>
+                    <p>Hash-based, range-based et consistent hashing. Apprenez a diviser vos donnees en partitions pour scaler horizontalement vos bases de donnees.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 50 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 2.4 -->
+                <div class="lesson-card m2">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m2">Lecon 2.4</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>Replication</h3>
+                    <p>Synchronique, asynchronique, leader-follower et multi-leader. Maitrisez les strategies de replication pour la haute disponibilite et la performance.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 55 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 2.5 -->
+                <div class="lesson-card m2">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m2">Lecon 2.5</span>
+                        <span class="lesson-difficulty difficulty-avance">Avance</span>
+                    </div>
+                    <h3>Consistance</h3>
+                    <p>Eventual, strong, causal et read-your-writes. Explorez les differents niveaux de coherence et leurs implications sur la performance et l'UX.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 50 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 2.6 -->
+                <div class="lesson-card m2">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m2">Lecon 2.6</span>
+                        <span class="lesson-difficulty difficulty-avance">Avance</span>
+                    </div>
+                    <h3>Coordination distribuee</h3>
+                    <p>ZooKeeper, etcd et verrous distribues. Decouvrez les outils et protocoles essentiels pour coordonner les services dans une architecture distribuee.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 55 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 2.7 -->
+                <div class="lesson-card m2">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m2">Lecon 2.7</span>
+                        <span class="lesson-difficulty difficulty-avance">Avance</span>
+                    </div>
+                    <h3>Gestion des transactions</h3>
+                    <p>Saga pattern, eventual consistency et 2PC. Apprenez a gerer les transactions distribuees tout en maintenant la performance du systeme.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 60 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 2.8 -->
+                <div class="lesson-card m2">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m2">Lecon 2.8</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>Fault Tolerance</h3>
+                    <p>Circuit breaker, bulkhead, retry et timeout patterns. Construisez des systemes capables de resister aux pannes en cascade.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 50 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 2.9 -->
+                <div class="lesson-card m2">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m2">Lecon 2.9</span>
+                        <span class="lesson-difficulty difficulty-avance">Avance</span>
+                    </div>
+                    <h3>Patterns d'evenements</h3>
+                    <p>Event sourcing, CQRS et architecture event-driven. Adoptez des patterns modernes pour des systemes reactifs et maintenables.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 60 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 2.10 -->
+                <div class="lesson-card m2">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m2">Lecon 2.10</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>Performance</h3>
+                    <p>Latence, throughput, goulots d'etranglement et optimisation. Mesurez et ameliorez les performances de vos systemes distribues.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 45 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== MODULE 3 ===== -->
+        <section id="module3" class="module-section">
+            <div class="module-header">
+                <div class="module-header-left">
+                    <div class="module-number m3">03</div>
+                    <div class="module-title-group">
+                        <h2>Conception de Systemes</h2>
+                        <p>Etudes de cas et problemes d'entretiens courants</p>
+                    </div>
+                </div>
+                <button class="module-quiz-btn">
+                    <span class="icon">&#x1F4CB;</span>
+                    Quiz Module 3
+                </button>
+            </div>
+
+            <div class="lessons-grid">
+                <!-- Lesson 3.1 -->
+                <div class="lesson-card m3">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m3">Lecon 3.1</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>URL Shortener</h3>
+                    <p>Exigences fonctionnelles, conception API, stockage, hachage et scaling. Concevez un systeme de raccourcissement d'URL type bit.ly.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 60 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 3.2 -->
+                <div class="lesson-card m3">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m3">Lecon 3.2</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>Rate Limiter</h3>
+                    <p>Token bucket, sliding window et rate limiting distribue. Protegez vos APIs contre les abus et assurez une utilisation equilibree des ressources.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 55 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 3.3 -->
+                <div class="lesson-card m3">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m3">Lecon 3.3</span>
+                        <span class="lesson-difficulty difficulty-avance">Avance</span>
+                    </div>
+                    <h3>Key-Value Store</h3>
+                    <p>Consistent hashing, replication et resolution de conflits. Construisez un magasin cle-valeur distribue comme DynamoDB ou Redis.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 65 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 3.4 -->
+                <div class="lesson-card m3">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m3">Lecon 3.4</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>Unique ID Generator</h3>
+                    <p>UUID, Snowflake, sequences de BDD et clock skew. Generez des identifiants uniques et sequentiels a l'echelle mondiale.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 45 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 3.5 -->
+                <div class="lesson-card m3">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m3">Lecon 3.5</span>
+                        <span class="lesson-difficulty difficulty-avance">Avance</span>
+                    </div>
+                    <h3>News Feed</h3>
+                    <p>Fan-out on write vs read, classement et caching. Concevez un fil d'actualite scalable comme Twitter ou Facebook.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 70 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 3.6 -->
+                <div class="lesson-card m3">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m3">Lecon 3.6</span>
+                        <span class="lesson-difficulty difficulty-avance">Avance</span>
+                    </div>
+                    <h3>Chat System</h3>
+                    <p>WebSocket, ordre des messages, presence et stockage. Creez un systeme de messagerie en temps reel comme WhatsApp ou Slack.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 65 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 3.7 -->
+                <div class="lesson-card m3">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m3">Lecon 3.7</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>Search Autocomplete</h3>
+                    <p>Trie, caching, classement et mises a jour en temps reel. Implementez l'auto-completion intelligente comme Google Search.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 50 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 3.8 -->
+                <div class="lesson-card m3">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m3">Lecon 3.8</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>Web Crawler</h3>
+                    <p>BFS/DFS, politeness, URL frontier et deduplication. Construisez un robot d'indexation web capable de crawler des milliards de pages.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 55 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 3.9 -->
+                <div class="lesson-card m3">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m3">Lecon 3.9</span>
+                        <span class="lesson-difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                    <h3>Notification System</h3>
+                    <p>Push/pull, priorisation et garanties de livraison. Concevez un systeme de notification multi-canal fiable et scalable.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 50 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+
+                <!-- Lesson 3.10 -->
+                <div class="lesson-card m3">
+                    <div class="lesson-card-header">
+                        <span class="lesson-number m3">Lecon 3.10</span>
+                        <span class="lesson-difficulty difficulty-avance">Avance</span>
+                    </div>
+                    <h3>Video Streaming</h3>
+                    <p>Transcodage, bitrate adaptatif, CDN et stockage. Decouvrez comment Netflix ou YouTube gerent la diffusion de video a l'echelle mondiale.</p>
+                    <div class="lesson-card-footer">
+                        <span class="lesson-duration"><span class="icon">&#x1F552;</span> 60 min</span>
+                        <div class="lesson-arrow">&#x2192;</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="footer">
+            <div class="footer-inner">
+                <p class="footer-text">&copy; 2026 CortexLLMs.io. Tous droits reserves.</p>
+                <div class="footer-links">
+                    <a href="#">Aide</a>
+                    <a href="#">Confidentialite</a>
+                    <a href="#">Conditions</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+</div>
+
+</body>
+</html>

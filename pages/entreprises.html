@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recherche Entreprises - CortexLLMs.io</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0d0f;--card:#1a1a2e;--accent:#3b82f6;--accent-hover:#2563eb;--text:#e4e4e7;--text-muted:#a1a1aa;--border:#27272a;--surface:#111113;--green:#22c55e;--yellow:#eab308;--orange:#f97316;--red:#ef4444}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+h1,h2,h3,h4{font-family:'Source Serif 4',serif}
+header{position:fixed;top:0;width:100%;background:rgba(13,13,15,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:1000}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{font-size:1.5rem;font-weight:800;color:#fff;text-decoration:none}
+.logo .io{color:var(--accent)}
+nav{display:flex;gap:32px}
+nav a{color:var(--text-muted);text-decoration:none;font-size:.9rem;font-weight:500;transition:color .2s}
+nav a:hover,nav a.active{color:var(--accent)}
+.hero{margin-top:72px;padding:80px 24px 60px;text-align:center;background:linear-gradient(180deg,rgba(59,130,246,.08) 0%,transparent 100%)}
+.hero h1{font-size:3rem;font-weight:700;margin-bottom:16px;background:linear-gradient(135deg,#fff 0%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--text-muted);font-size:1.15rem;max-width:560px;margin:0 auto}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.filters{display:flex;gap:12px;flex-wrap:wrap;margin:40px 0 32px;padding:20px;background:var(--card);border-radius:12px;border:1px solid var(--border)}
+.filter-group{display:flex;flex-direction:column;gap:6px}
+.filters label{font-size:.85rem;font-weight:600;color:var(--text-muted)}
+.filters select,.filters input{padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Inter',sans-serif;font-size:.85rem}
+.filters select:focus,.filters input:focus{outline:none;border-color:var(--accent)}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px;margin-bottom:64px}
+.company-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:transform .25s,border-color .25s}
+.company-card:hover{transform:translateY(-4px);border-color:var(--accent)}
+.card-header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.card-logo{width:56px;height:56px;border-radius:12px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:var(--accent);border:1px solid var(--border);flex-shrink:0}
+.card-name{font-size:1.25rem;font-weight:700}
+.stack-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.stack-tag{padding:4px 10px;border-radius:20px;background:rgba(59,130,246,.12);color:var(--accent);font-size:.75rem;font-weight:600}
+.card-process{margin-bottom:18px}
+.card-process h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:8px;font-family:'Inter',sans-serif}
+.process-steps{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.step{padding:4px 10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:.78rem;color:var(--text-muted)}
+.step-arrow{color:var(--accent);font-weight:700;font-size:.75rem}
+.difficulty{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.difficulty-label{font-size:.8rem;color:var(--text-muted);font-weight:500}
+.difficulty-bar{display:flex;gap:4px}
+.diff-dot{width:10px;height:10px;border-radius:50%;background:var(--border)}
+.diff-dot.filled{background:var(--accent)}
+.diff-dot.filled.yellow{background:var(--yellow)}
+.diff-dot.filled.orange{background:var(--orange)}
+.diff-dot.filled.red{background:var(--red)}
+.btn-primary{display:block;width:100%;padding:12px 20px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;transition:background .2s}
+.btn-primary:hover{background:var(--accent-hover)}
+.section{padding:60px 0;border-top:1px solid var(--border)}
+.section h2{font-size:1.8rem;margin-bottom:32px}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.tip-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px}
+.tip-number{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(59,130,246,.15);color:var(--accent);font-weight:800;font-size:.85rem;margin-bottom:12px}
+.tip-card h3{font-size:1.05rem;margin-bottom:8px}
+.tip-card p{color:var(--text-muted);font-size:.9rem}
+.tabs-container{margin-top:24px}
+.tabs-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:12px}
+.tab-btn{padding:8px 18px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text-muted);font-family:'Inter',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .2s}
+.tab-btn:hover{border-color:var(--accent);color:var(--text)}
+.tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tab-panel{display:none;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px}
+.tab-panel.active{display:block}
+.tab-panel h3{font-size:1.4rem;margin-bottom:8px}
+.tab-panel .meta{color:var(--text-muted);font-size:.9rem;margin-bottom:20px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+.detail-box{background:var(--surface);border-radius:10px;padding:20px;border:1px solid var(--border)}
+.detail-box h4{font-size:.85rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);margin-bottom:10px;font-family:'Inter',sans-serif}
+.detail-box ul{list-style:none}
+.detail-box ul li{padding:6px 0;color:var(--text-muted);font-size:.9rem;border-bottom:1px solid var(--border)}
+.detail-box ul li:last-child{border-bottom:none}
+footer{border-top:1px solid var(--border);padding:40px 24px;text-align:center;color:var(--text-muted);font-size:.85rem}
+@media(max-width:768px){.hero h1{font-size:2rem}.cards-grid{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr}nav{gap:16px}nav a{font-size:.8rem}.filters{flex-direction:column}}
+</style>
+</head>
+<body>
+<header>
+<div class="header-inner">
+<a href="../index.html" class="logo">CortexLLMs<span class="io">.io</span></a>
+<nav>
+<a href="entreprises.html" class="active">Entreprises</a>
+<a href="blog.html">Blog</a>
+<a href="#">Ressources</a>
+<a href="#">Contact</a>
+</nav>
+</div>
+</header>
+<section class="hero">
+<div class="container">
+<h1>Recherche Entreprises</h1>
+<p>Fiches détaillées des processus de recrutement chez les plus grandes entreprises tech</p>
+</div>
+</section>
+<main class="container">
+<div class="filters">
+<div class="filter-group"><label>Difficulté</label><select id="filter-difficulty" onchange="filterCards()"><option value="all">Toutes</option><option value="3">3/5</option><option value="4">4/5</option><option value="5">5/5</option></select></div>
+<div class="filter-group"><label>Stack</label><select id="filter-stack" onchange="filterCards()"><option value="all">Toutes</option><option value="java">Java</option><option value="python">Python</option><option value="go">Go</option><option value="react">React</option><option value="ruby">Ruby</option><option value="swift">Swift</option><option value="csharp">C#</option></select></div>
+<div class="filter-group"><label>Rechercher</label><input type="text" id="filter-search" placeholder="Nom de l'entreprise..." oninput="filterCards()"></div>
+</div>
+<div class="cards-grid" id="cards-grid">
+<div class="company-card" data-difficulty="4" data-stack="java go python" data-name="google">
+<div class="card-header"><div class="card-logo">G</div><h3 class="card-name">Google</h3></div>
+<div class="stack-tags"><span class="stack-tag">Java</span><span class="stack-tag">Go</span><span class="stack-tag">Python</span></div>
+<div class="card-process"><h4>Processus</h4><div class="process-steps"><span class="step">Phone Screen</span><span class="step-arrow">→</span><span class="step">Technical (2)</span><span class="step-arrow">→</span><span class="step">System Design</span><span class="step-arrow">→</span><span class="step">Behavioral</span><span class="step-arrow">→</span><span class="step">HC</span></div></div>
+<div class="difficulty"><span class="difficulty-label">Difficulté</span><div class="difficulty-bar"><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot"></div></div></div>
+<a href="#" class="btn-primary">Voir la fiche</a>
+</div>
+<div class="company-card" data-difficulty="4" data-stack="react php" data-name="meta">
+<div class="card-header"><div class="card-logo">M</div><h3 class="card-name">Meta</h3></div>
+<div class="stack-tags"><span class="stack-tag">React</span><span class="stack-tag">PHP</span><span class="stack-tag">Hack</span></div>
+<div class="card-process"><h4>Processus</h4><div class="process-steps"><span class="step">Phone Screen</span><span class="step-arrow">→</span><span class="step">Technical (2)</span><span class="step-arrow">→</span><span class="step">System Design</span><span class="step-arrow">→</span><span class="step">Behavioral</span></div></div>
+<div class="difficulty"><span class="difficulty-label">Difficulté</span><div class="difficulty-bar"><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot"></div></div></div>
+<a href="#" class="btn-primary">Voir la fiche</a>
+</div>
+<div class="company-card" data-difficulty="3" data-stack="java python" data-name="amazon">
+<div class="card-header"><div class="card-logo">A</div><h3 class="card-name">Amazon</h3></div>
+<div class="stack-tags"><span class="stack-tag">Java</span><span class="stack-tag">Python</span><span class="stack-tag">AWS</span></div>
+<div class="card-process"><h4>Processus</h4><div class="process-steps"><span class="step">Phone Screen</span><span class="step-arrow">→</span><span class="step">Loop (5-6)</span><span class="step-arrow">→</span><span class="step">Leadership Principles</span></div></div>
+<div class="difficulty"><span class="difficulty-label">Difficulté</span><div class="difficulty-bar"><div class="diff-dot filled orange"></div><div class="diff-dot filled orange"></div><div class="diff-dot filled orange"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></div>
+<a href="#" class="btn-primary">Voir la fiche</a>
+</div>
+<div class="company-card" data-difficulty="4" data-stack="swift" data-name="apple">
+<div class="card-header"><div class="card-logo">&#63743;</div><h3 class="card-name">Apple</h3></div>
+<div class="stack-tags"><span class="stack-tag">Swift</span><span class="stack-tag">ObjC</span><span class="stack-tag">C++</span></div>
+<div class="card-process"><h4>Processus</h4><div class="process-steps"><span class="step">Phone Screen</span><span class="step-arrow">→</span><span class="step">Technical (3-4)</span><span class="step-arrow">→</span><span class="step">Design Review</span></div></div>
+<div class="difficulty"><span class="difficulty-label">Difficulté</span><div class="difficulty-bar"><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot"></div></div></div>
+<a href="#" class="btn-primary">Voir la fiche</a>
+</div>
+<div class="company-card" data-difficulty="3" data-stack="csharp" data-name="microsoft">
+<div class="card-header"><div class="card-logo">MS</div><h3 class="card-name">Microsoft</h3></div>
+<div class="stack-tags"><span class="stack-tag">C#</span><span class="stack-tag">.NET</span><span class="stack-tag">Azure</span></div>
+<div class="card-process"><h4>Processus</h4><div class="process-steps"><span class="step">Phone Screen</span><span class="step-arrow">→</span><span class="step">Technical (3-4)</span><span class="step-arrow">→</span><span class="step">As-appropriate</span></div></div>
+<div class="difficulty"><span class="difficulty-label">Difficulté</span><div class="difficulty-bar"><div class="diff-dot filled orange"></div><div class="diff-dot filled orange"></div><div class="diff-dot filled orange"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></div>
+<a href="#" class="btn-primary">Voir la fiche</a>
+</div>
+<div class="company-card" data-difficulty="5" data-stack="java react" data-name="netflix">
+<div class="card-header"><div class="card-logo">N</div><h3 class="card-name">Netflix</h3></div>
+<div class="stack-tags"><span class="stack-tag">Java</span><span class="stack-tag">React</span><span class="stack-tag">AWS</span></div>
+<div class="card-process"><h4>Processus</h4><div class="process-steps"><span class="step">Recruiter</span><span class="step-arrow">→</span><span class="step">Technical (4-5)</span><span class="step-arrow">→</span><span class="step">Culture</span></div></div>
+<div class="difficulty"><span class="difficulty-label">Difficulté</span><div class="difficulty-bar"><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div></div></div>
+<a href="#" class="btn-primary">Voir la fiche</a>
+</div>
+<div class="company-card" data-difficulty="3" data-stack="go python java" data-name="uber">
+<div class="card-header"><div class="card-logo">U</div><h3 class="card-name">Uber</h3></div>
+<div class="stack-tags"><span class="stack-tag">Go</span><span class="stack-tag">Python</span><span class="stack-tag">Java</span></div>
+<div class="card-process"><h4>Processus</h4><div class="process-steps"><span class="step">Phone Screen</span><span class="step-arrow">→</span><span class="step">Technical (3)</span><span class="step-arrow">→</span><span class="step">System Design</span><span class="step-arrow">→</span><span class="step">Behavioral</span></div></div>
+<div class="difficulty"><span class="difficulty-label">Difficulté</span><div class="difficulty-bar"><div class="diff-dot filled orange"></div><div class="diff-dot filled orange"></div><div class="diff-dot filled orange"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></div>
+<a href="#" class="btn-primary">Voir la fiche</a>
+</div>
+<div class="company-card" data-difficulty="3" data-stack="ruby react java" data-name="airbnb">
+<div class="card-header"><div class="card-logo">AB</div><h3 class="card-name">Airbnb</h3></div>
+<div class="stack-tags"><span class="stack-tag">Ruby</span><span class="stack-tag">React</span><span class="stack-tag">Java</span></div>
+<div class="card-process"><h4>Processus</h4><div class="process-steps"><span class="step">Phone Screen</span><span class="step-arrow">→</span><span class="step">Technical (2-3)</span><span class="step-arrow">→</span><span class="step">System Design</span><span class="step-arrow">→</span><span class="step">Values</span></div></div>
+<div class="difficulty"><span class="difficulty-label">Difficulté</span><div class="difficulty-bar"><div class="diff-dot filled orange"></div><div class="diff-dot filled orange"></div><div class="diff-dot filled orange"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></div>
+<a href="#" class="btn-primary">Voir la fiche</a>
+</div>
+<div class="company-card" data-difficulty="4" data-stack="ruby go java" data-name="stripe">
+<div class="card-header"><div class="card-logo">S</div><h3 class="card-name">Stripe</h3></div>
+<div class="stack-tags"><span class="stack-tag">Ruby</span><span class="stack-tag">Go</span><span class="stack-tag">Java</span></div>
+<div class="card-process"><h4>Processus</h4><div class="process-steps"><span class="step">Phone Screen</span><span class="step-arrow">→</span><span class="step">Take-home</span><span class="step-arrow">→</span><span class="step">Technical (3)</span><span class="step-arrow">→</span><span class="step">Team Fit</span></div></div>
+<div class="difficulty"><span class="difficulty-label">Difficulté</span><div class="difficulty-bar"><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot filled red"></div><div class="diff-dot"></div></div></div>
+<a href="#" class="btn-primary">Voir la fiche</a>
+</div>
+<div class="company-card" data-difficulty="3" data-stack="java python" data-name="spotify">
+<div class="card-header"><div class="card-logo">SP</div><h3 class="card-name">Spotify</h3></div>
+<div class="stack-tags"><span class="stack-tag">Java</span><span class="stack-tag">Python</span><span class="stack-tag">GCP</span></div>
+<div class="card-process"><h4>Processus</h4><div class="process-steps"><span class="step">Recruiter</span><span class="step-arrow">→</span><span class="step">Technical (2)</span><span class="step-arrow">→</span><span class="step">Architecture</span><span class="step-arrow">→</span><span class="step">Culture</span></div></div>
+<div class="difficulty"><span class="difficulty-label">Difficulté</span><div class="difficulty-bar"><div class="diff-dot filled orange"></div><div class="diff-dot filled orange"></div><div class="diff-dot filled orange"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></div>
+<a href="#" class="btn-primary">Voir la fiche</a>
+</div>
+</div>
+<section class="section">
+<h2>Conseils généraux</h2>
+<div class="tips-grid">
+<div class="tip-card"><div class="tip-number">1</div><h3>Préparez-vous en avance</h3><p>Commencez votre préparation au moins 4-6 semaines avant l'entretien. Révisez les structures de données, les algorithmes et le system design régulièrement.</p></div>
+<div class="tip-card"><div class="tip-number">2</div><h3>Pratiquez le code à voix haute</h3><p>Entraînez-vous à expliquer votre raisonnement à voix pendant que vous codez. C'est un critère clé dans la plupart des entretiens techniques.</p></div>
+<div class="tip-card"><div class="tip-number">3</div><h3>Maîtrisez les Leadership Principles</h3><p>Amazon et d'autres entreprises évaluent fortement leurs valeurs. Préparez des exemples concrets basés sur vos expériences passées.</p></div>
+<div class="tip-card"><div class="tip-number">4</div><h3>Faites des entretiens simulés</h3><p>Pratiquez avec des amis ou utilisez des plateformes comme Pramp et Interviewing.io pour vous familiariser avec le format réel.</p></div>
+<div class="tip-card"><div class="tip-number">5</div><h3>Recherchez l'entreprise</h3><p>Comprendre la stack technique, la culture et les produits de l'entreprise vous permet de mieux adapter vos réponses et de poser des questions pertinentes.</p></div>
+</div>
+</section>
+<section class="section">
+<h2>Préparation par entreprise</h2>
+<div class="tabs-container">
+<div class="tabs-nav">
+<button class="tab-btn active" onclick="showTab('google')">Google</button>
+<button class="tab-btn" onclick="showTab('meta')">Meta</button>
+<button class="tab-btn" onclick="showTab('amazon')">Amazon</button>
+<button class="tab-btn" onclick="showTab('apple')">Apple</button>
+<button class="tab-btn" onclick="showTab('microsoft')">Microsoft</button>
+<button class="tab-btn" onclick="showTab('netflix')">Netflix</button>
+<button class="tab-btn" onclick="showTab('uber')">Uber</button>
+<button class="tab-btn" onclick="showTab('airbnb')">Airbnb</button>
+<button class="tab-btn" onclick="showTab('stripe')">Stripe</button>
+<button class="tab-btn" onclick="showTab('spotify')">Spotify</button>
+</div>
+<div class="tab-panel active" id="tab-google">
+<h3>Google</h3>
+<p class="meta">Difficulté : 4/5 • Stack : Java, Go, Python</p>
+<p>Google est connu pour ses entretiens techniques exigeants. Le processus comprend 2 entretiens techniques, un system design, un behavioral et une revue par le Hiring Committee (HC).</p>
+<div class="detail-grid">
+<div class="detail-box"><h4>Processus complet</h4><ul><li>Phone Screen : 45 min, 1-2 questions DSA</li><li>Technical 1 : 45 min, algorithmes avancés</li><li>Technical 2 : 45 min, DSA + coding</li><li>System Design : 60 min, architecture à grande échelle</li><li>Behavioral : 45 min, Googleyn &amp; Leadership</li><li>HC : Revue du comité de recrutement</li></ul></div>
+<div class="detail-box"><h4>Conseils spécifiques</h4><ul><li>Maîtrisez les graphes et les arbres</li><li>Étudiez les systèmes distribués (MapReduce, GFS)</li><li>Préparez des exemples de leadership</li><li>Entraînez-vous sur Google-specific LeetCode</li></ul></div>
+</div>
+</div>
+<div class="tab-panel" id="tab-meta">
+<h3>Meta</h3>
+<p class="meta">Difficulté : 4/5 • Stack : React, PHP, Hack</p>
+<p>Meta met l'accent sur le system design et la capacité à travailler à grande échelle. Le processus est structuré et rapide.</p>
+<div class="detail-grid">
+<div class="detail-box"><h4>Processus complet</h4><ul><li>Phone Screen : 45 min, 1 question DSA</li><li>Technical 1 : 45 min, DSA medium/hard</li><li>Technical 2 : 45 min, DSA avancé</li><li>System Design : 60 min, design d'applications sociales</li><li>Behavioral : 45 min, valeurs Meta</li></ul></div>
+<div class="detail-box"><h4>Conseils spécifiques</h4><ul><li>Étudiez les algorithmes de graphe</li><li>Pratiquez le system design d'applications temps réel</li><li>Connaissez les produits Meta (FB, Instagram, WhatsApp)</li><li>Préparez des stories STAR complètes</li></ul></div>
+</div>
+</div>
+<div class="tab-panel" id="tab-amazon">
+<h3>Amazon</h3>
+<p class="meta">Difficulté : 3/5 • Stack : Java, Python, AWS</p>
+<p>Amazon se distingue par son focus sur les Leadership Principles. Le loop entretiens dure 5-6 heures.</p>
+<div class="detail-grid">
+<div class="detail-box"><h4>Processus complet</h4><ul><li>Phone Screen : 30-45 min, 1 question DSA</li><li>Loop : 5-6 entretiens de 45 min chacun</li><li>Chaque round mêle technique et LP</li><li>Leadership Principles : 50% de la notation</li><li>Décision finale sous 5 jours ouvrés</li></ul></div>
+<div class="detail-box"><h4>Conseils spécifiques</h4><ul><li>Préparez 2-3 stories par Leadership Principle</li><li>Utilisez le format STAR (Situation, Task, Action, Result)</li><li>Maîtrisez les services AWS populaires</li><li>Focus sur les solutions concrètes et mesurables</li></ul></div>
+</div>
+</div>
+<div class="tab-panel" id="tab-apple">
+<h3>Apple</h3>
+<p class="meta">Difficulté : 4/5 • Stack : Swift, ObjC, C++</p>
+<p>Apple valorise la qualité du code et l'attention aux détails. Le Design Review est unique au processus Apple.</p>
+<div class="detail-grid">
+<div class="detail-box"><h4>Processus complet</h4><ul><li>Phone Screen : 30-45 min, présentation technique</li><li>Technical 1-4 : 45 min chacun, mix DSA et coding</li><li>Design Review : présentation d'un projet précédent</li><li>Focus sur la qualité du code et l'optimisation</li></ul></div>
+<div class="detail-box"><h4>Conseils spécifiques</h4><ul><li>Maîtrisez Swift et les frameworks Apple</li><li>Préparez un projet à présenter en détail</li><li>Montrez votre passion pour l'expérience utilisateur</li><li>Étudiez les patterns de conception iOS/macOS</li></ul></div>
+</div>
+</div>
+<div class="tab-panel" id="tab-microsoft">
+<h3>Microsoft</h3>
+<p class="meta">Difficulté : 3/5 • Stack : C#, .NET, Azure</p>
+<p>Microsoft a un processus relativement bienveillant. L'entretien "As-appropriate" est une discussion informelle avec un senior.</p>
+<div class="detail-grid">
+<div class="detail-box"><h4>Processus complet</h4><ul><li>Phone Screen : 30-45 min, DSA + motivation</li><li>Technical 1-4 : 45 min chacun, DSA + system design</li><li>As-appropriate : discussion informelle avec un dirigeant</li><li>Décision basée sur un score agrégé</li></ul></div>
+<div class="detail-box"><h4>Conseils spécifiques</h4><ul><li>Maîtrisez C# et l'écosystème .NET</li><li>Étudiez les services Azure populaires</li><li>Préparez-vous aux questions de culture d'entreprise</li><li>Montrez votre capacité à collaborer</li></ul></div>
+</div>
+</div>
+<div class="tab-panel" id="tab-netflix">
+<h3>Netflix</h3>
+<p class="meta">Difficulté : 5/5 • Stack : Java, React, AWS</p>
+<p>Netflix recrute pour des rôles spécifiques avec des attentes très élevées. Le processus est long et sélectif.</p>
+<div class="detail-grid">
+<div class="detail-box"><h4>Processus complet</h4><ul><li>Recruiter : présentation du rôle</li><li>Technical 1-5 : entretiens approfondis</li><li>Focus sur l'expérience et l'impact passé</li><li>Culture : alignement avec les valeurs Netflix</li><li>Décision par consensus du team</li></ul></div>
+<div class="detail-box"><h4>Conseils spécifiques</h4><ul><li>Préparez des exemples d'impact à grande échelle</li><li>Étudiez l'architecture de Netflix (microservices)</li><li>Démontrez une culture de la liberté et de la responsabilité</li><li>Soyez prêt à discuter de vos compensations</li></ul></div>
+</div>
+</div>
+<div class="tab-panel" id="tab-uber">
+<h3>Uber</h3>
+<p class="meta">Difficulté : 3/5 • Stack : Go, Python, Java</p>
+<p>Uber recherche des ingénieurs polyvalents avec une bonne compréhension des systèmes distribués.</p>
+<div class="detail-grid">
+<div class="detail-box"><h4>Processus complet</h4><ul><li>Phone Screen : 45 min, DSA</li><li>Technical 1-3 : 45 min chacun, DSA avancé</li><li>System Design : architecture de systèmes temps réel</li><li>Behavioral : valeurs et culture Uber</li></ul></div>
+<div class="detail-box"><h4>Conseils spécifiques</h4><ul><li>Maîtrisez Go et les systèmes temps réel</li><li>Étudiez les systèmes de matching et de routing</li><li>Préparez des exemples de travail sous pression</li><li>Connaissez les produits Uber (Rides, Eats, Freight)</li></ul></div>
+</div>
+</div>
+<div class="tab-panel" id="tab-airbnb">
+<h3>Airbnb</h3>
+<p class="meta">Difficulté : 3/5 • Stack : Ruby, React, Java</p>
+<p>Airbnb accorde une importance particulière à la culture d'entreprise et aux valeurs fondatrices.</p>
+<div class="detail-grid">
+<div class="detail-box"><h4>Processus complet</h4><ul><li>Phone Screen : 45 min, présentation</li><li>Technical 1-3 : 45 min chacun, DSA + coding</li><li>System Design : design d'une plateforme</li><li>Values : entretien culturel approfondi</li></ul></div>
+<div class="detail-box"><h4>Conseils spécifiques</h4><ul><li>Connaissez les valeurs d'Airbnb en profondeur</li><li>Préparez des expériences de travail d'équipe</li><li>Étudiez l'architecture technique d'Airbnb</li><li>Montrez votre créativité et votre empathie</li></ul></div>
+</div>
+</div>
+<div class="tab-panel" id="tab-stripe">
+<h3>Stripe</h3>
+<p class="meta">Difficulté : 4/5 • Stack : Ruby, Go, Java</p>
+<p>Stripe est réputé pour ses entretiens techniques rigoureux et son take-home project.</p>
+<div class="detail-grid">
+<div class="detail-box"><h4>Processus complet</h4><ul><li>Phone Screen : 45 min, DSA + motivation</li><li>Take-home : projet technique à réaliser en 3-5 jours</li><li>Technical 1-3 : 45 min chacun, review du projet + DSA</li><li>Team Fit : compatibilité avec l'équipe</li></ul></div>
+<div class="detail-box"><h4>Conseils spécifiques</h4><ul><li>Concentrez-vous sur la qualité du code du take-home</li><li>Maîtrisez Ruby et les API REST</li><li>Comprendre les systèmes de paiement est un plus</li><li>Montrez votre attention aux détails</li></ul></div>
+</div>
+</div>
+<div class="tab-panel" id="tab-spotify">
+<h3>Spotify</h3>
+<p class="meta">Difficulté : 3/5 • Stack : Java, Python, GCP</p>
+<p>Spotify privilégie la culture et le travail en équipe. Le processus est moins axé sur les algorithmes.</p>
+<div class="detail-grid">
+<div class="detail-box"><h4>Processus complet</h4><ul><li>Recruiter : présentation du rôle et de la culture</li><li>Technical 1-2 : 45 min chacun, DSA + system design</li><li>Architecture : design de systèmes d'audio/streaming</li><li>Culture : alignement avec les valeurs Spotify</li></ul></div>
+<div class="detail-box"><h4>Conseils spécifiques</h4><ul><li>Comprenez l'architecture en squad/chapter/tribe</li><li>Étudiez les systèmes de recommandation</li><li>Montrez votre esprit d'équipe et d'autonomie</li><li>Connaissez les produits Spotify (Music, Podcasts, Wrapped)</li></ul></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer>
+<div class="container">
+<p>&copy; 2026 CortexLLMs.io — Tous droits réservés</p>
+</div>
+</footer>
+<script>
+function filterCards(){
+const diff=document.getElementById('filter-difficulty').value;
+const stack=document.getElementById('filter-stack').value;
+const search=document.getElementById('filter-search').value.toLowerCase();
+document.querySelectorAll('.company-card').forEach(c=>{
+const d=c.dataset.difficulty;
+const s=c.dataset.stack;
+const n=c.dataset.name;
+const okDiff=diff==='all'||d===diff;
+const okStack=stack==='all'||s.includes(stack);
+const okSearch=!search||n.includes(search);
+c.style.display=(okDiff&&okStack&&okSearch)?'':'none';
+});
+}
+function showTab(id){
+document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+document.getElementById('tab-'+id).classList.add('active');
+event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

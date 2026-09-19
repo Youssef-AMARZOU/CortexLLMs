@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecon - CortexLLMs.io</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg-primary:#0a0a0f;--bg-secondary:#12121a;--bg-tertiary:#1a1a26;--bg-card:#16161f;--bg-hover:#1e1e2a;--bg-code:#0d1117;--text-primary:#e8e8ed;--text-secondary:#9898a6;--text-muted:#6b6b7b;--accent-blue:#4f8cff;--accent-blue-dim:rgba(79,140,255,.12);--accent-green:#34d399;--accent-green-dim:rgba(52,211,153,.12);--accent-orange:#fb923c;--accent-orange-dim:rgba(251,146,60,.12);--accent-purple:#a78bfa;--accent-purple-dim:rgba(167,139,250,.12);--accent-red:#f87171;--accent-red-dim:rgba(248,113,113,.12);--accent-cyan:#22d3ee;--accent-yellow:#facc15;--border:#2a2a3a;--border-light:#22222e;--radius:10px;--radius-sm:6px;--shadow:0 4px 24px rgba(0,0,0,.3);--shadow-lg:0 8px 40px rgba(0,0,0,.4);--transition:.2s ease;--font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--font-serif:'Source Serif 4',Georgia,serif}
+body{font-family:var(--font-sans);background:var(--bg-primary);color:var(--text-primary);line-height:1.7;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-blue);text-decoration:none;transition:color var(--transition)}a:hover{color:#6ba3ff}
+header{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.header-inner{max-width:1280px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-size:1.35rem;font-weight:800;color:var(--text-primary);letter-spacing:-.5px}.logo span.blue{color:var(--accent-blue)}
+nav{display:flex;align-items:center;gap:.25rem}
+nav a{color:var(--text-secondary);font-size:.88rem;font-weight:500;padding:.45rem .9rem;border-radius:var(--radius-sm);transition:all var(--transition)}
+nav a:hover,nav a.active{color:var(--text-primary);background:var(--bg-hover)}
+nav a.nav-cta{background:var(--accent-blue);color:#fff;margin-left:.5rem;padding:.45rem 1.1rem}
+nav a.nav-cta:hover{background:#3d7aee;color:#fff}
+.breadcrumb-bar{background:var(--bg-secondary);border-bottom:1px solid var(--border-light)}
+.breadcrumb-inner{max-width:1280px;margin:0 auto;padding:.7rem 2rem;display:flex;align-items:center;gap:.5rem;font-size:.82rem}
+.breadcrumb-inner a{color:var(--text-muted)}.breadcrumb-inner a:hover{color:var(--accent-blue)}
+.breadcrumb-inner .sep{color:var(--text-muted);opacity:.5}.breadcrumb-inner .current{color:var(--text-secondary)}
+.lesson-layout{max-width:1280px;margin:0 auto;padding:2rem;display:grid;grid-template-columns:1fr 300px;gap:2.5rem;align-items:start}
+.lesson-main{min-width:0}
+.lesson-meta{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem;margin-bottom:1.5rem}
+.meta-tag{display:inline-flex;align-items:center;gap:.35rem;font-size:.78rem;font-weight:600;padding:.3rem .7rem;border-radius:100px;text-transform:uppercase;letter-spacing:.3px}
+.meta-tag.category{background:var(--accent-blue-dim);color:var(--accent-blue)}
+.meta-tag.difficulty{background:var(--accent-orange-dim);color:var(--accent-orange)}
+.meta-tag.duration{background:var(--accent-green-dim);color:var(--accent-green)}
+.meta-tag.lesson-num{background:var(--accent-purple-dim);color:var(--accent-purple)}
+.lesson-main h1{font-family:var(--font-serif);font-size:2.4rem;font-weight:700;line-height:1.25;margin-bottom:.5rem}
+.lesson-module{font-size:.9rem;color:var(--text-muted);margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.lesson-module span{color:var(--text-secondary);font-weight:500}
+.lesson-content{font-family:var(--font-serif);font-size:1.08rem;line-height:1.85}
+.lesson-content h2{font-family:var(--font-sans);font-size:1.55rem;font-weight:700;margin:2.8rem 0 1rem;padding-top:1rem}
+.lesson-content h3{font-family:var(--font-sans);font-size:1.2rem;font-weight:600;margin:2rem 0 .75rem}
+.lesson-content p{color:var(--text-secondary);margin-bottom:1.25rem}
+.lesson-content ul,.lesson-content ol{margin:1rem 0 1.5rem 1.5rem;color:var(--text-secondary)}
+.lesson-content li{margin-bottom:.5rem}
+.lesson-content strong{color:var(--text-primary);font-weight:600}
+.lesson-content em{color:var(--accent-cyan)}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;background:var(--bg-tertiary);color:var(--accent-cyan);padding:.15rem .45rem;border-radius:4px;font-size:.88em}
+.code-block{position:relative;margin:1.5rem 0;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+.code-header{display:flex;align-items:center;justify-content:space-between;background:var(--bg-tertiary);padding:.5rem 1rem;border-bottom:1px solid var(--border)}
+.code-lang{font-family:var(--font-sans);font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
+.code-dots{display:flex;gap:6px}.code-dots span{width:10px;height:10px;border-radius:50%}
+.code-dots span:nth-child(1){background:#ff5f57}.code-dots span:nth-child(2){background:#febc2e}.code-dots span:nth-child(3){background:#28c840}
+pre{background:var(--bg-code);padding:1.25rem 1.5rem;overflow-x:auto;font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:.88rem;line-height:1.65;color:#c9d1d9}
+pre code{background:none;color:inherit;padding:0;font-size:inherit}
+.callout{margin:1.5rem 0;padding:1.25rem 1.5rem;border-radius:var(--radius);border-left:4px solid}
+.callout.info{background:var(--accent-blue-dim);border-color:var(--accent-blue)}
+.callout.warning{background:var(--accent-orange-dim);border-color:var(--accent-orange)}
+.callout.tip{background:var(--accent-green-dim);border-color:var(--accent-green)}
+.callout.important{background:var(--accent-purple-dim);border-color:var(--accent-purple)}
+.callout-title{font-family:var(--font-sans);font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.5rem}
+.callout.info .callout-title{color:var(--accent-blue)}.callout.warning .callout-title{color:var(--accent-orange)}
+.callout.tip .callout-title{color:var(--accent-green)}.callout.important .callout-title{color:var(--accent-purple)}
+.callout p{margin:0;font-size:.95rem}
+.key-takeaways{margin:2.5rem 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.key-takeaways-header{background:var(--accent-blue-dim);padding:1rem 1.5rem;border-bottom:1px solid var(--border)}
+.key-takeaways-header h3{font-family:var(--font-sans);font-size:1rem;font-weight:700;color:var(--accent-blue);display:flex;align-items:center;gap:.5rem}
+.key-takeaways ul{list-style:none;padding:1.25rem 1.5rem;margin:0}
+.key-takeaways li{position:relative;padding-left:1.5rem;margin-bottom:.75rem;font-size:.95rem;color:var(--text-secondary)}
+.key-takeaways li::before{content:'';position:absolute;left:0;top:.55rem;width:8px;height:8px;border-radius:50%;background:var(--accent-green)}
+.quiz-cta{margin:2.5rem 0;background:linear-gradient(135deg,rgba(79,140,255,.1),rgba(167,139,250,.1));border:1px solid rgba(79,140,255,.25);border-radius:var(--radius);padding:2rem;text-align:center}
+.quiz-cta h3{font-family:var(--font-sans);font-size:1.25rem;font-weight:700;margin-bottom:.5rem}
+.quiz-cta p{color:var(--text-secondary);font-size:.95rem;margin-bottom:1.25rem}
+.quiz-cta .btn-quiz{display:inline-flex;align-items:center;gap:.5rem;background:var(--accent-blue);color:#fff;font-family:var(--font-sans);font-size:.95rem;font-weight:600;padding:.7rem 1.8rem;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:all var(--transition)}
+.quiz-cta .btn-quiz:hover{background:#3d7aee;transform:translateY(-1px);box-shadow:var(--shadow)}
+.lesson-nav{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:3rem 0 2rem;padding-top:2rem;border-top:1px solid var(--border)}
+.nav-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;transition:all var(--transition)}
+.nav-card:hover{border-color:var(--accent-blue);transform:translateY(-2px);box-shadow:var(--shadow)}
+.nav-card-label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:.5rem}
+.nav-card-title{font-size:1rem;font-weight:600;color:var(--text-primary);line-height:1.4}
+.nav-card.next{text-align:right}.nav-card.empty{opacity:.3;pointer-events:none}
+.sidebar{position:sticky;top:84px}
+.sidebar-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.25rem}
+.sidebar-card-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+.sidebar-card-header h3{font-size:.88rem;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.toc-list{list-style:none;padding:.75rem 1.25rem}
+.toc-list li{margin-bottom:.25rem}
+.toc-list a{display:block;padding:.35rem .6rem;font-size:.85rem;color:var(--text-muted);border-radius:var(--radius-sm);border-left:2px solid transparent;transition:all var(--transition)}
+.toc-list a:hover,.toc-list a.active{color:var(--accent-blue);background:var(--accent-blue-dim);border-left-color:var(--accent-blue)}
+.toc-list .toc-h3{padding-left:1.2rem}
+.related-list{padding:.75rem 1.25rem}
+.related-item{display:block;padding:.7rem .6rem;margin-bottom:.25rem;border-radius:var(--radius-sm);transition:all var(--transition);color:var(--text-secondary);font-size:.88rem;line-height:1.4}
+.related-item:hover{background:var(--bg-hover);color:var(--text-primary)}
+.related-item .rel-cat{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--text-muted);display:block;margin-bottom:.15rem}
+.sidebar .btn-quiz{display:block;width:100%;text-align:center;background:var(--accent-blue);color:#fff;font-family:var(--font-sans);font-size:.95rem;font-weight:600;padding:.85rem 1.5rem;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:all var(--transition);margin-top:.5rem}
+.sidebar .btn-quiz:hover{background:#3d7aee;transform:translateY(-1px)}
+footer{background:var(--bg-secondary);border-top:1px solid var(--border);margin-top:3rem}
+.footer-inner{max-width:1280px;margin:0 auto;padding:2.5rem 2rem}
+.footer-top{display:flex;justify-content:space-between;align-items:start;margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid var(--border)}
+.footer-brand .logo{margin-bottom:.75rem}.footer-brand p{color:var(--text-muted);font-size:.88rem;max-width:320px;line-height:1.6}
+.footer-links{display:flex;gap:3rem}
+.footer-col h4{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:1rem}
+.footer-col a{display:block;font-size:.88rem;color:var(--text-secondary);margin-bottom:.5rem;transition:color var(--transition)}
+.footer-col a:hover{color:var(--accent-blue)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--text-muted)}
+@media(max-width:900px){.lesson-layout{grid-template-columns:1fr}.sidebar{position:static}.footer-top{flex-direction:column;gap:1.5rem}.footer-links{flex-wrap:wrap;gap:1.5rem}.lesson-main h1{font-size:1.8rem}.lesson-nav{grid-template-columns:1fr}}
+@media(max-width:640px){.header-inner{padding:0 1rem}nav a:not(.nav-cta){display:none}.lesson-layout{padding:1rem}.breadcrumb-inner{padding:.7rem 1rem}.footer-inner{padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<header>
+<div class="header-inner">
+<a href="../index.html" class="logo">Cortex<span class="blue">LLMs.io</span></a>
+<nav>
+<a href="../index.html">Accueil</a>
+<a href="courses.html">Formations</a>
+<a href="quizzes.html">Quiz</a>
+<a href="progress.html">Progres</a>
+<a href="about.html">A propos</a>
+<a href="login.html" class="nav-cta">Commencer</a>
+</nav>
+</div>
+</header>
+<div class="breadcrumb-bar">
+<div class="breadcrumb-inner">
+<a href="../index.html">Accueil</a>
+<span class="sep">/</span>
+<a id="bc-category" href="#">Categorie</a>
+<span class="sep">/</span>
+<span class="current" id="bc-lesson">Lecon</span>
+</div>
+</div>
+<div class="lesson-layout">
+<main class="lesson-main">
+<div class="lesson-meta" id="lesson-meta"></div>
+<h1 id="lesson-title"></h1>
+<div class="lesson-module" id="lesson-module"></div>
+<div class="lesson-content" id="lesson-content"></div>
+<div class="key-takeaways" id="key-takeaways"></div>
+<div class="quiz-cta" id="quiz-cta"></div>
+<div class="lesson-nav" id="lesson-nav"></div>
+</main>
+<aside class="sidebar">
+<div class="sidebar-card">
+<div class="sidebar-card-header"><h3>Sommaire</h3></div>
+<ul class="toc-list" id="toc-list"></ul>
+</div>
+<div class="sidebar-card">
+<div class="sidebar-card-header"><h3>Lecons associees</h3></div>
+<div class="related-list" id="related-list"></div>
+</div>
+<div class="sidebar-card" style="padding:1.25rem">
+<button class="btn-quiz" id="sidebar-quiz-btn">Commencer le Quiz</button>
+</div>
+</aside>
+</div>
+<footer>
+<div class="footer-inner">
+<div class="footer-top">
+<div class="footer-brand">
+<div class="logo">Cortex<span class="blue">LLMs.io</span></div>
+<p>Plateforme de formation pour les entretiens techniques. IA, DevOps, System Design et plus encore.</p>
+</div>
+<div class="footer-links">
+<div class="footer-col">
+<h4>Formations</h4>
+<a href="courses.html">Machine Learning</a>
+<a href="courses.html">DevOps</a>
+<a href="courses.html">System Design</a>
+<a href="courses.html">Programmation</a>
+</div>
+<div class="footer-col">
+<h4>Ressources</h4>
+<a href="quizzes.html">Quiz</a>
+<a href="#">Exercices</a>
+<a href="#">Projets</a>
+<a href="#">Blog</a>
+</div>
+<div class="footer-col">
+<h4>Plateforme</h4>
+<a href="about.html">A propos</a>
+<a href="#">Contact</a>
+<a href="#">Conditions</a>
+<a href="#">Confidentialite</a>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<span>&copy; 2026 CortexLLMs.io. Tous droits reserves.</span>
+<span>Fait avec passion pour les interviews techniques.</span>
+</div>
+</div>
+</footer>
+<script>
+const categoryLabels = {
+  ai: "Intelligence Artificielle",
+  devops: "DevOps",
+  "system-design": "System Design",
+  programmation: "Programmation",
+  cybersecurite: "Cybersecurite"
+};
+const difficultyLabels = { debutant: "Debutant", intermediaire: "Intermediaire", avance: "Avance" };
+
+const lessons = {
+  "ml-intro": {
+    title: "Introduction au Machine Learning",
+    category: "ai",
+    duration: "25 min",
+    difficulty: "debutant",
+    lessonNumber: 1,
+    moduleTitle: "Fondamentaux de l'IA",
+    quizId: "ml-intro-quiz",
+    prevLesson: null,
+    nextLesson: "docker-fundamentals",
+    sections: [
+      {
+        title: "Qu'est-ce que le Machine Learning ?",
+        type: "text",
+        content: '<p>Le <strong>Machine Learning</strong> (apprentissage automatique) est une branche de l'intelligence artificielle qui permet aux systemes d\'apprendre et de s\'ameliorer a partir de donnees, sans etre explicitement programme pour chaque tache.</p><p>Plutot que de suivre des regles statiques, un modele de ML identifie des <strong>patterns</strong> dans les donnees et utilise ces patterns pour prendre des decisions ou faire des previsions sur de nouvelles donnees.</p>'
+      },
+      {
+        title: "Les trois types d'apprentissage",
+        type: "text",
+        content: '<h3>1. Apprentissage supervise</h3><p>Le modele apprend a partir de <strong>donnees etiquetees</strong> (input/output connus). C\'est le type le plus courant pour les problemes de classification et de regression.</p><ul><li><strong>Classification</strong> : predire une categorie (spam vs. non-spam)</li><li><strong>Regression</strong> : predire une valeur continue (prix d\'un bien immobilier)</li></ul><h3>2. Apprentissage non-supervise</h3><p>Le modele decouvre des structures caches dans des <strong>donnees non-etiquetees</strong>. Utile pour le clustering et la reduction de dimensionalite.</p><h3>3. Apprentissage par renforcement</h3><p>L\'agent apprend en interagissant avec un <strong>environnement</strong> et en recevant des recompenses ou penalites pour ses actions.</p>'
+      },
+      {
+        title: "Le workflow d'un projet ML",
+        type: "code",
+        content: "# Pipeline type d'un projet de Machine Learning\n# 1. Collecte et preparation des donnees\nimport pandas as pd\nfrom sklearn.model_selection import train_test_split\n\ndf = pd.read_csv('donnees.csv')\nX_train, X_test, y_train, y_test = train_test_split(\n    df.drop('cible', axis=1),\n    df['cible'],\n    test_size=0.2,\n    random_state=42\n)\n\n# 2. Entrainement du modele\nfrom sklearn.ensemble import RandomForestClassifier\n\nmodele = RandomForestClassifier(n_estimators=100)\nmodele.fit(X_train, y_train)\n\n# 3. Evaluation\nfrom sklearn.metrics import accuracy_score, f1_score\n\npredictions = modele.predict(X_test)\nprint(f'Precision : {accuracy_score(y_test, predictions):.2%}')\nprint(f'Score F1 : {f1_score(y_test, predictions, average="weighted"):.2%}')",
+        lang: "python"
+      },
+      {
+        title: "Les metriques d'evaluation",
+        type: "text",
+        content: '<p>Choisir la bonne metrique est essentiel pour evaluer la performance d\'un modele :</p><ul><li><strong>Exactitude (Accuracy)</strong> : proportion de previsions correctes</li><li><strong>Precision</strong> : parmi les positifs predits, combien sont reellement positifs</li><li><strong>Rappel (Recall)</strong> : parmi les reels positifs, combien ont ete detectes</li><li><strong>Score F1</strong> : moyenne harmonique de precision et rappel</li><li><strong>AUC-ROC</strong> : capacite de discrimination du modele</li></ul>'
+      },
+      {
+        title: "Conseil pour l'entretien",
+        type: "callout",
+        calloutType: "tip",
+        content: '<p>Lors d\'un entretien ML, montrez que vous comprenez l\'importance de la <strong>separation train/test</strong> et du <strong>cross-validation</strong> pour eviter le surapprentissage. Discutez toujours du contexte metier avant de choisir un algorithme.</p>'
+      },
+      {
+        title: "Erreurs courantes a eviter",
+        type: "list",
+        items: [
+          "Fuite de donnees (data leakage) : utiliser des informations du futur pour entrainer le modele",
+          "Ne pas normaliser les features avant certains algorithmes (SVM, KNN)",
+          "Ignorer le desequilibre de classes dans les problemes de classification",
+          "Ne pas faire de feature engineering avant de conclure qu'un modele est faible",
+          "Oublier de sauvegarder le modele et le pipeline de preprocessing"
+        ]
+      }
+    ],
+    keyTakeaways: [
+      "Le ML permet aux systemes d'apprendre a partir de donnees sans programmation explicite",
+      "Les 3 types principaux sont : supervise, non-supervise et par renforcement",
+      "Toujours separer les donnees en train/test et valider avec cross-validation",
+      "Le choix de la metrique depend du contexte metier (precision vs. rappel)",
+      "Le feature engineering est souvent plus important que le choix de l'algorithme"
+    ],
+    relatedLessons: ["docker-fundamentals", "load-balancing"]
+  },
+
+  "docker-fundamentals": {
+    title: "Docker Fundamentals",
+    category: "devops",
+    duration: "30 min",
+    difficulty: "debutant",
+    lessonNumber: 3,
+    moduleTitle: "Conteneurisation et CI/CD",
+    quizId: "docker-quiz",
+    prevLesson: "ml-intro",
+    nextLesson: "load-balancing",
+    sections: [
+      {
+        title: "Pourquoi Docker ?",
+        type: "text",
+        content: '<p><strong>Docker</strong> resout le probleme classique : <em>Chez moi ca fonctionne !</em> Il permet de packager une application avec toutes ses dependances dans un <strong>conteneur standardise</strong> qui fonctionne de la meme maniere partout.</p><p>Contrairement aux machines virtuelles, les conteneurs partagent le noyau de l\'hote et sont beaucoup plus <strong>legers</strong> et <strong>rapides</strong> a demarrer.</p>'
+      },
+      {
+        title: "Concepts cles",
+        type: "text",
+        content: '<h3>Image vs Conteneur</h3><p>Une <strong>image</strong> est un modele immuable contenant le code, les dependances et la configuration. Un <strong>conteneur</strong> est une instance en cours d\'execution d\'une image.</p><h3>Dockerfile</h3><p>Un Dockerfile est un fichier texte contenant les instructions pour construire une image Docker. Chaque instruction cree une couche (layer) dans l\'image.</p>'
+      },
+      {
+        title: "Exemple de Dockerfile",
+        type: "code",
+        content: "# Dockerfile pour une application Python Flask\nFROM python:3.11-slim\n\nWORKDIR /app\n\n# Copier les dependances d'abord (cache des couches)\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\n\n# Copier le code de l'application\nCOPY . .\n\n# Exposer le port\nEXPOSE 5000\n\n# Variable d'environnement\nENV FLASK_ENV=production\n\n# Commande de demarrage\nCMD ["python", "app.py"]",
+        lang: "dockerfile"
+      },
+      {
+        title: "Commandes Docker essentielles",
+        type: "code",
+        content: "# Construire une image\ndocker build -t mon-app:1.0 .\n\n# Lister les images\ndocker images\n\n# Demarrer un conteneur\ndocker run -d -p 8080:5000 --name mon-app mon-app:1.0\n\n# Voir les conteneurs en cours\ndocker ps\n\n# Voir les logs\ndocker logs mon-app\n\n# Entrer dans un conteneur\ndocker exec -it mon-app /bin/bash\n\n# Arreter et supprimer\ndocker stop mon-app\ndocker rm mon-app",
+        lang: "bash"
+      },
+      {
+        title: "Docker Compose",
+        type: "code",
+        content: "# docker-compose.yml\nversion: '3.8'\nservices:\n  web:\n    build: .\n    ports:\n      - "5000:5000"\n    environment:\n      - DATABASE_URL=postgresql://db:5432/mydb\n    depends_on:\n      - db\n    volumes:\n      - ./app:/app\n\n  db:\n    image: postgres:15\n    environment:\n      POSTGRES_DB: mydb\n      POSTGRES_PASSWORD: secret\n    volumes:\n      - pgdata:/var/lib/postgresql/data\n\n  redis:\n    image: redis:alpine\n    ports:\n      - "6379:6379"\n\nvolumes:\n  pgdata:",
+        lang: "yaml"
+      },
+      {
+        title: "Conseil pour l'entretien",
+        type: "callout",
+        calloutType: "important",
+        content: '<p>En entretien, soyez pret a expliquer la <strong>difference entre VM et conteneur</strong>, et pourquoi Docker est plus efficace. Mentionnez aussi les <strong>bonnes pratiques</strong> : images legères (slim/alpine), multi-stage builds, et securisation des images.</p>'
+      },
+      {
+        title: "Erreurs courantes a eviter",
+        type: "list",
+        items: [
+          "Creer des images trop volumineuses en copiant tout dans une seule couche",
+          "Ne pas utiliser de .dockerignore pour exclure les fichiers inutiles",
+          "Exposer des ports inutiles ou laisser des secrets dans l'image",
+          "Ne pas utiliser de multi-stage builds pour les applications de production",
+          "Oublier de definir un USER non-root pour la securite"
+        ]
+      }
+    ],
+    keyTakeaways: [
+      "Docker standardise l'environnement d'execution : 'Ca marche partout'",
+      "Dockerfile decrit les couches d'une image ; Docker Compose orchestre plusieurs conteneurs",
+      "Utilisez des images slim/alpine et multi-stage builds pour reduire la taille",
+      "Le cache des couches est essentiel : mettez les dependances AVANT le code",
+      "En production, ne jamais tourner en root et gerer les secrets proprement"
+    ],
+    relatedLessons: ["ml-intro", "load-balancing"]
+  },
+
+  "load-balancing": {
+    title: "Load Balancing",
+    category: "system-design",
+    duration: "35 min",
+    difficulty: "intermediaire",
+    lessonNumber: 5,
+    moduleTitle: "Architecture et Scalabilite",
+    quizId: "load-balancing-quiz",
+    prevLesson: "docker-fundamentals",
+    nextLesson: null,
+    sections: [
+      {
+        title: "Pourquoi le Load Balancing ?",
+        type: "text",
+        content: '<p>Le <strong>Load Balancing</strong> (equilibrage de charge) est une technique fondamentale pour distribuer le trafic entrant sur plusieurs serveurs. Il garantit la <strong>disponibilite</strong>, la <strong>redondance</strong> et la <strong>performance</strong> de vos applications.</p><p>Sans load balancer, un seul serveur peut devenir un <strong>point unique de panne</strong> (SPOF) et ne peut pas gerer des pics de trafic importants.</p>'
+      },
+      {
+        title: "Architecture de base",
+        type: "code",
+        content: "                    +------------------+\n                    |   Load Balancer  |\n                    |   (L4 / L7)      |\n                    +--------+---------+\n                             |\n              +--------------+--------------+\n              |              |              |\n     +--------+--+   +-------+---+   +------+----+\n     | Serveur 1  |   | Serveur 2 |   | Serveur 3 |\n     | (App Web)  |   | (App Web) |   | (App Web) |\n     +------------+   +-----------+   +-----------+\n              |              |              |\n              +--------------+--------------+\n                             |\n                    +--------+---------+\n                    |   Base de donnees |\n                    |   (replica)       |\n                    +------------------+",
+        lang: "text"
+      },
+      {
+        title: "Algorithmes de distribution",
+        type: "text",
+        content: '<h3>1. Round Robin</h3><p>Distribue les requetes de maniere <strong>sequentielle</strong> a chaque serveur. Simple mais ne tient pas compte de la charge actuelle.</p><h3>2. Weighted Round Robin</h3><p>Chaque serveur recoit un <strong>poids</strong> proportionnel a sa capacite. Un serveur plus puissant recoit plus de requetes.</p><h3>3. Least Connections</h3><p>Envoie la requete au serveur ayant le <strong>moins de connexions actives</strong>. Ideal pour les charges de travail variables.</p><h3>4. IP Hash</h3><p>Utilise un <strong>hash de l'adresse IP</strong> du client pour determiner le serveur. Assure la session sticky.</p><h3>5. Least Response Time</h3><p>Envoie la requete au serveur avec le <strong>temps de reponse le plus rapide</strong> et le moins de connexions actives.</p>'
+      },
+      {
+        title: "Load Balancer L4 vs L7",
+        type: "code",
+        content: "# Nginx - Load Balancer L7 (HTTP/HTTPS)\nhttp {\n    upstream backend_servers {\n        least_conn;\n        server backend1.example.com weight=3;\n        server backend2.example.com weight=2;\n        server backend3.example.com weight=1 backup;\n\n        keepalive 32;\n    }\n\n    server {\n        listen 80;\n        server_name app.example.com;\n\n        location / {\n            proxy_pass http://backend_servers;\n            proxy_set_header Host $host;\n            proxy_set_header X-Real-IP $remote_addr;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n            proxy_set_header X-Forwarded-Proto $scheme;\n\n            proxy_connect_timeout 5s;\n            proxy_read_timeout 60s;\n        }\n\n        # Session sticky via cookie\n        location /api/ {\n            proxy_pass http://backend_servers;\n            proxy_cookie_path / /;\n            add_header Set-Cookie "server_id=$upstream_cookie_server_id";\n        }\n    }\n}",
+        lang: "nginx"
+      },
+      {
+        title: "HAProxy - Configuration avancee",
+        type: "code",
+        content: "# haproxy.cfg\nglobal\n    maxconn 50000\n    log /dev/log local0\n\ndefaults\n    mode http\n    timeout connect 5s\n    timeout client 30s\n    timeout server 30s\n    option httplog\n    option dontlognull\n    retries 3\n\nfrontend http_front\n    bind *:80\n    bind *:443 ssl crt /etc/ssl/certs/app.pem\n    redirect scheme https if !{ ssl_fc }\n    default_backend web_servers\n\nbackend web_servers\n    balance roundrobin\n    option httpchk GET /health\n    http-check expect status 200\n    cookie SERVERID insert indirect nocache\n    server web1 10.0.0.1:8080 cookie s1 check inter 5s fall 3 rise 2\n    server web2 10.0.0.2:8080 cookie s2 check inter 5s fall 3 rise 2\n    server web3 10.0.0.3:8080 cookie s3 check inter 5s fall 3 rise 2 backup",
+        lang: "haproxy"
+      },
+      {
+        title: "Strategies de Health Check",
+        type: "text",
+        content: '<p>Les <strong>health checks</strong> permettent au load balancer de detecter les serveurs en panne et de ne plus leur envoyer de trafic.</p><ul><li><strong>Active check</strong> : le LB envoie regulierement des requetes de verification</li><li><strong>Passive check</strong> : le LB surveille les reponses aux vrais trafic</li><li><strong>Deep health check</strong> : verification complete de la couche applicative (base de donnees, cache, etc.)</li></ul>'
+      },
+      {
+        title: "Conseil pour l'entretien",
+        type: "callout",
+        calloutType: "info",
+        content: '<p>En entretien system design, discutez toujours des <strong>trade-offs</strong> : L4 est plus rapide mais moins intelligent, L7 offre plus de fonctionnalites mais avec plus de latence. Mentionnez les solutions cloud (AWS ALB/NLB, GCP Cloud Load Balancing) et les patterns comme <strong>circuit breaker</strong> et <strong>rate limiting</strong>.</p>'
+      },
+      {
+        title: "Points de vigilance",
+        type: "list",
+        items: [
+          "Le load balancer ne doit jamais devenir un point unique de panne (haute disponibilite)",
+          "Pensez au SSL termination pour offload le decryptage TLS des serveurs backend",
+          "Configurez le health checking avec des intervals et thresholds appropries",
+          "Pour les WebSocket, utilisez un algorithme basé sur les headers ou IP hash",
+          "Surveillez les metriques : taux d'erreur, latence, nombre de connexions actives par serveur"
+        ]
+      }
+    ],
+    keyTakeaways: [
+      "Le load balancing distribue le trafic pour la performance et la disponibilite",
+      "L4 (TCP) est rapide ; L7 (HTTP) offre des routing rules et session sticky",
+      "Least Connections et Least Response Time sont preferes au simple Round Robin en production",
+      "Les health checks sont essentiels pour detecter automatiquement les serveurs en panne",
+      "Le load balancer lui-meme doit etre haute disponibilite (actif/passif, DNS round-robin)"
+    ],
+    relatedLessons: ["ml-intro", "docker-fundamentals"]
+  }
+};
+
+function escapeHtml(s) {
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function renderSection(sec) {
+  let html = '';
+  if (sec.type === "text") {
+    html += sec.content;
+  } else if (sec.type === "code") {
+    const lang = sec.lang || "code";
+    const escaped = escapeHtml(sec.content);
+    html += '<div class="code-block"><div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">' + lang + '</span></div><pre><code>' + escaped + '</code></pre></div>';
+  } else if (sec.type === "callout") {
+    const ct = sec.calloutType || "info";
+    const titles = { info: "A noter", warning: "Attention", tip: "Conseil", important: "Important" };
+    html += '<div class="callout ' + ct + '"><div class="callout-title">' + (titles[ct] || "Info") + '</div>' + sec.content + '</div>';
+  } else if (sec.type === "list") {
+    html += '<ul>';
+    sec.items.forEach(function(item) { html += '<li>' + item + '</li>'; });
+    html += '</ul>';
+  }
+  return html;
+}
+
+function getParam(name) {
+  const u = new URL(window.location.href);
+  return u.searchParams.get(name);
+}
+
+function render() {
+  const id = getParam("id") || "ml-intro";
+  const lesson = lessons[id];
+  if (!lesson) {
+    document.getElementById("lesson-title").textContent = "Lecon non trouvee";
+    document.getElementById("lesson-content").innerHTML = '<p>Cette lecon n'existe pas encore. <a href="courses.html">Retour aux formations</a>.</p>';
+    return;
+  }
+
+  document.title = lesson.title + " - CortexLLMs.io";
+
+  // Breadcrumb
+  document.getElementById("bc-category").textContent = categoryLabels[lesson.category] || lesson.category;
+  document.getElementById("bc-category").href = "courses.html?cat=" + lesson.category;
+  document.getElementById("bc-lesson").textContent = lesson.title;
+
+  // Meta tags
+  const metaHtml = '<span class="meta-tag category">' + (categoryLabels[lesson.category] || lesson.category) + '</span>'
+    + '<span class="meta-tag difficulty">' + difficultyLabels[lesson.difficulty] + '</span>'
+    + '<span class="meta-tag duration">&#9202; ' + lesson.duration + '</span>'
+    + '<span class="meta-tag lesson-num">Lecon ' + lesson.lessonNumber + '</span>';
+  document.getElementById("lesson-meta").innerHTML = metaHtml;
+
+  // Title
+  document.getElementById("lesson-title").textContent = lesson.title;
+
+  // Module
+  document.getElementById("lesson-module").innerHTML = 'Module : <span>' + lesson.moduleTitle + '</span>';
+
+  // Content
+  let contentHtml = '';
+  lesson.sections.forEach(function(sec) {
+    contentHtml += '<h2 id="section-' + sec.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '') + '">' + sec.title + '</h2>';
+    contentHtml += renderSection(sec);
+  });
+  document.getElementById("lesson-content").innerHTML = contentHtml;
+
+  // Key Takeaways
+  if (lesson.keyTakeaways && lesson.keyTakeaways.length > 0) {
+    let ktHtml = '<div class="key-takeaways-header"><h3>&#10003; Points cles a retenir</h3></div><ul>';
+    lesson.keyTakeaways.forEach(function(kt) { ktHtml += '<li>' + kt + '</li>'; });
+    ktHtml += '</ul>';
+    document.getElementById("key-takeaways").innerHTML = ktHtml;
+  }
+
+  // Quiz CTA
+  document.getElementById("quiz-cta").innerHTML = '<h3>Testez vos connaissances</h3><p>Apres avoir etudie cette lecon, mettez-vous a l'epreuve avec notre quiz interactif.</p><button class="btn-quiz" onclick="window.location.href='quizzes.html?id=' + lesson.quizId + ''">&#9654; Commencer le Quiz</button>';
+
+  // Sidebar quiz button
+  document.getElementById("sidebar-quiz-btn").onclick = function() {
+    window.location.href = 'quizzes.html?id=' + lesson.quizId;
+  };
+
+  // Table of Contents
+  const tocList = document.getElementById("toc-list");
+  let tocHtml = '';
+  lesson.sections.forEach(function(sec) {
+    const slug = 'section-' + sec.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
+    const isH3 = sec.title.match(/^d+./);
+    tocHtml += '<li><a href="#' + slug + '"' + (isH3 ? ' class="toc-h3"' : '') + '>' + sec.title + '</a></li>';
+  });
+  tocList.innerHTML = tocHtml;
+
+  // Related lessons
+  const relList = document.getElementById("related-list");
+  if (lesson.relatedLessons && lesson.relatedLessons.length > 0) {
+    let relHtml = '';
+    lesson.relatedLessons.forEach(function(rid) {
+      const rl = lessons[rid];
+      if (rl) {
+        relHtml += '<a href="?id=' + rid + '" class="related-item"><span class="rel-cat">' + (categoryLabels[rl.category] || rl.category) + '</span>' + rl.title + '</a>';
+      }
+    });
+    relList.innerHTML = relHtml;
+  } else {
+    relList.innerHTML = '<p style="padding:.7rem;font-size:.88rem;color:var(--text-muted)">Aucune lecon associee.</p>';
+  }
+
+  // Prev/Next navigation
+  const navEl = document.getElementById("lesson-nav");
+  let navHtml = '';
+  if (lesson.prevLesson && lessons[lesson.prevLesson]) {
+    const prev = lessons[lesson.prevLesson];
+    navHtml += '<a href="?id=' + lesson.prevLesson + '" class="nav-card prev"><div class="nav-card-label">&larr; Lecon precedente</div><div class="nav-card-title">' + prev.title + '</div></a>';
+  } else {
+    navHtml += '<div class="nav-card empty"><div class="nav-card-label">&larr; Lecon precedente</div><div class="nav-card-title">Debut du module</div></div>';
+  }
+  if (lesson.nextLesson && lessons[lesson.nextLesson]) {
+    const next = lessons[lesson.nextLesson];
+    navHtml += '<a href="?id=' + lesson.nextLesson + '" class="nav-card next"><div class="nav-card-label">Lecon suivante &rarr;</div><div class="nav-card-title">' + next.title + '</div></a>';
+  } else {
+    navHtml += '<div class="nav-card empty next"><div class="nav-card-label">Lecon suivante &rarr;</div><div class="nav-card-title">Fin du module</div></div>';
+  }
+  navEl.innerHTML = navHtml;
+
+  // TOC active state on scroll
+  const tocLinks = tocList.querySelectorAll("a");
+  const sections = document.querySelectorAll(".lesson-content h2");
+  window.addEventListener("scroll", function() {
+    let current = 0;
+    sections.forEach(function(sec, i) {
+      if (sec.getBoundingClientRect().top <= 120) current = i;
+    });
+    tocLinks.forEach(function(link, i) {
+      link.classList.toggle("active", i === current);
+    });
+  });
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,555 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingenierie IA - CortexLLMs.io</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg:#0d0d0f;--card:#1a1a2e;--card-hover:#222240;
+            --accent:#3b82f6;--accent-h:#2563eb;--accent-l:rgba(59,130,246,.15);
+            --accent-g:rgba(59,130,246,.3);
+            --t1:#f0f0f5;--t2:#9ca3af;--t3:#6b7280;
+            --bdr:#2a2a3e;--bdr-l:#333350;
+            --ok:#10b981;--warn:#f59e0b;--err:#ef4444;--purple:#8b5cf6;--cyan:#06b6d4;
+            --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+            --serif:'Source Serif 4',Georgia,serif;
+        }
+        html{scroll-behavior:smooth}
+        body{font-family:var(--sans);background:var(--bg);color:var(--t1);line-height:1.6;min-height:100vh}
+
+        header{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(13,13,15,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+        .logo{font-size:1.35rem;font-weight:800;text-decoration:none;color:var(--t1);letter-spacing:-.5px;display:flex;align-items:center;gap:.2rem}
+        .logo .io{color:var(--accent)}
+        nav{display:flex;align-items:center;gap:.25rem}
+        nav a{text-decoration:none;color:var(--t2);font-size:.875rem;font-weight:500;padding:.5rem .85rem;border-radius:8px;transition:all .2s}
+        nav a:hover{color:var(--t1);background:rgba(255,255,255,.05)}
+        nav a.active{color:var(--accent);background:var(--accent-l)}
+
+        .page-wrap{padding-top:64px;min-height:100vh}
+
+        .hero{padding:4rem 2rem 3rem;text-align:center;background:linear-gradient(180deg,rgba(59,130,246,.08) 0%,transparent 100%);border-bottom:1px solid var(--bdr)}
+        .hero-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--accent-l);border:1px solid rgba(59,130,246,.25);color:var(--accent);font-size:.8rem;font-weight:600;padding:.35rem .9rem;border-radius:999px;margin-bottom:1.25rem;letter-spacing:.02em}
+        .hero h1{font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.2rem);font-weight:700;margin-bottom:1rem;line-height:1.2;letter-spacing:-.02em}
+        .hero h1 .accent{color:var(--accent)}
+        .hero>p{font-size:1.1rem;color:var(--t2);max-width:640px;margin:0 auto 2rem;line-height:1.7}
+        .hero-stats{display:flex;justify-content:center;gap:2.5rem;margin-top:2rem}
+        .hero-stat{text-align:center}
+        .hero-stat .value{font-size:1.8rem;font-weight:700;color:var(--accent)}
+        .hero-stat .label{font-size:.8rem;color:var(--t3);margin-top:.2rem}
+
+        .progress-sec{max-width:1200px;margin:2rem auto 0;padding:0 2rem}
+        .progress-box{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1.25rem 1.5rem}
+        .progress-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
+        .progress-hdr .lbl{font-size:.9rem;font-weight:600}
+        .progress-hdr .pct{font-size:.85rem;color:var(--accent);font-weight:600}
+        .progress-track{width:100%;height:8px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden}
+        .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--purple));border-radius:999px;transition:width 1s ease}
+        .progress-mods{display:flex;justify-content:space-between;margin-top:.75rem}
+        .progress-mods span{font-size:.75rem;color:var(--t3)}
+
+        .content{max-width:1200px;margin:0 auto;padding:2rem;display:grid;grid-template-columns:1fr 280px;gap:2rem;align-items:start}
+        .modules{display:flex;flex-direction:column;gap:2.5rem}
+
+        .module{background:var(--card);border:1px solid var(--bdr);border-radius:16px;overflow:hidden}
+        .module-hdr{padding:1.5rem 1.75rem;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:flex-start}
+        .module-num{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:.3rem}
+        .module-title{font-family:var(--serif);font-size:1.4rem;font-weight:700;line-height:1.3}
+        .module-meta{display:flex;align-items:center;gap:1rem;margin-top:.5rem}
+        .module-meta span{font-size:.8rem;color:var(--t3);display:flex;align-items:center;gap:.3rem}
+        .module-acts{display:flex;flex-direction:column;align-items:flex-end;gap:.5rem}
+        .quiz-btn{background:linear-gradient(135deg,var(--accent),var(--purple));color:#fff;border:none;padding:.55rem 1.1rem;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-block}
+        .quiz-btn:hover{transform:translateY(-1px);box-shadow:0 4px 15px var(--accent-g)}
+
+        .lessons{padding:.5rem 0}
+        .lesson{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:1rem;padding:1rem 1.75rem;text-decoration:none;color:inherit;border-bottom:1px solid rgba(255,255,255,.03);transition:all .2s;cursor:pointer}
+        .lesson:last-child{border-bottom:none}
+        .lesson:hover{background:rgba(59,130,246,.04)}
+        .lesson-num{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;background:rgba(255,255,255,.04);border:1px solid var(--bdr);color:var(--t3);flex-shrink:0;transition:all .2s}
+        .lesson:hover .lesson-num{background:var(--accent-l);border-color:rgba(59,130,246,.3);color:var(--accent)}
+        .lesson-info{min-width:0}
+        .lesson-title{font-size:.95rem;font-weight:600;margin-bottom:.2rem;line-height:1.3}
+        .lesson-desc{font-size:.8rem;color:var(--t3);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+        .lesson-badges{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+        .dur{font-size:.7rem;color:var(--t3);background:rgba(255,255,255,.04);padding:.25rem .6rem;border-radius:6px;white-space:nowrap}
+        .diff{font-size:.65rem;font-weight:600;padding:.2rem .6rem;border-radius:6px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+        .diff-f{background:rgba(16,185,129,.12);color:var(--ok)}
+        .diff-m{background:rgba(245,158,11,.12);color:var(--warn)}
+        .diff-a{background:rgba(139,92,246,.12);color:var(--purple)}
+
+        .sidebar{position:sticky;top:88px}
+        .sb-card{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1.25rem}
+        .sb-title{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:1rem}
+        .sb-nav{display:flex;flex-direction:column;gap:.2rem}
+        .sb-nav a{display:flex;align-items:center;gap:.6rem;padding:.55rem .75rem;border-radius:8px;text-decoration:none;color:var(--t2);font-size:.82rem;font-weight:500;transition:all .2s}
+        .sb-nav a:hover{background:rgba(255,255,255,.04);color:var(--t1)}
+        .sb-nav a.active{background:var(--accent-l);color:var(--accent)}
+        .sb-nav .dot{width:6px;height:6px;border-radius:50%;background:var(--bdr-l);flex-shrink:0}
+        .sb-nav a.active .dot{background:var(--accent)}
+        .sb-info{margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--bdr)}
+        .sb-row{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;font-size:.8rem}
+        .sb-row .lbl{color:var(--t3)}
+        .sb-row .val{font-weight:600;color:var(--t1)}
+        .sb-cta{margin-top:1.25rem;background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(139,92,246,.1));border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:1rem;text-align:center}
+        .sb-cta p{font-size:.8rem;color:var(--t2);margin-bottom:.75rem;line-height:1.5}
+
+        footer{margin-top:4rem;border-top:1px solid var(--bdr);padding:2rem;text-align:center}
+        footer p{font-size:.8rem;color:var(--t3)}
+        footer a{color:var(--accent);text-decoration:none}
+
+        @media(max-width:900px){
+            .content{grid-template-columns:1fr}
+            .sidebar{position:static;order:-1}
+            .lesson-badges{flex-direction:column;align-items:flex-end}
+        }
+        @media(max-width:640px){
+            nav{display:none}
+            .hero-stats{flex-direction:column;gap:1rem}
+            .module-hdr{flex-direction:column;gap:1rem}
+            .module-acts{align-items:flex-start}
+        }
+    </style>
+</head>
+<body>
+<header>
+    <a href="index.html" class="logo">CortexLLMs<span class="io">.io</span></a>
+    <nav>
+        <a href="index.html">Accueil</a>
+        <a href="ai-engineering.html" class="active">Ingenierie IA</a>
+        <a href="devops.html">DevOps</a>
+        <a href="system-design.html">System Design</a>
+        <a href="dsa.html">DSA</a>
+        <a href="entreprises.html">Entreprises</a>
+        <a href="blog.html">Blog</a>
+    </nav>
+</header>
+
+<div class="page-wrap">
+    <section class="hero">
+        <div class="hero-badge">&#x1F916; Formation Complete</div>
+        <h1>Ingenierie <span class="accent">Intelligence Artificielle</span></h1>
+        <p>Preparez vos entretiens en Ingenierie IA avec 32 lecons detaillees couvrant Machine Learning, Deep Learning, LLMs et NLP. Du fondamental a l'expert.</p>
+        <div class="hero-stats">
+            <div class="hero-stat"><div class="value">32</div><div class="label">Lecons</div></div>
+            <div class="hero-stat"><div class="value">3</div><div class="label">Modules</div></div>
+            <div class="hero-stat"><div class="value">~16h</div><div class="label">Contenu</div></div>
+            <div class="hero-stat"><div class="value">3</div><div class="label">Quiz</div></div>
+        </div>
+    </section>
+
+    <div class="progress-sec">
+        <div class="progress-box">
+            <div class="progress-hdr">
+                <span class="lbl">Progression globale</span>
+                <span class="pct" id="progressPercent">0%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="progress-mods">
+                <span id="mod1S">Module 1 &#8212; 0/12</span>
+                <span id="mod2S">Module 2 &#8212; 0/10</span>
+                <span id="mod3S">Module 3 &#8212; 0/10</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <main class="modules">
+            <!-- MODULE 1 -->
+            <section class="module" id="module-1">
+                <div class="module-hdr">
+                    <div>
+                        <div class="module-num">Module 01</div>
+                        <h2 class="module-title">Fondamentaux du Machine Learning</h2>
+                        <div class="module-meta">
+                            <span>&#x1F4DA; 12 lecons</span>
+                            <span>&#x23F1; ~6h</span>
+                            <span>&#x1F7E2; Debutant a Intermediaire</span>
+                        </div>
+                    </div>
+                    <div class="module-acts">
+                        <a href="quiz.html?module=1" class="quiz-btn">Commencer le quiz</a>
+                    </div>
+                </div>
+                <div class="lessons">
+                    <a href="pages/ai-lesson.html?id=01" class="lesson">
+                        <div class="lesson-num">01</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Introduction au Machine Learning</div>
+                            <div class="lesson-desc">Definition du ML, types d'apprentissage (supervise, non-supervise, par renforcement), cas d'usage industriels et cycle de vie d'un projet ML.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">15 min</span><span class="diff diff-f">Facile</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=02" class="lesson">
+                        <div class="lesson-num">02</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Regression Lineaire</div>
+                            <div class="lesson-desc">Formule y = mx + b, descente de gradient, regularisation L1/L2, metrics d'evaluation RMSE et R-squared.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">25 min</span><span class="diff diff-f">Facile</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=03" class="lesson">
+                        <div class="lesson-num">03</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Classification</div>
+                            <div class="lesson-desc">Regression logistique, SVM, k-NN, arbres de decision, matrice de confusion, precision, rappel et F1-score.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-f">Facile</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=04" class="lesson">
+                        <div class="lesson-num">04</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Clustering</div>
+                            <div class="lesson-desc">K-Means, DBSCAN, CAH (Classification Ascendante Hierarchique), silhouette score, methode du coude.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">25 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=05" class="lesson">
+                        <div class="lesson-num">05</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Regularisation</div>
+                            <div class="lesson-desc">Lasso (L1), Ridge (L2), Elastic Net, Dropout. Prevention du surapprentissage et selection automatique de variables.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">20 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=06" class="lesson">
+                        <div class="lesson-num">06</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Evaluation des Modeles</div>
+                            <div class="lesson-desc">Precision, rappel, F1-score, AUC-ROC, cross-validation k-fold, matrices de confusion et courbes d'apprentissage.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">25 min</span><span class="diff diff-f">Facile</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=07" class="lesson">
+                        <div class="lesson-num">07</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Feature Engineering</div>
+                            <div class="lesson-desc">Normalisation, encodage one-hot et label, selection de variables, analyse en composantes principales (PCA).</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=08" class="lesson">
+                        <div class="lesson-num">08</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Ensemble Methods</div>
+                            <div class="lesson-desc">Random Forest, Gradient Boosting, XGBoost, AdaBoost. Bagging vs Boosting, importance des variables.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=09" class="lesson">
+                        <div class="lesson-num">09</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Optimisation des Hyperparametres</div>
+                            <div class="lesson-desc">Grid Search, Random Search, Bayesian Optimization (Optuna), early stopping et selection de modeles.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">25 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=10" class="lesson">
+                        <div class="lesson-num">10</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Bias-Variance Tradeoff</div>
+                            <div class="lesson-desc">Surapprentissage, sous-apprentissage, diagnostic du biais et de la variance, strategies de regularisation.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">20 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=11" class="lesson">
+                        <div class="lesson-num">11</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Pipelines ML</div>
+                            <div class="lesson-desc">Scikit-learn pipelines, FeatureColumns, transformations composees, export et deploiement de pipelines.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">20 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=12" class="lesson">
+                        <div class="lesson-num">12</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">MLOps</div>
+                            <div class="lesson-desc">Versionnement avec MLflow, deploiement containerise, monitoring de drift, pipelines CI/CD pour le ML.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-a">Avance</span></div>
+                    </a>
+                </div>
+            </section>
+            <!-- MODULE 2 -->
+            <section class="module" id="module-2">
+                <div class="module-hdr">
+                    <div>
+                        <div class="module-num">Module 02</div>
+                        <h2 class="module-title">Deep Learning</h2>
+                        <div class="module-meta">
+                            <span>&#x1F4DA; 10 lecons</span>
+                            <span>&#x23F1; ~5h</span>
+                            <span>&#x1F7E1; Intermediaire</span>
+                        </div>
+                    </div>
+                    <div class="module-acts">
+                        <a href="quiz.html?module=2" class="quiz-btn">Commencer le quiz</a>
+                    </div>
+                </div>
+                <div class="lessons">
+                    <a href="pages/ai-lesson.html?id=13" class="lesson">
+                        <div class="lesson-num">13</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Introduction au Deep Learning</div>
+                            <div class="lesson-desc">Perceptron, reseaux de neurones artificiels, fonctions d'activation (ReLU, sigmoid, softmax), retropropagation.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">20 min</span><span class="diff diff-f">Facile</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=14" class="lesson">
+                        <div class="lesson-num">14</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Reseaux de Neurones Denses (DNN)</div>
+                            <div class="lesson-desc">Forward et backward propagation, couches denses, initialisation des poids, optimiseurs SGD et Adam.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=15" class="lesson">
+                        <div class="lesson-num">15</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">CNN - Reseaux de Neurones Convolutifs</div>
+                            <div class="lesson-desc">Couches de convolution, pooling, architectures VGG, ResNet, EfficientNet. Applications vision par ordinateur.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=16" class="lesson">
+                        <div class="lesson-num">16</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">RNN et LSTM</div>
+                            <div class="lesson-desc">Sequences et series temporelles, memoire a long et court terme, GRU, applications NLP et time-series.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=17" class="lesson">
+                        <div class="lesson-num">17</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Architecture Transformer</div>
+                            <div class="lesson-desc">Mecanisme d'attention, self-attention multi-tete, positional encoding, Attention Is All You Need.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-a">Avance</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=18" class="lesson">
+                        <div class="lesson-num">18</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Transfer Learning</div>
+                            <div class="lesson-desc">Pre-training et fine-tuning, extraction de features, modeles prevus (ImageNet, BERT), strategie de gel des couches.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">25 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=19" class="lesson">
+                        <div class="lesson-num">19</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Regularisation en Deep Learning</div>
+                            <div class="lesson-desc">Dropout, batch normalization, early stopping, data augmentation, weight decay et label smoothing.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">25 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=20" class="lesson">
+                        <div class="lesson-num">20</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Optimisation en Deep Learning</div>
+                            <div class="lesson-desc">Learning rate scheduling, gradient clipping, mixed precision training, accumulation de gradient.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">25 min</span><span class="diff diff-a">Avance</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=21" class="lesson">
+                        <div class="lesson-num">21</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">GAN - Generative Adversarial Networks</div>
+                            <div class="lesson-desc">Architecture generateur-discriminateur, mode de training alterne, Wasserstein GAN, applications image.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-a">Avance</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=22" class="lesson">
+                        <div class="lesson-num">22</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Autoencoders et VAE</div>
+                            <div class="lesson-desc">Encoding et decodage, espace latent, Variational Autoencoders, denoising autoencoders, generation.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">25 min</span><span class="diff diff-a">Avance</span></div>
+                    </a>
+                </div>
+            </section>
+            <!-- MODULE 3 -->
+            <section class="module" id="module-3">
+                <div class="module-hdr">
+                    <div>
+                        <div class="module-num">Module 03</div>
+                        <h2 class="module-title">LLMs et NLP</h2>
+                        <div class="module-meta">
+                            <span>&#x1F4DA; 10 lecons</span>
+                            <span>&#x23F1; ~5h</span>
+                            <span>&#x1F534; Avance</span>
+                        </div>
+                    </div>
+                    <div class="module-acts">
+                        <a href="quiz.html?module=3" class="quiz-btn">Commencer le quiz</a>
+                    </div>
+                </div>
+                <div class="lessons">
+                    <a href="pages/ai-lesson.html?id=23" class="lesson">
+                        <div class="lesson-num">23</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">NLP Fondamentaux</div>
+                            <div class="lesson-desc">Tokenisation (BPE, WordPiece), TF-IDF, embeddings Word2Vec et GloVe, representions de textes.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">25 min</span><span class="diff diff-f">Facile</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=24" class="lesson">
+                        <div class="lesson-num">24</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Transformers en NLP</div>
+                            <div class="lesson-desc">BERT (encoder), GPT (decoder), T5 (encoder-decoder), architectures et pre-training sur grandes donnees.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=25" class="lesson">
+                        <div class="lesson-num">25</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Fine-tuning de LLMs</div>
+                            <div class="lesson-desc">LoRA, QLoRA, PEFT, instruction tuning, strategie d'adaptation efficiente des grands modeles.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-a">Avance</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=26" class="lesson">
+                        <div class="lesson-num">26</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">RAG - Retrieval Augmented Generation</div>
+                            <div class="lesson-desc">Bases de donnees vectorielles, embeddings semantiques, chunking de documents, reranking et citations.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-a">Avance</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=27" class="lesson">
+                        <div class="lesson-num">27</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Prompt Engineering</div>
+                            <div class="lesson-desc">Few-shot learning, chain-of-thought, system prompts, techniques avancees de formulation de prompts.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">20 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=28" class="lesson">
+                        <div class="lesson-num">28</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Alignement IA</div>
+                            <div class="lesson-desc">RLHF, DPO, Constitutional AI, techniques de securite et d'alignement des modeles de langage.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-a">Avance</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=29" class="lesson">
+                        <div class="lesson-num">29</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Evaluation des LLMs</div>
+                            <div class="lesson-desc">Benchmarks (MMLU, HumanEval), perplexite, evaluation humaine, metriques specifiques aux LLMs.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">25 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=30" class="lesson">
+                        <div class="lesson-num">30</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Deploiement de LLMs</div>
+                            <div class="lesson-desc">Quantization (INT4, INT8), distillation, inference optimisee (vLLM, TensorRT), gestion de la memoire GPU.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-a">Avance</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=31" class="lesson">
+                        <div class="lesson-num">31</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Agents IA</div>
+                            <div class="lesson-desc">Tool use, function calling, architectures multi-agents (ReAct, LangGraph), orchestration et memoire.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">30 min</span><span class="diff diff-a">Avance</span></div>
+                    </a>
+                    <a href="pages/ai-lesson.html?id=32" class="lesson">
+                        <div class="lesson-num">32</div>
+                        <div class="lesson-info">
+                            <div class="lesson-title">Ethique et Securite IA</div>
+                            <div class="lesson-desc">Biais algorithmiques, hallucinations, red teaming, governance IA, reglementation europeenne AI Act.</div>
+                        </div>
+                        <div class="lesson-badges"><span class="dur">25 min</span><span class="diff diff-m">Moyen</span></div>
+                    </a>
+                </div>
+            </section>
+        </main>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sb-card">
+                <div class="sb-title">Navigation</div>
+                <div class="sb-nav">
+                    <a href="#module-1" class="active"><span class="dot"></span>Module 1 - Fondamentaux ML</a>
+                    <a href="#module-2"><span class="dot"></span>Module 2 - Deep Learning</a>
+                    <a href="#module-3"><span class="dot"></span>Module 3 - LLMs et NLP</a>
+                </div>
+                <div class="sb-info">
+                    <div class="sb-row"><span class="lbl">Total lecons</span><span class="val">32</span></div>
+                    <div class="sb-row"><span class="lbl">Quiz disponibles</span><span class="val">3</span></div>
+                    <div class="sb-row"><span class="lbl">Duree estimee</span><span class="val">~16 heures</span></div>
+                    <div class="sb-row"><span class="lbl">Niveau</span><span class="val">Debutant a Avance</span></div>
+                </div>
+            </div>
+            <div class="sb-cta">
+                <p>Testez vos connaissances avec nos quiz detailles pour chaque module.</p>
+                <a href="quiz.html?module=1" class="quiz-btn">Quiz Module 1</a>
+            </div>
+            <div class="sb-cta" style="margin-top:.75rem;background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(6,182,212,.1));border-color:rgba(16,185,129,.2);">
+                <p>Rejoignez la communaute CortexLLMs pour des entretiens simules et du feedback.</p>
+                <a href="entreprises.html" class="quiz-btn" style="background:linear-gradient(135deg,var(--ok),var(--cyan));">Voir les entreprises</a>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<footer>
+    <p>CortexLLMs.io &copy; 2026 &mdash; Plateforme de preparation aux entretiens IA. <a href="blog.html">Blog</a> | <a href="index.html">Accueil</a></p>
+</footer>
+
+<script>
+(function(){
+    var completed = {};
+    try { completed = JSON.parse(localStorage.getItem('cortex_progress') || '{}'); } catch(e) {}
+
+    function updateProgress(){
+        var total = 32;
+        var done = 0;
+        var m1=0,m2=0,m3=0;
+        for(var i=1;i<=12;i++) if(completed['ai-'+i]) { done++; m1++; }
+        for(var i=13;i<=22;i++) if(completed['ai-'+i]) { done++; m2++; }
+        for(var i=23;i<=32;i++) if(completed['ai-'+i]) { done++; m3++; }
+        var pct = Math.round((done/total)*100);
+        document.getElementById('progressPercent').textContent = pct+'%';
+        document.getElementById('progressFill').style.width = pct+'%';
+        document.getElementById('mod1S').textContent = 'Module 1 \u2014 '+m1+'/12';
+        document.getElementById('mod2S').textContent = 'Module 2 \u2014 '+m2+'/10';
+        document.getElementById('mod3S').textContent = 'Module 3 \u2014 '+m3+'/10';
+        if(m1===12) document.getElementById('mod1S').classList.add('completed');
+        if(m2===10) document.getElementById('mod2S').classList.add('completed');
+        if(m3===10) document.getElementById('mod3S').classList.add('completed');
+    }
+    updateProgress();
+
+    var navLinks = document.querySelectorAll('.sb-nav a');
+    navLinks.forEach(function(link){
+        link.addEventListener('click', function(e){
+            navLinks.forEach(function(l){ l.classList.remove('active'); });
+            this.classList.add('active');
+        });
+    });
+
+    var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+            if(entry.isIntersecting){
+                var id = entry.target.id;
+                navLinks.forEach(function(l){
+                    l.classList.toggle('active', l.getAttribute('href') === '#'+id);
+                });
+            }
+        });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.module').forEach(function(m){ observer.observe(m); });
+})();
+</script>
+</body>
+</html>
