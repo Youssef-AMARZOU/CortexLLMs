@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration - CortexLLMs.io</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .site-header{position:fixed;top:0;left:0;right:0;height:var(--nh);background:var(--nav);backdrop-filter:blur(12px);border-bottom:1px solid var(--bdr);z-index:200}
+    .header-inner{display:flex;align-items:center;justify-content:space-between;height:100%}
+    .logo{font-family:'Source Serif 4',serif;font-size:20px;font-weight:700;color:var(--t1);text-decoration:none}
+    .logo .io{color:var(--acc)}
+    .main-nav{display:flex;gap:24px;align-items:center}
+    .main-nav a{font-size:14px;font-weight:500;color:var(--t2);text-decoration:none;transition:color .2s}
+    .main-nav a:hover,.main-nav a.active{color:var(--acc)}
+    .header-actions{display:flex;gap:10px;align-items:center}
+    .page-content{margin-top:var(--nh);min-height:calc(100vh - var(--nh));padding:32px 0 60px}
+    .admin-hero{margin-bottom:32px}
+    .admin-hero h1{font-family:'Source Serif 4',serif;font-size:1.75rem;font-weight:700;margin-bottom:4px}
+    .admin-hero p{color:var(--t2);font-size:14px}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;margin-bottom:32px}
+    .stat-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:20px;text-align:center}
+    .stat-card .stat-value{font-family:'Source Serif 4',serif;font-size:28px;font-weight:700;color:var(--acc)}
+    .stat-card .stat-label{font-size:13px;color:var(--t2);margin-top:4px}
+    .tabs{display:flex;gap:4px;border-bottom:1px solid var(--bdr);margin-bottom:24px;overflow-x:auto}
+    .tab-btn{padding:10px 18px;background:none;border:none;border-bottom:2px solid transparent;color:var(--t3);font-family:'Inter',sans-serif;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;transition:color .2s,border-color .2s}
+    .tab-btn:hover{color:var(--t2)}
+    .tab-btn.active{color:var(--acc);border-bottom-color:var(--acc)}
+    .tab-content{display:none}
+    .tab-content.active{display:block}
+    .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px}
+    .section-header h2{font-family:'Source Serif 4',serif;font-size:1.15rem;font-weight:600}
+    .form-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:24px;margin-bottom:24px}
+    .form-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:16px}
+    .fg{display:flex;flex-direction:column;gap:6px}
+    .fg label{font-size:13px;font-weight:600;color:var(--t2)}
+    .fg .input,.fg select,.fg textarea{width:100%;padding:10px 14px;background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);color:var(--t1);font-family:'Inter',sans-serif;font-size:14px;transition:border-color .2s,box-shadow .2s}
+    .fg .input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-l)}
+    .fg textarea{resize:vertical;min-height:80px}
+    .form-actions{display:flex;gap:10px;margin-top:16px}
+    .table-wrap{overflow-x:auto;background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);margin-bottom:24px}
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--bdr)}
+    .table th{background:rgba(30,41,59,.5);font-size:12px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px}
+    .table tr:last-child td{border-bottom:none}
+    .table tr:hover td{background:rgba(59,130,246,.05)}
+    .role-select{padding:6px 10px;background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r);color:var(--t1);font-family:'Inter',sans-serif;font-size:13px;cursor:pointer}
+    .role-select:focus{outline:none;border-color:var(--acc)}
+    .btn-sm{padding:6px 12px;font-size:12px}
+    .comment-item{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px}
+    .comment-item__header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .comment-item__author{font-weight:600;font-size:14px;color:var(--t1)}
+    .comment-item__date{font-size:12px;color:var(--t3)}
+    .comment-item__body{font-size:14px;color:var(--t2);line-height:1.5}
+    .comment-item__actions{display:flex;gap:8px}
+    .category-item{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+    .category-item__name{font-weight:500;font-size:14px;color:var(--t1)}
+    .category-item__actions{display:flex;gap:8px}
+    .loading-spinner{width:40px;height:40px;border:3px solid var(--bdr);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite;margin:40px auto}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .empty-state{text-align:center;padding:40px 24px;color:var(--t3);font-size:14px}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">CortexLLMs<span class="io">.io</span></a>
+      <nav class="main-nav">
+        <a href="/">Accueil</a>
+        <a href="/pages/quizzes.html">Quiz</a>
+        <a href="/pages/tests.html">Tests</a>
+        <a href="/pages/admin.html" class="active">Administration</a>
+      </nav>
+      <div class="header-actions" id="header-actions"></div>
+    </div>
+  </header>
+
+  <main class="page-content container">
+    <section class="admin-hero">
+      <h1>Administration</h1>
+      <p>Gestion de la plateforme CortexLLMs.io</p>
+    </section>
+
+    <section class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="stat-value" id="statUsers">--</div><div class="stat-label">Utilisateurs</div></div>
+      <div class="stat-card"><div class="stat-value" id="statCourses">--</div><div class="stat-label">Cours</div></div>
+      <div class="stat-card"><div class="stat-value" id="statQuizzes">--</div><div class="stat-label">Quiz</div></div>
+      <div class="stat-card"><div class="stat-value" id="statTests">--</div><div class="stat-label">Tests</div></div>
+      <div class="stat-card"><div class="stat-value" id="statAttempts">--</div><div class="stat-label">Tentatives</div></div>
+      <div class="stat-card"><div class="stat-value" id="statComments">--</div><div class="stat-label">Commentaires</div></div>
+    </section>
+
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="users">Utilisateurs</button>
+      <button class="tab-btn" data-tab="categories">Categories</button>
+      <button class="tab-btn" data-tab="courses">Cours</button>
+      <button class="tab-btn" data-tab="quizzes">Quiz</button>
+      <button class="tab-btn" data-tab="tests">Tests</button>
+      <button class="tab-btn" data-tab="comments">Commentaires</button>
+    </div>
+
+    <div class="tab-content active" id="tab-users">
+      <div class="section-header"><h2>Utilisateurs</h2></div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Nom</th><th>Email</th><th>Role</th><th>Inscrit le</th><th>Actions</th></tr></thead>
+          <tbody id="usersBody"><tr><td colspan="5" class="loading-spinner"></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-categories">
+      <div class="section-header"><h2>Categories</h2></div>
+      <div class="form-card">
+        <div class="form-row">
+          <div class="fg"><label for="catName">Nom</label><input class="input" id="catName" placeholder="Nom de la categorie"></div>
+          <div class="fg"><label for="catDesc">Description</label><input class="input" id="catDesc" placeholder="Description (optionnel)"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary btn-sm" id="addCategoryBtn">Ajouter</button>
+        </div>
+      </div>
+      <div id="categoriesList"></div>
+    </div>
+
+    <div class="tab-content" id="tab-courses">
+      <div class="section-header"><h2>Cours</h2></div>
+      <div class="form-card">
+        <div class="form-row">
+          <div class="fg"><label for="courseTitle">Titre</label><input class="input" id="courseTitle" placeholder="Titre du cours"></div>
+          <div class="fg"><label for="courseCategory">Categorie</label><select class="input" id="courseCategory"></select></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label for="courseDesc">Description</label><textarea class="input" id="courseDesc" placeholder="Description du cours"></textarea></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label for="courseContent">Contenu</label><textarea class="input" id="courseContent" placeholder="Contenu du cours (Markdown)" style="min-height:150px"></textarea></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary btn-sm" id="addCourseBtn">Creer le cours</button>
+        </div>
+      </div>
+      <div id="coursesList"></div>
+    </div>
+
+    <div class="tab-content" id="tab-quizzes">
+      <div class="section-header"><h2>Quiz</h2></div>
+      <div class="form-card">
+        <h3 style="font-size:15px;margin-bottom:12px;color:var(--t1)">Creer un quiz</h3>
+        <div class="form-row">
+          <div class="fg"><label for="quizTitle">Titre</label><input class="input" id="quizTitle" placeholder="Titre du quiz"></div>
+          <div class="fg"><label for="quizCategory">Categorie</label><select class="input" id="quizCategory"></select></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label for="quizDesc">Description</label><textarea class="input" id="quizDesc" placeholder="Description"></textarea></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label for="quizDifficulty">Difficulte</label><select class="input" id="quizDifficulty"><option value="debutant">Debutant</option><option value="intermediaire">Intermediaire</option><option value="avance">Avance</option></select></div>
+          <div class="fg"><label for="quizTime">Temps (min)</label><input class="input" type="number" id="quizTime" value="30" min="1"></div>
+          <div class="fg"><label for="quizPassing">Score requis (%)</label><input class="input" type="number" id="quizPassing" value="70" min="0" max="100"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary btn-sm" id="addQuizBtn">Creer le quiz</button>
+        </div>
+      </div>
+
+      <div class="form-card" id="questionFormCard" style="display:none">
+        <h3 style="font-size:15px;margin-bottom:12px;color:var(--t1)">Ajouter une question</h3>
+        <div class="form-row">
+          <div class="fg"><label for="qQuizSelect">Quiz</label><select class="input" id="qQuizSelect"></select></div>
+        </div>
+        <div class="form-row">
+          <div class="fg" style="grid-column:1/-1"><label for="qText">Question</label><textarea class="input" id="qText" placeholder="Texte de la question"></textarea></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label for="qOptA">Option A</label><input class="input" id="qOptA" placeholder="Option A"></div>
+          <div class="fg"><label for="qOptB">Option B</label><input class="input" id="qOptB" placeholder="Option B"></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label for="qOptC">Option C</label><input class="input" id="qOptC" placeholder="Option C"></div>
+          <div class="fg"><label for="qOptD">Option D</label><input class="input" id="qOptD" placeholder="Option D"></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label for="qCorrect">Bonne reponse</label><select class="input" id="qCorrect"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+          <div class="fg"><label for="qPoints">Points</label><input class="input" type="number" id="qPoints" value="1" min="1"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary btn-sm" id="addQuestionBtn">Ajouter la question</button>
+        </div>
+      </div>
+
+      <div id="quizzesList"></div>
+    </div>
+
+    <div class="tab-content" id="tab-tests">
+      <div class="section-header"><h2>Tests</h2></div>
+      <div class="form-card">
+        <h3 style="font-size:15px;margin-bottom:12px;color:var(--t1)">Creer un test</h3>
+        <div class="form-row">
+          <div class="fg"><label for="testTitle">Titre</label><input class="input" id="testTitle" placeholder="Titre du test"></div>
+          <div class="fg"><label for="testCategory">Categorie</label><select class="input" id="testCategory"></select></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label for="testDesc">Description</label><textarea class="input" id="testDesc" placeholder="Description"></textarea></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label for="testTime">Temps (min)</label><input class="input" type="number" id="testTime" value="60" min="1"></div>
+          <div class="fg"><label for="testPoints">Points totaux</label><input class="input" type="number" id="testPoints" value="100" min="1"></div>
+          <div class="fg"><label for="testPassing">Score requis (%)</label><input class="input" type="number" id="testPassing" value="70" min="0" max="100"></div>
+          <div class="fg"><label for="testMaxAttempts">Tentatives max</label><input class="input" type="number" id="testMaxAttempts" value="3" min="0"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary btn-sm" id="addTestBtn">Creer le test</button>
+        </div>
+      </div>
+      <div id="testsList"></div>
+    </div>
+
+    <div class="tab-content" id="tab-comments">
+      <div class="section-header"><h2>Commentaires</h2></div>
+      <div id="commentsList"></div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+  (function() {
+    var actionsEl = document.getElementById('header-actions');
+    var allQuizzes = [];
+    var allCategories = [];
+
+    App.checkAuth().then(function(user) {
+      if (!user || user.role !== 'admin') {
+        window.location.href = '/';
+        return;
+      }
+      actionsEl.innerHTML =
+        '<a href="/pages/dashboard.html" class="btn btn-secondary btn-sm">Tableau de bord</a>' +
+        '<div class="avatar avatar-sm">' + (user.username ? user.username.charAt(0).toUpperCase() : '?') + '</div>' +
+        '<button class="btn btn-secondary btn-sm" onclick="App.logout()">Deconnexion</button>';
+      loadDashboard();
+      loadUsers();
+      loadCategories();
+      loadQuizzesForSelect();
+      loadQuizzes();
+      loadTests();
+      loadComments();
+    });
+
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    function esc(s) { var d = document.createElement('div'); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
+
+    function formatDate(s) { return s ? new Date(s).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' }) : ''; }
+
+    async function loadDashboard() {
+      try {
+        var d = await admin.getDashboard();
+        var s = d.stats || d;
+        document.getElementById('statUsers').textContent = s.users || s.totalUsers || 0;
+        document.getElementById('statCourses').textContent = s.courses || s.totalCourses || 0;
+        document.getElementById('statQuizzes').textContent = s.quizzes || s.totalQuizzes || 0;
+        document.getElementById('statTests').textContent = s.tests || s.totalTests || 0;
+        document.getElementById('statAttempts').textContent = s.attempts || s.totalAttempts || 0;
+        document.getElementById('statComments').textContent = s.comments || s.totalComments || 0;
+      } catch(e) { console.error('Erreur dashboard:', e); }
+    }
+
+    async function loadUsers() {
+      try {
+        var d = await admin.getUsers();
+        var users = d.users || d || [];
+        var tbody = document.getElementById('usersBody');
+        if (!users.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Aucun utilisateur</td></tr>'; return; }
+        tbody.innerHTML = '';
+        users.forEach(function(u) {
+          var tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td>' + esc(u.username || '') + '</td>' +
+            '<td>' + esc(u.email || '') + '</td>' +
+            '<td><select class="role-select" data-uid="' + u.id + '">' +
+              '<option value="user"' + (u.role === 'user' ? ' selected' : '') + '>Utilisateur</option>' +
+              '<option value="admin"' + (u.role === 'admin' ? ' selected' : '') + '>Admin</option>' +
+            '</select></td>' +
+            '<td>' + formatDate(u.created_at || u.createdAt) + '</td>' +
+            '<td><button class="btn btn-danger btn-sm" data-del="' + u.id + '">Supprimer</button></td>';
+          tbody.appendChild(tr);
+        });
+
+        tbody.querySelectorAll('.role-select').forEach(function(sel) {
+          sel.addEventListener('change', async function() {
+            try {
+              await admin.updateUserRole(sel.dataset.uid, sel.value);
+              App.showToast('Role mis a jour');
+            } catch(e) { App.showToast(e.message || 'Erreur', 'error'); }
+          });
+        });
+
+        tbody.querySelectorAll('[data-del]').forEach(function(btn) {
+          btn.addEventListener('click', async function() {
+            if (!confirm('Supprimer cet utilisateur ?')) return;
+            try {
+              await admin.deleteUser(btn.dataset.del);
+              App.showToast('Utilisateur supprime');
+              loadUsers();
+              loadDashboard();
+            } catch(e) { App.showToast(e.message || 'Erreur', 'error'); }
+          });
+        });
+      } catch(e) { console.error('Erreur users:', e); }
+    }
+
+    async function loadCategories() {
+      try {
+        var d = await courses.getCategories();
+        allCategories = d.categories || d || [];
+        renderCategories();
+        populateCategorySelects(allCategories);
+      } catch(e) { console.error('Erreur categories:', e); }
+    }
+
+    function renderCategories() {
+      var el = document.getElementById('categoriesList');
+      if (!allCategories.length) { el.innerHTML = '<div class="empty-state">Aucune categorie</div>'; return; }
+      el.innerHTML = '';
+      allCategories.forEach(function(c) {
+        var div = document.createElement('div');
+        div.className = 'category-item';
+        div.innerHTML =
+          '<span class="category-item__name">' + esc(c.name || c) + '</span>' +
+          '<div class="category-item__actions"><button class="btn btn-danger btn-sm" data-cat="' + esc(c.id || c.name || c) + '">Supprimer</button></div>';
+        el.appendChild(div);
+      });
+    }
+
+    function populateCategorySelects(cats) {
+      var selects = ['courseCategory', 'quizCategory', 'testCategory'];
+      selects.forEach(function(id) {
+        var sel = document.getElementById(id);
+        sel.innerHTML = '<option value="">Selectionner...</option>';
+        cats.forEach(function(c) {
+          var name = c.name || c;
+          sel.innerHTML += '<option value="' + esc(name) + '">' + esc(name) + '</option>';
+        });
+      });
+    }
+
+    document.getElementById('addCategoryBtn').addEventListener('click', async function() {
+      var name = document.getElementById('catName').value.trim();
+      var desc = document.getElementById('catDesc').value.trim();
+      if (!name) { App.showToast('Nom requis', 'error'); return; }
+      try {
+        await admin.createCategory({ name: name, description: desc });
+        App.showToast('Categorie ajoutee');
+        document.getElementById('catName').value = '';
+        document.getElementById('catDesc').value = '';
+        loadCategories();
+        loadDashboard();
+      } catch(e) { App.showToast(e.message || 'Erreur', 'error'); }
+    });
+
+    async function loadQuizzesForSelect() {
+      try {
+        var d = await quizzes.list();
+        allQuizzes = d.quizzes || d || [];
+        var sel = document.getElementById('qQuizSelect');
+        sel.innerHTML = '<option value="">Selectionner un quiz...</option>';
+        allQuizzes.forEach(function(q) {
+          sel.innerHTML += '<option value="' + q.id + '">' + esc(q.title) + '</option>';
+        });
+        var form = document.getElementById('questionFormCard');
+        if (allQuizzes.length) form.style.display = '';
+      } catch(e) { console.error('Erreur quiz select:', e); }
+    }
+
+    async function loadQuizzes() {
+      try {
+        var d = await quizzes.list();
+        var list = d.quizzes || d || [];
+        var el = document.getElementById('quizzesList');
+        if (!list.length) { el.innerHTML = '<div class="empty-state">Aucun quiz</div>'; return; }
+        el.innerHTML = '';
+        list.forEach(function(q) {
+          var div = document.createElement('div');
+          div.className = 'category-item';
+          div.innerHTML =
+            '<span class="category-item__name">' + esc(q.title) + ' <span style="color:var(--t3);font-size:12px">(' + esc(q.category || '') + ')</span></span>' +
+            '<div class="category-item__actions"><button class="btn btn-danger btn-sm" data-qid="' + q.id + '">Supprimer</button></div>';
+          el.appendChild(div);
+        });
+      } catch(e) { console.error('Erreur quizzes:', e); }
+    }
+
+    document.getElementById('addQuizBtn').addEventListener('click', async function() {
+      var title = document.getElementById('quizTitle').value.trim();
+      var category = document.getElementById('quizCategory').value;
+      var description = document.getElementById('quizDesc').value.trim();
+      var difficulty = document.getElementById('quizDifficulty').value;
+      var time_limit = parseInt(document.getElementById('quizTime').value) || 30;
+      var passing_score = parseInt(document.getElementById('quizPassing').value) || 70;
+      if (!title) { App.showToast('Titre requis', 'error'); return; }
+      try {
+        await admin.createQuiz({ title: title, category: category, description: description, difficulty: difficulty, time_limit: time_limit, passing_score: passing_score });
+        App.showToast('Quiz cree');
+        ['quizTitle','quizDesc'].forEach(function(id) { document.getElementById(id).value = ''; });
+        loadQuizzesForSelect();
+        loadQuizzes();
+        loadDashboard();
+      } catch(e) { App.showToast(e.message || 'Erreur', 'error'); }
+    });
+
+    document.getElementById('addQuestionBtn').addEventListener('click', async function() {
+      var quizId = document.getElementById('qQuizSelect').value;
+      var question = document.getElementById('qText').value.trim();
+      var options = [
+        document.getElementById('qOptA').value.trim(),
+        document.getElementById('qOptB').value.trim(),
+        document.getElementById('qOptC').value.trim(),
+        document.getElementById('qOptD').value.trim()
+      ];
+      var correct_answer = document.getElementById('qCorrect').value;
+      var points = parseInt(document.getElementById('qPoints').value) || 1;
+      if (!quizId || !question) { App.showToast('Quiz et question requis', 'error'); return; }
+      try {
+        await admin.addQuestion(quizId, { question: question, options: options, correct_answer: correct_answer, points: points });
+        App.showToast('Question ajoutee');
+        ['qText','qOptA','qOptB','qOptC','qOptD'].forEach(function(id) { document.getElementById(id).value = ''; });
+      } catch(e) { App.showToast(e.message || 'Erreur', 'error'); }
+    });
+
+    async function loadTests() {
+      try {
+        var d = await tests.list();
+        var list = d.tests || d || [];
+        var el = document.getElementById('testsList');
+        if (!list.length) { el.innerHTML = '<div class="empty-state">Aucun test</div>'; return; }
+        el.innerHTML = '';
+        list.forEach(function(t) {
+          var div = document.createElement('div');
+          div.className = 'category-item';
+          div.innerHTML =
+            '<span class="category-item__name">' + esc(t.title) + ' <span style="color:var(--t3);font-size:12px">(' + esc(t.category || '') + ')</span></span>' +
+            '<div class="category-item__actions"><button class="btn btn-danger btn-sm" data-tid="' + t.id + '">Supprimer</button></div>';
+          el.appendChild(div);
+        });
+      } catch(e) { console.error('Erreur tests:', e); }
+    }
+
+    document.getElementById('addTestBtn').addEventListener('click', async function() {
+      var title = document.getElementById('testTitle').value.trim();
+      var category = document.getElementById('testCategory').value;
+      var description = document.getElementById('testDesc').value.trim();
+      var time_limit = parseInt(document.getElementById('testTime').value) || 60;
+      var total_points = parseInt(document.getElementById('testPoints').value) || 100;
+      var passing_score = parseInt(document.getElementById('testPassing').value) || 70;
+      var max_attempts = parseInt(document.getElementById('testMaxAttempts').value) || 3;
+      if (!title) { App.showToast('Titre requis', 'error'); return; }
+      try {
+        await admin.createTest({ title: title, category: category, description: description, time_limit: time_limit, total_points: total_points, passing_score: passing_score, max_attempts: max_attempts });
+        App.showToast('Test cree');
+        ['testTitle','testDesc'].forEach(function(id) { document.getElementById(id).value = ''; });
+        loadTests();
+        loadDashboard();
+      } catch(e) { App.showToast(e.message || 'Erreur', 'error'); }
+    });
+
+    async function loadComments() {
+      try {
+        var d = await admin.getComments();
+        var list = d.comments || d || [];
+        var el = document.getElementById('commentsList');
+        if (!list.length) { el.innerHTML = '<div class="empty-state">Aucun commentaire</div>'; return; }
+        el.innerHTML = '';
+        list.forEach(function(c) {
+          var div = document.createElement('div');
+          div.className = 'comment-item';
+          var statusBadge = c.approved
+            ? '<span class="badge badge-success">Approuve</span>'
+            : '<span class="badge badge-warning">En attente</span>';
+          div.innerHTML =
+            '<div class="comment-item__header">' +
+              '<div><span class="comment-item__author">' + esc(c.author || c.username || 'Anonyme') + '</span> ' + statusBadge + '</div>' +
+              '<span class="comment-item__date">' + formatDate(c.created_at || c.createdAt) + '</span>' +
+            '</div>' +
+            '<div class="comment-item__body">' + esc(c.content || c.text || c.body || '') + '</div>' +
+            '<div class="comment-item__actions">' +
+              (!c.approved ? '<button class="btn btn-primary btn-sm" data-approve="' + c.id + '">Approuver</button>' : '') +
+              '<button class="btn btn-danger btn-sm" data-delcom="' + c.id + '">Supprimer</button>' +
+            '</div>';
+          el.appendChild(div);
+        });
+
+        el.querySelectorAll('[data-approve]').forEach(function(btn) {
+          btn.addEventListener('click', async function() {
+            try {
+              await admin.approveComment(btn.dataset.approve);
+              App.showToast('Commentaire approuve');
+              loadComments();
+              loadDashboard();
+            } catch(e) { App.showToast(e.message || 'Erreur', 'error'); }
+          });
+        });
+
+        el.querySelectorAll('[data-delcom]').forEach(function(btn) {
+          btn.addEventListener('click', async function() {
+            if (!confirm('Supprimer ce commentaire ?')) return;
+            try {
+              await admin.deleteComment(btn.dataset.delcom);
+              App.showToast('Commentaire supprime');
+              loadComments();
+              loadDashboard();
+            } catch(e) { App.showToast(e.message || 'Erreur', 'error'); }
+          });
+        });
+      } catch(e) { console.error('Erreur comments:', e); }
+    }
+
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,455 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CortexLLMs.io - Maitrisez vos Entretiens d'Ingenieur Logiciel</title>
+<meta name="description" content="Preparation interactive aux questions de code et guides pour accelerer votre preparation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0d0f;--card:#1a1a2e;--nav:rgba(13,13,15,.85);--acc:#3b82f6;--acc-h:#2563eb;--acc-l:rgba(59,130,246,.15);--t1:#f1f5f9;--t2:#94a3b8;--t3:#64748b;--bdr:#1e293b;--bdr2:#2d3748;--wh:#fff;--gbl:linear-gradient(135deg,#3b82f6,#8b5cf6);--gcrd:linear-gradient(145deg,#1a1a2e,#16162a);--glow:0 0 40px rgba(59,130,246,.1);--r:12px;--rl:16px;--mx:1200px;--nh:72px}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--t1);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3,h4,h5,h6{font-family:'Source Serif 4',Georgia,serif;font-weight:700;line-height:1.2}
+a{text-decoration:none;color:inherit;transition:color .2s}
+ul{list-style:none}
+.container{max-width:var(--mx);margin:0 auto;padding:0 24px}
+.header{position:fixed;top:0;left:0;right:0;height:var(--nh);background:var(--nav);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);z-index:1000;transition:background .3s,box-shadow .3s}
+.header.scrolled{background:rgba(13,13,15,.95);box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:100%;max-width:var(--mx);margin:0 auto;padding:0 24px}
+.nav-logo{display:flex;align-items:center;gap:2px;font-family:'Source Serif 4',Georgia,serif;font-size:1.35rem;font-weight:800;letter-spacing:-.5px;cursor:pointer}
+.nav-logo .lm{color:var(--wh)}.nav-logo .la{color:var(--acc)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-item{position:relative}
+.nav-link{display:flex;align-items:center;gap:4px;padding:8px 14px;font-size:.875rem;font-weight:500;color:var(--t2);border-radius:8px;transition:all .2s;cursor:pointer;white-space:nowrap}
+.nav-link:hover{color:var(--t1);background:rgba(255,255,255,.05)}
+.nav-link svg{width:14px;height:14px;transition:transform .2s}
+.nav-item:hover .nav-link svg{transform:rotate(180deg)}
+.dropdown{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(-4px);min-width:260px;background:var(--card);border:1px solid var(--bdr2);border-radius:var(--r);padding:8px;opacity:0;visibility:hidden;pointer-events:none;transition:all .2s;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.nav-item:hover .dropdown{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.dd-item{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;border-radius:8px;transition:background .15s}
+.dd-item:hover{background:rgba(59,130,246,.1)}
+.dd-icon{width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;background:var(--acc-l);border-radius:8px;color:var(--acc)}
+.dd-icon svg{width:18px;height:18px}
+.dd-text h4{font-family:'Inter',sans-serif;font-size:.85rem;font-weight:600;color:var(--t1);margin-bottom:2px}
+.dd-text p{font-size:.75rem;color:var(--t3);line-height:1.4}
+.nav-cta{padding:8px 18px;background:var(--acc);color:var(--wh)!important;border-radius:8px;font-weight:600;font-size:.875rem;transition:background .2s,transform .2s}
+.nav-cta:hover{background:var(--acc-h);transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;border:none;background:none}
+.hamburger span{display:block;width:22px;height:2px;background:var(--wh);border-radius:2px;transition:all .3s}
+.hamburger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.active span:nth-child(2){opacity:0}
+.hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mobile-nav{display:none;position:fixed;top:var(--nh);left:0;right:0;bottom:0;background:rgba(13,13,15,.98);backdrop-filter:blur(20px);z-index:999;padding:24px;overflow-y:auto;opacity:0;transform:translateY(-10px);transition:opacity .3s,transform .3s}
+.mobile-nav.open{opacity:1;transform:translateY(0)}
+.mns{margin-bottom:24px}
+.mns-t{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:12px;padding-left:12px}
+.mnl{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;font-size:.95rem;font-weight:500;color:var(--t2);transition:all .2s}
+.mnl:hover{background:rgba(255,255,255,.05);color:var(--t1)}
+.mnl svg{width:20px;height:20px;color:var(--acc)}
+.mn-div{height:1px;background:var(--bdr);margin:16px 0}
+.mn-cta{display:block;text-align:center;padding:14px;background:var(--acc);color:var(--wh);border-radius:10px;font-weight:600;font-size:.95rem;margin-top:8px}
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;padding-top:var(--nh);overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:50%;transform:translateX(-50%);width:900px;height:900px;background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 60% 50% at 50% 50%,black 30%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 60% 50% at 50% 50%,black 30%,transparent 100%)}
+.hero-content{position:relative;text-align:center;max-width:820px;margin:0 auto;padding:80px 24px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--acc-l);border:1px solid rgba(59,130,246,.25);border-radius:100px;font-size:.8rem;font-weight:600;color:var(--acc);margin-bottom:28px;animation:fiu .6s ease}
+.hero-badge-dot{width:6px;height:6px;background:var(--acc);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero-title{font-size:clamp(2.5rem,5.5vw,4.2rem);font-weight:800;line-height:1.1;margin-bottom:20px;animation:fiu .6s ease .1s both}
+.hero-title .hl{background:var(--gbl);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(1rem,2vw,1.2rem);color:var(--t2);max-width:600px;margin:0 auto 36px;line-height:1.7;animation:fiu .6s ease .2s both}
+.hero-btns{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;animation:fiu .6s ease .3s both}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-size:.95rem;font-weight:600;border:none;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.btn-p{background:var(--acc);color:var(--wh);box-shadow:0 4px 16px rgba(59,130,246,.3)}
+.btn-p:hover{background:var(--acc-h);transform:translateY(-2px);box-shadow:0 6px 24px rgba(59,130,246,.4)}
+.btn-s{background:rgba(255,255,255,.06);color:var(--t1);border:1px solid var(--bdr2)}
+.btn-s:hover{background:rgba(255,255,255,.1);border-color:var(--t3);transform:translateY(-2px)}
+.btn svg{width:18px;height:18px}
+.hero-stats{display:flex;align-items:center;justify-content:center;gap:48px;margin-top:56px;animation:fiu .6s ease .4s both}
+.hero-stat{text-align:center}
+.hero-stat-val{font-family:'Source Serif 4',Georgia,serif;font-size:2rem;font-weight:800;color:var(--wh)}
+.hero-stat-lbl{font-size:.8rem;color:var(--t3);margin-top:2px}
+.hero-stat-div{width:1px;height:40px;background:var(--bdr2)}
+@keyframes fiu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+section{padding:100px 0}
+.s-label{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--acc);margin-bottom:12px}
+.s-title{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;margin-bottom:14px}
+.s-desc{font-size:1.05rem;color:var(--t2);max-width:560px;line-height:1.7}
+.s-header{text-align:center;margin-bottom:56px}
+.s-header .s-desc{margin:0 auto}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.cat-card{position:relative;background:var(--gcrd);border:1px solid var(--bdr);border-radius:var(--rl);padding:32px 28px;transition:all .3s;cursor:pointer;overflow:hidden}
+.cat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gbl);opacity:0;transition:opacity .3s}
+.cat-card:hover{border-color:rgba(59,130,246,.3);transform:translateY(-4px);box-shadow:var(--glow)}
+.cat-card:hover::before{opacity:1}
+.cat-icon{width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--acc-l);border-radius:12px;color:var(--acc);margin-bottom:20px}
+.cat-icon svg{width:24px;height:24px}
+.cat-card h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--wh)}
+.cat-card p{font-size:.9rem;color:var(--t2);line-height:1.6;margin-bottom:18px}
+.cat-link{display:inline-flex;align-items:center;gap:6px;font-size:.85rem;font-weight:600;color:var(--acc);transition:gap .2s}
+.cat-link svg{width:16px;height:16px}
+.cat-card:hover .cat-link{gap:10px}
+.cat-count{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(59,130,246,.1);border-radius:6px;font-size:.75rem;font-weight:600;color:var(--acc);margin-bottom:16px}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.feat-card{text-align:center;padding:40px 32px;background:var(--gcrd);border:1px solid var(--bdr);border-radius:var(--rl);transition:all .3s}
+.feat-card:hover{border-color:rgba(59,130,246,.2);transform:translateY(-4px)}
+.feat-icon{width:64px;height:64px;display:flex;align-items:center;justify-content:center;background:var(--acc-l);border-radius:16px;color:var(--acc);margin:0 auto 24px}
+.feat-icon svg{width:30px;height:30px}
+.feat-card h3{font-size:1.15rem;margin-bottom:10px;color:var(--wh)}
+.feat-card p{font-size:.9rem;color:var(--t2);line-height:1.7}
+.stats-sec{background:linear-gradient(180deg,transparent,rgba(59,130,246,.03) 50%,transparent)}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.stat-card{text-align:center;padding:48px 32px;background:var(--gcrd);border:1px solid var(--bdr);border-radius:var(--rl);position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:120px;height:80px;background:radial-gradient(ellipse,rgba(59,130,246,.12),transparent);pointer-events:none}
+.stat-num{font-family:'Source Serif 4',Georgia,serif;font-size:3rem;font-weight:800;color:var(--acc);margin-bottom:8px;line-height:1}
+.stat-label{font-size:1rem;font-weight:600;color:var(--wh);margin-bottom:6px}
+.stat-desc{font-size:.85rem;color:var(--t3);line-height:1.5}
+.cta-sec{text-align:center}
+.cta-box{background:var(--gcrd);border:1px solid var(--bdr);border-radius:var(--rl);padding:64px 40px;position:relative;overflow:hidden}
+.cta-box::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(59,130,246,.1),transparent);pointer-events:none}
+.cta-box h2{font-size:clamp(1.6rem,3vw,2.4rem);margin-bottom:14px;position:relative}
+.cta-box p{font-size:1.05rem;color:var(--t2);max-width:520px;margin:0 auto 32px;line-height:1.7;position:relative}
+.cta-box .btn{position:relative}
+footer{padding:60px 0 32px;border-top:1px solid var(--bdr)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+.footer-brand p{font-size:.9rem;color:var(--t2);line-height:1.7;margin-top:12px;max-width:280px}
+.footer-col h4{font-family:'Inter',sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--t3);margin-bottom:16px}
+.footer-col a{display:block;font-size:.9rem;color:var(--t2);padding:4px 0;transition:color .2s}
+.footer-col a:hover{color:var(--acc)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:24px;border-top:1px solid var(--bdr);font-size:.8rem;color:var(--t3)}
+.footer-social{display:flex;gap:16px}
+.footer-social a{color:var(--t3);transition:color .2s}
+.footer-social a:hover{color:var(--acc)}
+.footer-social svg{width:18px;height:18px}
+.scroll-reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.scroll-reveal.revealed{opacity:1;transform:translateY(0)}
+@media(max-width:1024px){.cat-grid,.feat-grid,.stats-grid{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.nav-links{display:none}.hamburger{display:flex}.mobile-nav{display:block}.hero-stats{flex-direction:column;gap:24px}.hero-stat-div{width:40px;height:1px}.cat-grid,.feat-grid,.stats-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr}section{padding:60px 0}.cta-box{padding:40px 24px}.cat-card.multi{grid-column:span 1 !important;display:block !important}}
+</style>
+</head>
+<body>
+
+<header class="header" id="header">
+<nav class="nav">
+<a href="#" class="nav-logo"><span class="lm">CortexLLMs</span><span class="la">.io</span></a>
+<div class="nav-links">
+<div class="nav-item"><a href="#accueil" class="nav-link">Accueil</a></div>
+<div class="nav-item">
+<a class="nav-link">Ingenierie IA <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></a>
+<div class="dropdown">
+<a href="#ia" class="dd-item"><div class="dd-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 014 4v1h2a2 2 0 012 2v2a2 2 0 01-2 2h-2v1a4 4 0 01-8 0v-1H6a2 2 0 01-2-2V9a2 2 0 012-2h2V6a4 4 0 014-4z"/></svg></div><div class="dd-text"><h4>Ingenierie IA/ML</h4><p>Preparation aux entretiens IA/ML</p></div></a>
+<a href="#ia" class="dd-item"><div class="dd-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div><div class="dd-text"><h4>LLMs &amp; Transformers</h4><p>Modeles de langage et architectures</p></div></a>
+</div></div>
+<div class="nav-item">
+<a class="nav-link">DevOps <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></a>
+<div class="dropdown">
+<a href="#devops" class="dd-item"><div class="dd-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-4V6l-8 8 8 8v-4h4a2 2 0 002-2v-4a2 2 0 00-2-2z"/></svg></div><div class="dd-text"><h4>CI/CD &amp; Pipelines</h4><p>Integration et deploiement continus</p></div></a>
+<a href="#devops" class="dd-item"><div class="dd-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="dd-text"><h4>Conteneurs &amp; Orchestration</h4><p>Docker, Kubernetes et plus</p></div></a>
+</div></div>
+<div class="nav-item"><a href="#system-design" class="nav-link">System Design</a></div>
+<div class="nav-item"><a href="#dsa" class="nav-link">Patterns DSA</a></div>
+<div class="nav-item"><a href="#entreprises" class="nav-link">Entreprises</a></div>
+<div class="nav-item"><a href="/pages/login.html" class="nav-cta">Se connecter</a></div>
+<div class="nav-item"><a href="/pages/register.html" class="nav-cta" style="background:var(--acc-l);border:1px solid var(--acc);margin-left:8px">S'inscrire</a></div>
+<div class="nav-item" id="nav-dashboard" style="display:none"><a href="/pages/dashboard.html" class="nav-cta" style="background:var(--acc-l);border:1px solid var(--acc)">Tableau de bord</a></div>
+</div>
+<button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+</header>
+
+<div class="mobile-nav" id="mobileNav">
+<div class="mns"><div class="mns-t">Navigation</div>
+<a href="#accueil" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/></svg>Accueil</a>
+<a href="#ia" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 014 4v1h2a2 2 0 012 2v2a2 2 0 01-2 2h-2v1a4 4 0 01-8 0v-1H6a2 2 0 01-2-2V9a2 2 0 012-2h2V6a4 4 0 014-4z"/></svg>Ingenierie IA</a>
+<a href="#devops" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-4V6l-8 8 8 8v-4h4a2 2 0 002-2v-4a2 2 0 00-2-2z"/></svg>DevOps</a>
+<a href="#system-design" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>System Design</a>
+<a href="#dsa" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Patterns DSA</a>
+<a href="#entreprises" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>Recherche Entreprises</a>
+</div>
+<div class="mn-div"></div>
+<div class="mns"><div class="mns-t">Ressources</div>
+<a href="#" class="mnl" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Blog</a>
+</div>
+<div class="mn-div"></div>
+<a href="/pages/login.html" class="mn-cta" data-close>Se connecter</a>
+<a href="/pages/register.html" class="mn-cta" data-close style="background:var(--acc-l);border:1px solid var(--acc)">S'inscrire</a>
+</div>
+
+<main>
+
+<section class="hero" id="accueil">
+<div class="hero-grid"></div>
+<div class="hero-content">
+<div class="hero-badge"><span class="hero-badge-dot"></span>Nouveau : Patterns DSA-31 disponibles</div>
+<h1 class="hero-title">Maitrisez vos <span class="hl">Entretiens d'Ingenieur Logiciel</span></h1>
+<p class="hero-sub">Preparation interactive aux questions de code et guides detailles pour accelerer votre preparation aux entretiens techniques.</p>
+<div class="hero-btns">
+<a href="#categories" class="btn btn-p">Explorer les themes <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+<a href="#" class="btn btn-s">Voir la demo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></a>
+</div>
+<div class="hero-stats">
+<div class="hero-stat"><div class="hero-stat-val">1000+</div><div class="hero-stat-lbl">Questions</div></div>
+<div class="hero-stat-div"></div>
+<div class="hero-stat"><div class="hero-stat-val">500+</div><div class="hero-stat-lbl">Guides</div></div>
+<div class="hero-stat-div"></div>
+<div class="hero-stat"><div class="hero-stat-val">100+</div><div class="hero-stat-lbl">Patterns</div></div>
+</div>
+</div>
+</section>
+
+<section id="categories">
+<div class="container">
+<div class="s-header scroll-reveal">
+<div class="s-label">/// THEMES</div>
+<h2 class="s-title">Tout pour reussir vos entretiens</h2>
+<p class="s-desc">Explorez nos categories completees pour preparer chaque type d'entretien technique.</p>
+</div>
+<div class="cat-grid">
+
+<div class="cat-card scroll-reveal">
+<div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 014 4v1h2a2 2 0 012 2v2a2 2 0 01-2 2h-2v1a4 4 0 01-8 0v-1H6a2 2 0 01-2-2V9a2 2 0 012-2h2V6a4 4 0 014-4z"/><circle cx="12" cy="15" r="1"/></svg></div>
+<div class="cat-count">120+ questions</div>
+<h3>Ingenierie IA</h3>
+<p>Preparation aux entretiens IA/ML : apprentissage automatique, reseaux de neurones, LLMs et systemes de recommandation.</p>
+<a href="#ia" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+</div>
+
+<div class="cat-card scroll-reveal">
+<div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-4V6l-8 8 8 8v-4h4a2 2 0 002-2v-4a2 2 0 00-2-2z"/></svg></div>
+<div class="cat-count">85+ questions</div>
+<h3>DevOps</h3>
+<p>Maitrisez les entretiens DevOps : CI/CD, conteneurs, orchestration, infrastructure as code et monitoring.</p>
+<a href="#devops" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+</div>
+
+<div class="cat-card scroll-reveal">
+<div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M10 7h4M7 10v4M14 17h-4M17 14v-4"/></svg></div>
+<div class="cat-count">200+ guides</div>
+<h3>System Design</h3>
+<p>Low Level Design &amp; System Design : architecture de systemes distribues, mise a l'echelle et conception d'APIs.</p>
+<a href="#system-design" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+</div>
+
+<div class="cat-card scroll-reveal">
+<div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+<div class="cat-count">31 patterns</div>
+<h3>Patterns DSA</h3>
+<p>Maitriser tous les patterns DSA (DSA-31, CP-11) : tris, graphes, DP, two pointers, sliding window et plus.</p>
+<a href="#dsa" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+</div>
+
+<div class="cat-card scroll-reveal">
+<div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
+<div class="cat-count">50+ entreprises</div>
+<h3>Recherche Entreprises</h3>
+<p>Conventions communes des ingenieurs logiciel : processus de recrutement, attentes et conseils par entreprise.</p>
+<a href="#entreprises" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+</div>
+
+<div class="cat-card scroll-reveal">
+<div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div>
+<div class="cat-count">150+ problemes</div>
+<h3>Problemes DSA</h3>
+<p>Comment resoudre les problemes DSA : strategies de resolution, templates et approches systematiques.</p>
+<a href="#dsa-problems" class="cat-link">Explorer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+</div>
+
+</div>
+</div>
+</section>
+
+<section id="ia" style="background:linear-gradient(180deg,transparent,rgba(59,130,246,.02),transparent)">
+<div class="container">
+<div class="s-header scroll-reveal">
+<div class="s-label">/// INGENIERIE IA</div>
+<h2 class="s-title">Preparation aux entretiens IA/ML</h2>
+<p class="s-desc">Des questions et guides cibles pour les roles d'ingenieurs en intelligence artificielle et apprentissage automatique.</p>
+</div>
+<div class="feat-grid">
+<div class="feat-card scroll-reveal"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></div><h3>Fondamentaux ML</h3><p>Regression, classification, clustering, regularisation et evaluation de modeles pour les entretiens techniques.</p></div>
+<div class="feat-card scroll-reveal"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><h3>Deep Learning</h3><p>Reseaux de neurones, CNN, RNN, architectures Transformer et optimisation des hyperparametres.</p></div>
+<div class="feat-card scroll-reveal"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div><h3>LLMs &amp; NLP</h3><p>Modeles de langage, fine-tuning, RAG, alignment et deploiement de systemes IA a grande echelle.</p></div>
+</div>
+</div>
+</section>
+
+<section id="devops">
+<div class="container">
+<div class="s-header scroll-reveal">
+<div class="s-label">/// DEVOPS</div>
+<h2 class="s-title">Maitrisez les entretiens DevOps</h2>
+<p class="s-desc">De la CI/CD a l'orchestration, preparez-vous aux questions techniques DevOps les plus demandees.</p>
+</div>
+<div class="feat-grid">
+<div class="feat-card scroll-reveal"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1zm10 0a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1zM4 10a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1zm10 0a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1z"/></svg></div><h3>CI/CD &amp; Pipelines</h3><p>Integration continue, deploiement continu, pipelines GitLab CI, GitHub Actions et Jenkins.</p></div>
+<div class="feat-card scroll-reveal"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><circle cx="6" cy="6" r="1"/><circle cx="6" cy="18" r="1"/></svg></div><h3>Conteneurs</h3><p>Docker, Kubernetes, registres d'images et strategies de deploiement en conteneurs.</p></div>
+<div class="feat-card scroll-reveal"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>Infrastructure as Code</h3><p>Terraform, Ansible, Puppet et strategies d'automatisation de l'infrastructure cloud.</p></div>
+</div>
+</div>
+</section>
+
+<section id="system-design" style="background:linear-gradient(180deg,transparent,rgba(59,130,246,.02),transparent)">
+<div class="container">
+<div class="s-header scroll-reveal">
+<div class="s-label">/// SYSTEM DESIGN</div>
+<h2 class="s-title">Low Level Design &amp; System Design</h2>
+<p class="s-desc">Apprenez a concevoir des systemes distribues robustes et scalables pour vos entretiens.</p>
+</div>
+<div class="feat-grid">
+<div class="feat-card scroll-reveal"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div><h3>Concepts fondamentaux</h3><p>Load balancing, caching, message queues, base de donnees et choix d'architecture.</p></div>
+<div class="feat-card scroll-reveal"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><h3>Systemes distribues</h3><p>Consistance, disponibilite, partitionnement, consensus et coordonnations distribuees.</p></div>
+<div class="feat-card scroll-reveal"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><h3>Conception d'APIs</h3><p>REST, GraphQL, gRPC, versioning, documentation et securisation des endpoints.</p></div>
+</div>
+</div>
+</section>
+
+<section id="dsa">
+<div class="container">
+<div class="s-header scroll-reveal">
+<div class="s-label">/// PATTERNS DSA</div>
+<h2 class="s-title">Maitriser tous les patterns DSA</h2>
+<p class="s-desc">DSA-31 et CP-11 : les patterns essentiels pour resoudre n'importe quel probleme d'algorithmique.</p>
+</div>
+<div class="cat-grid">
+<div class="cat-card scroll-reveal"><div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></div><h3>Two Pointers &amp; Sliding Window</h3><p>Techniques de pointeurs doubles et fenetre glissante pour les problemes de tableaux et de chaines.</p><a href="#" class="cat-link">Voir les patterns <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+<div class="cat-card scroll-reveal"><div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3>Programmation Dynamique</h3><p>Memoisation, tabulation, problems de sac a dos, LIS, LCS et variants avances.</p><a href="#" class="cat-link">Voir les patterns <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+<div class="cat-card scroll-reveal"><div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 17H7A5 5 0 017 7h2M15 7h2a5 5 0 010 10h-2M8 12h8"/></svg></div><h3>Graphes &amp; Parcours</h3><p>BFS, DFS, Dijkstra, Bellman-Ford, tri topologique et composants connectes.</p><a href="#" class="cat-link">Voir les patterns <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+<div class="cat-card scroll-reveal"><div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div><h3>Structures de Donnees</h3><p>Arbres, tas, tries union-find, tries prefix et structures de donnees speciales.</p><a href="#" class="cat-link">Voir les patterns <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+<div class="cat-card scroll-reveal"><div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><h3>Backtracking &amp; Recursion</h3><p>Sudoku, N-Queens, permutations, combinations et problemes de decision.</p><a href="#" class="cat-link">Voir les patterns <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+<div class="cat-card scroll-reveal"><div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><h3>Greedy &amp; Binaires</h3><p>Algorithmes gloutons, manipulation de bits, xor et problemes d'optimisation locale.</p><a href="#" class="cat-link">Voir les patterns <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+</div>
+</div>
+</section>
+
+<section id="entreprises" style="background:linear-gradient(180deg,transparent,rgba(59,130,246,.02),transparent)">
+<div class="container">
+<div class="s-header scroll-reveal">
+<div class="s-label">/// RECHERCHE ENTREPRISES</div>
+<h2 class="s-title">Conventions communes des ingenieurs logiciel</h2>
+<p class="s-desc">Fiches d'information detaillees sur le processus de recrutement et les attentes de chaque entreprise.</p>
+</div>
+<div class="feat-grid">
+<div class="feat-card scroll-reveal"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><h3>Processus de recrutement</h3><p>Telephones screen, entretiens techniques, system design et onsite detailles pour chaque entreprise.</p></div>
+<div class="feat-card scroll-reveal"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h3>Fiches d'entreprise</h3><p>Stack technique, culture d'entreprise, salaires, avantages et retours d'experience de candidats.</p></div>
+<div class="feat-card scroll-reveal"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><h3>Astuces de candidats</h3><p>Conseils pratiques, erreurs a eviter et strategies pour maximiser vos chances de succes.</p></div>
+</div>
+</div>
+</section>
+
+<section id="dsa-problems">
+<div class="container">
+<div class="s-header scroll-reveal">
+<div class="s-label">/// PROBLEMES DSA</div>
+<h2 class="s-title">Comment resoudre les problemes DSA</h2>
+<p class="s-desc">Une approche systematique pour aborder et resoudre n'importe quel probleme d'algorithme.</p>
+</div>
+<div style="background:var(--gcrd);border:1px solid var(--bdr);border-radius:var(--rl);padding:48px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center" class="scroll-reveal">
+<div>
+<div class="cat-count">5 etapes</div>
+<h3 style="margin-bottom:16px">La methode en 5 etapes</h3>
+<p style="color:var(--t2);margin-bottom:24px">Un cadre eprouve pour resoudre systematiquement tout probleme DSA lors de vos entretiens.</p>
+<ol style="list-style:decimal;padding-left:20px;display:flex;flex-direction:column;gap:10px">
+<li style="color:var(--t2);font-size:.9rem"><strong style="color:var(--t1)">Comprendre</strong> - Clarifiez les contraintes et les cas limites</li>
+<li style="color:var(--t2);font-size:.9rem"><strong style="color:var(--t1)">Exemple</strong> - Tracez un exemple pas a pas</li>
+<li style="color:var(--t2);font-size:.9rem"><strong style="color:var(--t1)">Pattern</strong> - Identifiez le pattern DSA applicable</li>
+<li style="color:var(--t2);font-size:.9rem"><strong style="color:var(--t1)">Coder</strong> - Implementez la solution proprement</li>
+<li style="color:var(--t2);font-size:.9rem"><strong style="color:var(--t1)">Tester</strong> - Verifiez avec differents cas de test</li>
+</ol>
+</div>
+<div style="background:#0d0d0f;border:1px solid var(--bdr);border-radius:var(--r);padding:24px;font-family:monospace;font-size:.82rem;color:var(--t2);line-height:1.9">
+<div style="color:var(--t3);margin-bottom:12px">// Exemple : Two Sum</div>
+<div><span style="color:#c792ea">function</span> <span style="color:#82aaff">twoSum</span>(nums, target) {</div>
+<div>&nbsp;&nbsp;<span style="color:#c792ea">const</span> map = <span style="color:#c792ea">new</span> <span style="color:#ffcb6b">Map</span>();</div>
+<div>&nbsp;&nbsp;<span style="color:#c792ea">for</span> (<span style="color:#c792ea">let</span> i = <span style="color:#f78c6c">0</span>; i &lt; nums.length; i++) {</div>
+<div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">const</span> complement = target - nums[i];</div>
+<div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">if</span> (map.<span style="color:#82aaff">has</span>(complement))</div>
+<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">return</span> [map.<span style="color:#82aaff">get</span>(complement), i];</div>
+<div>&nbsp;&nbsp;&nbsp;&nbsp;map.<span style="color:#82aaff">set</span>(nums[i], i);</div>
+<div>&nbsp;&nbsp;}</div>
+<div>}</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="stats-sec">
+<div class="container">
+<div class="s-header scroll-reveal">
+<div class="s-label">/// CHIFFRES CLES</div>
+<h2 class="s-title">Des ressources completes</h2>
+<p class="s-desc">Notre plateforme couvre tous les aspects de la preparation aux entretiens techniques.</p>
+</div>
+<div class="stats-grid">
+<div class="stat-card scroll-reveal"><div class="stat-num" data-target="1000" data-suffix="+">0</div><div class="stat-label">Questions</div><div class="stat-desc">Questions d'entretien technique couvrant tous les niveaux de difficulte.</div></div>
+<div class="stat-card scroll-reveal"><div class="stat-num" data-target="500" data-suffix="+">0</div><div class="stat-label">Guides</div><div class="stat-desc">Guides detailles avec explications, solutions et optimisations.</div></div>
+<div class="stat-card scroll-reveal"><div class="stat-num" data-target="100" data-suffix="+">0</div><div class="stat-label">Patterns</div><div class="stat-desc">Patterns DSA essentiels pour resoudre n'importe quel probleme.</div></div>
+</div>
+</div>
+</section>
+
+<section class="cta-sec">
+<div class="container">
+<div class="cta-box scroll-reveal">
+<h2>Prete a maitriser vos entretiens ?</h2>
+<p>Rejoignez des milliers d'ingenieurs qui ont reussi grace a notre plateforme de preparation interactive.</p>
+<a href="#" class="btn btn-p" style="margin:0 auto">Commencer maintenant <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+</div>
+</div>
+</section>
+
+</main>
+
+<footer>
+<div class="container">
+<div class="footer-grid">
+<div class="footer-brand">
+<a href="#" class="nav-logo" style="font-size:1.2rem"><span class="lm">CortexLLMs</span><span class="la">.io</span></a>
+<p>Plateforme de preparation interactive aux entretiens d'ingenieur logiciel. Maitrisez chaque aspect de votre prochain entretien technique.</p>
+</div>
+<div class="footer-col"><h4>Themes</h4><a href="#ia">Ingenierie IA</a><a href="#devops">DevOps</a><a href="#system-design">System Design</a><a href="#dsa">Patterns DSA</a><a href="#entreprises">Recherche Entreprises</a></div>
+<div class="footer-col"><h4>Ressources</h4><a href="#">Blog</a><a href="#">Guides PDF</a><a href="#">Flashcards</a><a href="#">FAQ</a></div>
+<div class="footer-col"><h4>Entreprise</h4><a href="#">A propos</a><a href="#">Contact</a><a href="#">Conditions</a><a href="#">Confidentialite</a></div>
+</div>
+<div class="footer-bottom">
+<span>&copy; 2026 CortexLLMs.io. Tous droits reserves.</span>
+<div class="footer-social">
+<a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg></a>
+<a href="#" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></a>
+<a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+</div>
+</div>
+</div>
+</footer>
+
+<script>
+(function(){
+var h=document.getElementById('header');
+window.addEventListener('scroll',function(){h.classList.toggle('scrolled',window.scrollY>20)});
+var hm=document.getElementById('hamburger'),mn=document.getElementById('mobileNav');
+hm.addEventListener('click',function(){hm.classList.toggle('active');mn.classList.toggle('open');document.body.style.overflow=mn.classList.contains('open')?'hidden':''});
+document.querySelectorAll('[data-close]').forEach(function(l){l.addEventListener('click',function(){hm.classList.remove('active');mn.classList.remove('open');document.body.style.overflow=''})});
+document.querySelectorAll('a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var id=a.getAttribute('href');if(id&&id.length>1){var el=document.querySelector(id);if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth',block:'start'})}}})});
+var rv=document.querySelectorAll('.scroll-reveal');
+var ob=new IntersectionObserver(function(entries){entries.forEach(function(entry,i){if(entry.isIntersecting){setTimeout(function(){entry.target.classList.add('revealed')},i*60);ob.unobserve(entry.target)}})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+rv.forEach(function(el){ob.observe(el)});
+var cn=document.querySelectorAll('.stat-num[data-target]');
+var co=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){var el=entry.target,t=parseInt(el.dataset.target),s=el.dataset.suffix||'',c=0,step=Math.ceil(t/50);var timer=setInterval(function(){c+=step;if(c>=t){c=t;clearInterval(timer)}el.textContent=c+s},25);co.unobserve(el)}})},{threshold:.5});
+cn.forEach(function(el){co.observe(el)});
+})();
+var token=localStorage.getItem('token');
+if(token){
+  fetch('/api/auth/me',{headers:{'Authorization':'Bearer '+token}}).then(function(r){return r.json()}).then(function(d){
+    if(d.user){
+      var dash=document.getElementById('nav-dashboard');
+      if(dash)dash.style.display='block';
+      document.querySelectorAll('.nav-item').forEach(function(n){var a=n.querySelector('.nav-cta');if(a&&(a.textContent==='Se connecter'||a.textContent==="S'inscrire"))n.style.display='none'});
+    }
+  }).catch(function(){});
+}
+</script>
+</body>
+</html>

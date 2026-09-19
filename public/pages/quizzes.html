@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz - CortexLLMs.io</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">Cortex<span class="io">.io</span></a>
+      <nav class="main-nav">
+        <a href="/index.html">Accueil</a>
+        <a href="/pages/courses.html">Cours</a>
+        <a href="/pages/quizzes.html" class="active">Quiz</a>
+        <a href="/pages/interviews.html">Simulations</a>
+        <a href="/pages/profile.html">Profil</a>
+      </nav>
+      <div class="header-actions">
+        <a href="/pages/login.html" class="btn btn-ghost">Connexion</a>
+        <a href="/pages/signup.html" class="btn btn-primary">Inscription</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <section class="hero-section">
+      <div class="container">
+        <h1 class="page-title">Quiz Disponibles</h1>
+        <p class="page-subtitle">Testez vos connaissances</p>
+      </div>
+    </section>
+
+    <section class="filter-section">
+      <div class="container">
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label for="categoryFilter">Catégorie</label>
+            <select id="categoryFilter">
+              <option value="">Toutes les catégories</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="difficultyFilter">Difficulté</label>
+            <select id="difficultyFilter">
+              <option value="">Toutes les difficultés</option>
+              <option value="débutant">Débutant</option>
+              <option value="intermédiaire">Intermédiaire</option>
+              <option value="avancé">Avancé</option>
+            </select>
+          </div>
+          <div class="filter-group filter-group--search">
+            <label for="searchFilter">Rechercher</label>
+            <input type="text" id="searchFilter" placeholder="Rechercher un quiz...">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="quizzes-section">
+      <div class="container">
+        <div id="quizGrid" class="quiz-grid"></div>
+        <div id="loadingState" class="loading-state">
+          <div class="spinner"></div>
+          <p>Chargement des quiz...</p>
+        </div>
+        <div id="emptyState" class="empty-state" style="display: none;">
+          <p>Aucun quiz disponible pour le moment.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="/" class="logo">Cortex<span class="io">.io</span></a>
+        <p>Plateforme d'entraînement aux entretiens techniques.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <a href="/index.html">Accueil</a>
+          <a href="/pages/courses.html">Cours</a>
+          <a href="/pages/quizzes.html">Quiz</a>
+          <a href="/pages/interviews.html">Simulations</a>
+        </div>
+        <div class="footer-col">
+          <h4>Compte</h4>
+          <a href="/pages/login.html">Connexion</a>
+          <a href="/pages/signup.html">Inscription</a>
+          <a href="/pages/profile.html">Profil</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 CortexLLMs.io. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    (function() {
+      const quizGrid = document.getElementById('quizGrid');
+      const loadingState = document.getElementById('loadingState');
+      const emptyState = document.getElementById('emptyState');
+      const categoryFilter = document.getElementById('categoryFilter');
+      const difficultyFilter = document.getElementById('difficultyFilter');
+      const searchFilter = document.getElementById('searchFilter');
+
+      let allQuizzes = [];
+
+      function populateCategories(quizzes) {
+        const categories = [...new Set(quizzes.map(q => q.category))].sort();
+        categories.forEach(cat => {
+          const option = document.createElement('option');
+          option.value = cat;
+          option.textContent = cat;
+          categoryFilter.appendChild(option);
+        });
+      }
+
+      function getDifficultyClass(difficulty) {
+        const map = {
+          'débutant': 'badge--beginner',
+          'intermédiaire': 'badge--intermediate',
+          'avancé': 'badge--advanced'
+        };
+        return map[difficulty] || '';
+      }
+
+      function renderQuizzes(quizzes) {
+        quizGrid.innerHTML = '';
+        if (quizzes.length === 0) {
+          emptyState.style.display = 'block';
+          return;
+        }
+        emptyState.style.display = 'none';
+
+        quizzes.forEach(quiz => {
+          const card = document.createElement('a');
+          card.href = `/pages/quiz.html?id=${quiz.id}`;
+          card.className = 'quiz-card';
+          card.innerHTML = `
+            <div class="quiz-card__header">
+              <h3 class="quiz-card__title">${quiz.title}</h3>
+              <span class="badge badge--category">${quiz.category}</span>
+            </div>
+            <p class="quiz-card__description">${quiz.description}</p>
+            <div class="quiz-card__meta">
+              <span class="badge ${getDifficultyClass(quiz.difficulty)}">${quiz.difficulty}</span>
+              <span class="quiz-card__time">${quiz.time_limit} min</span>
+              <span class="quiz-card__score">Réussite: ${quiz.passing_score}%</span>
+            </div>
+            <div class="quiz-card__footer">
+              <span class="btn btn-primary btn-block">Commencer</span>
+            </div>
+          `;
+          quizGrid.appendChild(card);
+        });
+      }
+
+      function filterQuizzes() {
+        const category = categoryFilter.value;
+        const difficulty = difficultyFilter.value;
+        const search = searchFilter.value.toLowerCase().trim();
+
+        const filtered = allQuizzes.filter(quiz => {
+          if (category && quiz.category !== category) return false;
+          if (difficulty && quiz.difficulty !== difficulty) return false;
+          if (search && !quiz.title.toLowerCase().includes(search) && !quiz.description.toLowerCase().includes(search)) return false;
+          return true;
+        });
+
+        renderQuizzes(filtered);
+      }
+
+      async function loadQuizzes() {
+        try {
+          loadingState.style.display = 'flex';
+          emptyState.style.display = 'none';
+
+          const data = await window.CortexAPI.get('/api/quizzes');
+          allQuizzes = data.quizzes || data;
+
+          populateCategories(allQuizzes);
+          renderQuizzes(allQuizzes);
+        } catch (error) {
+          console.error('Erreur lors du chargement des quiz:', error);
+          emptyState.innerHTML = '<p>Une erreur est survenue lors du chargement des quiz.</p>';
+          emptyState.style.display = 'block';
+        } finally {
+          loadingState.style.display = 'none';
+        }
+      }
+
+      categoryFilter.addEventListener('change', filterQuizzes);
+      difficultyFilter.addEventListener('change', filterQuizzes);
+      searchFilter.addEventListener('input', filterQuizzes);
+
+      loadQuizzes();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tests - CortexLLMs.io</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .hero-section {
+      padding: 48px 0 32px;
+      text-align: center;
+    }
+    .hero-section .page-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .hero-section .page-subtitle {
+      color: var(--t2);
+      font-size: 1rem;
+    }
+    .filter-section {
+      padding: 0 0 24px;
+    }
+    .filter-bar {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .filter-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--t2);
+    }
+    .filter-group select,
+    .filter-group input {
+      padding: 10px 14px;
+      background: var(--card);
+      border: 1px solid var(--bdr);
+      border-radius: var(--r);
+      color: var(--t1);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      min-width: 200px;
+    }
+    .filter-group select:focus,
+    .filter-group input:focus {
+      outline: none;
+      border-color: var(--acc);
+      box-shadow: 0 0 0 3px var(--acc-l);
+    }
+    .filter-group select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+    .tests-section {
+      padding-bottom: 60px;
+    }
+    .test-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .test-card {
+      background: var(--card);
+      border: 1px solid var(--bdr);
+      border-radius: var(--rl);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform .2s, box-shadow .2s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .test-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+      color: inherit;
+    }
+    .test-card__header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .test-card__title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--t1);
+      line-height: 1.3;
+    }
+    .test-card__category {
+      display: inline-flex;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--acc-l);
+      color: var(--acc);
+      white-space: nowrap;
+    }
+    .test-card__description {
+      font-size: 14px;
+      color: var(--t2);
+      line-height: 1.5;
+      flex: 1;
+    }
+    .test-card__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--t3);
+    }
+    .test-card__meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .test-card__meta .meta-label {
+      font-weight: 500;
+      color: var(--t2);
+    }
+    .test-card__footer {
+      padding-top: 8px;
+      border-top: 1px solid var(--bdr);
+    }
+    .test-card__footer .btn {
+      width: 100%;
+    }
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 60px 0;
+      color: var(--t2);
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--bdr);
+      border-top-color: var(--acc);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--t3);
+    }
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nh);
+      background: var(--nav);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--bdr);
+      z-index: 200;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+    .logo {
+      font-family: 'Source Serif 4', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--t1);
+      text-decoration: none;
+    }
+    .logo .io { color: var(--acc); }
+    .main-nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .main-nav a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--t2);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .main-nav a:hover, .main-nav a.active {
+      color: var(--acc);
+    }
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .page-content {
+      margin-top: var(--nh);
+      min-height: calc(100vh - var(--nh));
+    }
+    .site-footer {
+      background: var(--card);
+      border-top: 1px solid var(--bdr);
+      padding: 40px 0 20px;
+    }
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+    }
+    .footer-brand p {
+      color: var(--t3);
+      font-size: 14px;
+      margin-top: 8px;
+      max-width: 280px;
+    }
+    .footer-links {
+      display: flex;
+      gap: 48px;
+    }
+    .footer-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .footer-col h4 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--t1);
+      margin-bottom: 4px;
+    }
+    .footer-col a {
+      font-size: 13px;
+      color: var(--t3);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .footer-col a:hover { color: var(--acc); }
+    .footer-bottom {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid var(--bdr);
+      font-size: 13px;
+      color: var(--t3);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">CortexLLMs<span class="io">.io</span></a>
+      <nav class="main-nav">
+        <a href="/">Accueil</a>
+        <a href="/pages/quizzes.html">Quiz</a>
+        <a href="/pages/tests.html" class="active">Tests</a>
+      </nav>
+      <div class="header-actions" id="header-actions">
+        <a href="/pages/login.html" class="btn btn-secondary btn-sm">Connexion</a>
+        <a href="/pages/register.html" class="btn btn-primary btn-sm">Inscription</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <section class="hero-section">
+      <div class="container">
+        <h1 class="page-title">Tests Notes</h1>
+        <p class="page-subtitle">Évaluez vos compétences avec des tests complets et chronométrés</p>
+      </div>
+    </section>
+
+    <section class="filter-section">
+      <div class="container">
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label for="categoryFilter">Catégorie</label>
+            <select id="categoryFilter">
+              <option value="">Toutes les catégories</option>
+            </select>
+          </div>
+          <div class="filter-group filter-group--search">
+            <label for="searchFilter">Rechercher</label>
+            <input type="text" id="searchFilter" placeholder="Rechercher un test...">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tests-section">
+      <div class="container">
+        <div id="testGrid" class="test-grid"></div>
+        <div id="loadingState" class="loading-state">
+          <div class="spinner"></div>
+          <p>Chargement des tests...</p>
+        </div>
+        <div id="emptyState" class="empty-state" style="display: none;">
+          <p>Aucun test disponible pour le moment.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="/" class="logo">CortexLLMs<span class="io">.io</span></a>
+        <p>Plateforme d'entraînement aux entretiens techniques.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <a href="/">Accueil</a>
+          <a href="/pages/quizzes.html">Quiz</a>
+          <a href="/pages/tests.html">Tests</a>
+        </div>
+        <div class="footer-col">
+          <h4>Compte</h4>
+          <a href="/pages/login.html">Connexion</a>
+          <a href="/pages/register.html">Inscription</a>
+          <a href="/pages/dashboard.html">Tableau de bord</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 CortexLLMs.io. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    (function() {
+      var testGrid = document.getElementById('testGrid');
+      var loadingState = document.getElementById('loadingState');
+      var emptyState = document.getElementById('emptyState');
+      var categoryFilter = document.getElementById('categoryFilter');
+      var searchFilter = document.getElementById('searchFilter');
+      var actionsEl = document.getElementById('header-actions');
+
+      var allTests = [];
+
+      App.checkAuth().then(function(user) {
+        if (user) {
+          actionsEl.innerHTML =
+            '<a href="/pages/dashboard.html" class="btn btn-secondary btn-sm">Tableau de bord</a>' +
+            (user.role === 'admin' ? '<a href="/pages/admin.html" class="btn btn-primary btn-sm">Admin</a>' : '') +
+            '<div class="avatar avatar-sm">' + (user.username ? user.username.charAt(0).toUpperCase() : '?') + '</div>' +
+            '<button class="btn btn-secondary btn-sm" onclick="App.logout()">Déconnexion</button>';
+        }
+      });
+
+      function populateCategories(tests) {
+        var categories = [];
+        tests.forEach(function(t) {
+          if (t.category && categories.indexOf(t.category) === -1) {
+            categories.push(t.category);
+          }
+        });
+        categories.sort();
+        categories.forEach(function(cat) {
+          var option = document.createElement('option');
+          option.value = cat;
+          option.textContent = cat;
+          categoryFilter.appendChild(option);
+        });
+      }
+
+      function renderTests(tests) {
+        testGrid.innerHTML = '';
+        if (tests.length === 0) {
+          emptyState.style.display = 'block';
+          return;
+        }
+        emptyState.style.display = 'none';
+
+        tests.forEach(function(test) {
+          var card = document.createElement('a');
+          card.href = '/pages/test.html?id=' + test.id;
+          card.className = 'test-card';
+          card.innerHTML =
+            '<div class="test-card__header">' +
+              '<h3 class="test-card__title">' + escapeHtml(test.title) + '</h3>' +
+              '<span class="test-card__category">' + escapeHtml(test.category) + '</span>' +
+            '</div>' +
+            '<p class="test-card__description">' + escapeHtml(test.description || '') + '</p>' +
+            '<div class="test-card__meta">' +
+              '<span><span class="meta-label">Durée :</span> ' + (test.time_limit || 0) + ' min</span>' +
+              '<span><span class="meta-label">Points :</span> ' + (test.total_points || 0) + '</span>' +
+              '<span><span class="meta-label">Réussite :</span> ' + (test.passing_score || 0) + '%</span>' +
+              '<span><span class="meta-label">Tentatives max :</span> ' + (test.max_attempts || '∞') + '</span>' +
+            '</div>' +
+            '<div class="test-card__footer">' +
+              '<span class="btn btn-primary">Commencer le Test</span>' +
+            '</div>';
+          testGrid.appendChild(card);
+        });
+      }
+
+      function filterTests() {
+        var category = categoryFilter.value;
+        var search = searchFilter.value.toLowerCase().trim();
+
+        var filtered = allTests.filter(function(test) {
+          if (category && test.category !== category) return false;
+          if (search && test.title.toLowerCase().indexOf(search) === -1 && (test.description || '').toLowerCase().indexOf(search) === -1) return false;
+          return true;
+        });
+
+        renderTests(filtered);
+      }
+
+      async function loadTests() {
+        try {
+          loadingState.style.display = 'flex';
+          emptyState.style.display = 'none';
+
+          var data = await api.get('/tests');
+          allTests = data.tests || data || [];
+
+          populateCategories(allTests);
+          renderTests(allTests);
+        } catch (error) {
+          console.error('Erreur lors du chargement des tests:', error);
+          emptyState.innerHTML = '<p>Une erreur est survenue lors du chargement des tests.</p>';
+          emptyState.style.display = 'block';
+        } finally {
+          loadingState.style.display = 'none';
+        }
+      }
+
+      function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+      }
+
+      categoryFilter.addEventListener('change', filterTests);
+      searchFilter.addEventListener('input', filterTests);
+
+      loadTests();
+    })();
+  </script>
+</body>
+</html>
