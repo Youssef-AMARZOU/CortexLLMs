@@ -1,0 +1,435 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caching - CortexLLMs.io</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0d0f;--card:#1a1a2e;--accent:#3b82f6;--accent-glow:rgba(59,130,246,.15);--text:#e4e4e7;--text2:#a1a1aa;--text3:#71717a;--border:#27272a;--code:#111118;--green:#22c55e;--yellow:#f59e0b;--red:#ef4444}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:16px}
+.layout{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:none}}
+.sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--card);border-right:1px solid var(--border);padding:2rem 1.5rem}
+.sidebar-logo{font-family:'Source Serif 4',serif;font-size:1.4rem;font-weight:700;color:var(--accent);margin-bottom:.5rem}
+.sidebar-module{font-size:.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.sidebar h3{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);margin:1.5rem 0 .75rem}
+.sidebar a{display:block;color:var(--text2);text-decoration:none;font-size:.85rem;padding:.4rem .75rem;border-radius:6px;margin-bottom:2px;transition:all .2s}
+.sidebar a:hover{background:var(--accent-glow);color:var(--accent)}
+.sidebar a.active{background:var(--accent-glow);color:var(--accent);font-weight:500}
+.main{max-width:860px;margin:0 auto;padding:3rem 2.5rem 6rem}
+@media(max-width:900px){.main{padding:2rem 1.25rem 4rem}}
+.breadcrumb{font-size:.8rem;color:var(--text3);margin-bottom:1rem}
+.breadcrumb span{color:var(--accent)}
+h1{font-family:'Source Serif 4',serif;font-size:2.5rem;font-weight:700;line-height:1.2;margin-bottom:.75rem}
+.lesson-meta{display:flex;gap:1.5rem;font-size:.85rem;color:var(--text3);margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.tag{background:var(--accent-glow);color:var(--accent);padding:.2rem .6rem;border-radius:4px;font-size:.75rem;font-weight:500}
+h2{font-family:'Source Serif 4',serif;font-size:1.6rem;font-weight:600;margin:3rem 0 1rem;padding-top:1rem;border-top:1px solid var(--border)}
+h2:first-of-type{border-top:none}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 .75rem;color:var(--accent)}
+p{margin-bottom:1rem;color:var(--text2)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.card-accent{border-left:3px solid var(--accent)}
+.card-warn{border-left:3px solid var(--yellow);background:rgba(245,158,11,.05)}
+.card-ok{border-left:3px solid var(--green);background:rgba(34,197,94,.05)}
+.card-title{font-weight:600;font-size:.95rem;margin-bottom:.5rem;color:var(--text)}
+pre{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:1.25rem;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.6}
+code{font-family:'JetBrains Mono','Fira Code',monospace;color:var(--accent)}
+pre code{color:var(--text)}
+.ic{background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.88em;color:var(--accent)}
+ul,ol{margin:.75rem 0 1.25rem 1.5rem;color:var(--text2)}
+li{margin-bottom:.4rem}
+li strong{color:var(--text)}
+table{width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:.9rem}
+th,td{padding:.7rem 1rem;text-align:left;border:1px solid var(--border)}
+th{background:var(--card);font-weight:600;color:var(--text)}
+td{color:var(--text2)}
+.qa{background:var(--card);border:1px solid var(--border);border-radius:12px;margin:1.5rem 0;overflow:hidden}
+.qa-q{padding:1rem 1.5rem;font-weight:600;color:var(--accent);background:var(--accent-glow);border-bottom:1px solid var(--border)}
+.qa-a{padding:1.25rem 1.5rem;color:var(--text2)}
+.qa-a p:last-child{margin-bottom:0}
+.nav-footer{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem}
+.nav-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text2);text-decoration:none;font-size:.9rem;transition:all .2s}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-glow)}
+.progress-bar{height:3px;background:var(--border);border-radius:2px;margin:1.5rem 0;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;width:20%}
+.diagram{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0;overflow-x:auto;white-space:pre;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.5;color:var(--text2)}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+<div class="sidebar-logo">CortexLLMs.io</div>
+<div class="sidebar-module">System Design</div>
+<h3>Concepts Fondamentaux</h3>
+<a href="load-balancing.html">1. Load Balancing</a>
+<a href="caching.html" class="active">2. Caching</a>
+<a href="#">3. Base de Donnees</a>
+<a href="#">4. Message Queues</a>
+<a href="#">5. CAP Theorem</a>
+<h3>Conception</h3>
+<a href="url-shortener.html">1. URL Shortener</a>
+<a href="#">2. Rate Limiter</a>
+<a href="#">3. Chat System</a>
+<a href="#">4. News Feed</a>
+<a href="#">5. Search Engine</a>
+</aside>
+<main class="main">
+<div class="breadcrumb">System Design / <span>Caching</span></div>
+<h1>Caching</h1>
+<div class="lesson-meta">
+<span class="tag">Concepts Fondamentaux</span>
+<span>Lecon 2 / 10</span>
+<span>Temps de lecture: ~28 min</span>
+</div>
+<div class="progress-bar"><div class="progress-fill"></div></div>
+
+<h2 id="pourquoi">1. Pourquoi le Caching?</h2>
+<p>Le caching est l'une des techniques les plus puissantes en systeme design pour ameliorer les performances, reduire la latence et diminuer la charge sur les composants en aval. Le principe fondamental est simple: stocker une copie des donnees frequemment accessibles dans un emplacement plus rapide que la source originale, et servir les requetes depuis cette copie au lieu d'interroger la source a chaque fois.</p>
+
+<h3>Latence</h3>
+<p>La latence est le temps qu'il faut a une donnee pour voyager de sa source jusqu'au client. Une base de donnees SQL peut avoir une latence de lecture de 1 a 10 millisecondes pour une requete simple. Un cache comme Redis peut repondre en 0,1 a 1 milliseconde, soit 10 a 100 fois plus rapidement. Pour une application qui recoit 10 000 requetes par seconde, cette difference est enorme. Le cache elimine le goulet d'etranglement de la base de donnees en servant la majorite des requetes de lecture directement depuis la memoire.</p>
+
+<h3>Debit (Throughput)</h3>
+<p>Le debit est le nombre de requetes qu'un systeme peut traiter par unite de temps. Sans cache, chaque requete doit etre traitee par la base de donnees, qui a un debit limite par son nombre de connexions, son I/O disque et sa capacite de traitement. En plaçant un cache devant la base de donnees, on peut augmenter le debit effectif du systeme de 10x a 100x, car le cache peut gerer des centaines de milliers de requetes par seconde sur un seul noeud.</p>
+
+<h3>Cout</h3>
+<p>Les ressources de base de donnees sont couteuses. Une instance RDS Amazon avec 64 Go de RAM coute plusieurs centaines de dollars par mois. En reduisant la charge sur la base de donnees via le cache, on peut utiliser des instances plus petites, ce qui represente des economies significatives. De plus, le cache reduit la necessite de scaling vertical de la base de donnees, qui est souvent le composant le plus cher et le plus difficile a scalier.</p>
+
+<h3>Experience Utilisateur</h3>
+<p>Les utilisateurs sont extremement sensibles a la latence. Selon des etudes de Google, 53% des utilisateurs mobiles abandonnent un site qui met plus de 3 secondes a charger. Le caching permet de maintenir des temps de reponse faibles meme sous forte charge, garantissant une experience utilisateur fluide et satisfaisante.</p>
+
+<h2 id="strategies">2. Strategies de Cache</h2>
+<p>Il existe plusieurs patterns pour integrer un cache dans l'architecture d'une application. Chaque strategie a ses avantages et ses inconvenients, et le choix depend des besoins specifiques en termes de coherence, de performance et de complexite.</p>
+
+<h3>Cache-Aside (Lazy Loading)</h3>
+<p>C'est la strategie la plus courante. L'application verifie d'abord si la donnee est dans le cache. Si elle y est (cache hit), elle la retourne directement. Sinon (cache miss), elle lit la donnee depuis la base de donnees, la stocke dans le cache, puis la retourne. L'application est responsable de la gestion du cache.</p>
+
+<pre><code>// Cache-Aside Pattern
+async function getUser(userId) {
+    // 1. Verifier le cache d'abord
+    const cached = await redis.get(`user:${userId}`);
+    if (cached) {
+        return JSON.parse(cached); // Cache hit
+    }
+
+    // 2. Cache miss - lire depuis la BDD
+    const user = await db.query('SELECT * FROM users WHERE id = ?', [userId]);
+
+    // 3. Stocker dans le cache avec TTL
+    await redis.setex(
+        `user:${userId}`,
+        3600, // TTL: 1 heure
+        JSON.stringify(user)
+    );
+
+    return user;
+}
+</code></pre>
+
+<div class="card card-ok">
+<div class="card-title">Avantages Cache-Aside</div>
+<p>Seules les donnees demandees sont mises en cache (pas de gaspillage de memoire). Les donnees corrompues dans le cache sont automatiquement remplacees au prochain cache miss. Simple a implementer et a raisonner.</p>
+</div>
+
+<h3>Read-Through</h3>
+<p>Le cache agit comme un proxy de lecture. L'application lit toujours depuis le cache, et c'est le cache qui, en cas de miss, va chercher la donnee dans la base de donnees. L'application n'a pas conscience de l'existence de la base de donnees.</p>
+
+<h3>Write-Through</h3>
+<p>Chaque ecriture est d'abord effectuee dans le cache, puis synchronisee avec la base de donnees. Cela garantit que le cache et la base de donnees sont toujours synchronises. L'inconvenient est que chaque ecriture implique deux operations (cache + BDD), ce qui augmente la latence d'ecriture.</p>
+
+<h3>Write-Behind (Write-Back)</h3>
+<p>Les ecritures sont d'abord effectuees dans le cache, puis la base de donnees est mise a jour de maniere asynchrone (batch ou stream). Cela reduit la latence d'ecriture au prix d'un risque de perte de donnees si le cache tombe en panne avant la synchronisation. Utile pour les charges d'ecriture intenses comme les compteurs, les analytics ou les logs.</p>
+
+<h3>Write-Around</h3>
+<p>Les ecritures vont directement dans la base de donnees, en by-passant le cache. Seules les lectures passent par le cache. C'est utile quand les donnees ecrites sont rarement relues, evitant de polluer le cache avec des donnees qui ne seront pas demandees de sitot.</p>
+
+<table>
+<tr><th>Strategie</th><th>Ecriture</th><th>Lecture</th><th>Coherence</th><th>Use Case</th></tr>
+<tr><td>Cache-Aside</td><td>BDD + Cache</td><td>Cache, puis BDD</td><td>Lazy</td><td>General purpose</td></tr>
+<tr><td>Read-Through</td><td>Cache</td><td>Cache (auto-load)</td><td>Lazy</td><td>Applications simples</td></tr>
+<tr><td>Write-Through</td><td>Cache + BDD (sync)</td><td>Cache</td><td>Forte</td><td>Donnees critiques</td></tr>
+<tr><td>Write-Behind</td><td>Cache (async BDD)</td><td>Cache</td><td>Eventuelle</td><td>Haute performance ecriture</td></tr>
+<tr><td>Write-Around</td><td>BDD seule</td><td>BDD, puis Cache</td><td>Lazy</td><td>Donnees rarement relues</td></tr>
+</table>
+
+<h2 id="invalidation">3. Invalidation du Cache</h2>
+<p>L'invalidation du cache est l'un des problemes les plus difficiles en informatique (« There are only two hard things in Computer Science: cache invalidation and naming things. » - Phil Karlton). Determiner quand une donnee en cache n'est plus valide est crucial pour la coherence des donnees.</p>
+
+<h3>TTL (Time-To-Live)</h3>
+<p>Le TTL definit une duree de vie maximale pour chaque entree du cache. Apres l'expiration, la donnee est automatiquement supprimee et la prochaine lecture ira chercher la version a jour dans la base de donnees. C'est la strategie la plus simple et la plus courante. Le choix du TTL est un compromis: trop court, le cache est peu efficace; trop long, les donnees sont potentiellement obsoletes.</p>
+
+<pre><code>// TTL dans Redis
+await redis.setex('product:123', 1800, JSON.stringify(product)); // 30 minutes
+
+// TTL avec valeur par defaut
+async function getCached(key, fetchFn, ttlSeconds = 300) {
+    let data = await redis.get(key);
+    if (data) return JSON.parse(data);
+
+    data = await fetchFn();
+    await redis.setex(key, ttlSeconds, JSON.stringify(data));
+    return data;
+}
+</code></pre>
+
+<h3>Event-Driven Invalidation</h3>
+<p>Lorsqu'une donnee est modifiee dans la base de donnees, un evenement est emis qui supprime ou met a jour la correspondance dans le cache. Cela peut etre implante via des database triggers, des CDC (Change Data Capture) avec des outils comme Debezium, ou des message queues comme Kafka. Cette approche maintient une coherence forte mais ajoute de la complexite.</p>
+
+<h3>Tag-Based Invalidation</h3>
+<p>Chaque entree du cache est associee a un ou plusieurs tags. Lorsqu'un evenement de modification se produit, on invalide toutes les entrees associees a un tag specifique. Par exemple, si un produit est modifie, on invalide toutes les entrees avec le tag <span class="ic">product:123</span>. C'est plus granulaire que le TTL et plus flexible que l'invalidation par cle.</p>
+
+<h3>Cache Stampede</h3>
+<p>Le cache stampede (also called thundering herd) se produit lorsque l'expiration simultanee de plusieurs cles populaires provoque un afflux massif de requetes vers la base de donnees. La premiere requete va chercher les donnees dans la BDD, mais pendant ce temps, des centaines d'autres requetes font de meme. Solutions: (1) <strong>Verrou distribue:</strong> Un seul processus regenere la cle pendant que les autres attendent; (2) <strong>Jitter:</strong> Ajouter un delai aleatoire au TTL pour eviter les expirations simultanees; (3) <strong>Pre-refresh:</strong> Actualiser le cache avant son expiration.</p>
+
+<pre><code>// Prevention du cache stampede avec verrou distribue
+async function getCachedWithLock(key, fetchFn, ttl = 300) {
+    let data = await redis.get(key);
+    if (data) return JSON.parse(data);
+
+    // Tenter d'acquerir le verrou
+    const lockKey = `lock:${key}`;
+    const acquired = await redis.set(lockKey, '1', 'EX', 10, 'NX');
+
+    if (acquired) {
+        // Ce processus regenere la donnee
+        data = await fetchFn();
+        await redis.setex(key, ttl, JSON.stringify(data));
+        await redis.del(lockKey);
+        return data;
+    } else {
+        // Attendre puis reessayer
+        await new Promise(r => setTimeout(r, 100));
+        return getCachedWithLock(key, fetchFn, ttl);
+    }
+}
+</code></pre>
+
+<h2 id="redis">4. Redis</h2>
+<p>Redis (Remote Dictionary Server) est le systeme de cache et de stockage en memoire le plus populaire au monde. Il est open source, extremement rapide (plus de 100 000 operations par seconde sur un seul noeud), et supporte une variete de structures de donnees.</p>
+
+<h3>Structures de Donnees</h3>
+<ul>
+<li><strong>String:</strong> La structure de base. Stocke des chaines de caracteres, des entiers, ou du JSON serialise. Operations: GET, SET, INCR, APPEND.</li>
+<li><strong>Hash:</strong> Une table de hachage associee a une cle. Ideal pour representer des objets (utilisateurs, produits). Operations: HGET, HSET, HMGET.</li>
+<li><strong>List:</strong> Une liste doublement chainee. Utile pour les files d'attente (FIFO) et les piles (LIFO). Operations: LPUSH, RPUSH, LPOP, RPOP.</li>
+<li><strong>Set:</strong> Un ensemble non ordonne d'elements uniques. Utile pour les tags, les relations d'amis, les intersections. Operations: SADD, SMEMBERS, SINTER.</li>
+<li><strong>Sorted Set (ZSet):</strong> Comme un Set mais avec un score associe a chaque element. Utile pour les leaderboards et les rangees temporelles. Operations: ZADD, ZRANGE, ZRANGEBYSCORE.</li>
+<li><strong>Stream:</strong> Un journal d'evenements append-only. Utile pour le streaming de donnees et les messages. Operations: XADD, XREAD, XREADGROUP.</li>
+</ul>
+
+<h3>Persistence</h3>
+<p>Redis offre deux mecanismes de persistence: <strong>RDB (Redis Database Backup)</strong> prend des snapshots periodiques du dataset, offrant un bon equilibre entre performance et durabilite. <strong>AOF (Append-Only File)</strong> enregistre chaque operation d'ecriture dans un fichier log, offrant une meilleure durabilite mais avec un impact sur les performances. La configuration recommandee pour la production est d'utiliser les deux mecanismes en parallele.</p>
+
+<h3>Replication</h3>
+<p>Redis supporte la replication master-slave. Le master traite toutes les operations d'ecriture et les replicates vers un ou plusieurs slaves. Les slaves peuvent servir les lectures, reduisant la charge du master. En cas de panne du master, un slave peut etre promu en nouveau master (Sentinel) ou via Redis Cluster.</p>
+
+<pre><code># Configuration Redis Sentinel
+# sentinel.conf
+sentinel monitor mymaster 127.0.0.1 6379 2
+sentinel down-after-milliseconds mymaster 5000
+sentinel failover-timeout mymaster 60000
+sentinel parallel-syncs mymaster 1
+
+# Connection en Python
+from redis.sentinel import Sentinel
+
+sentinel = Sentinel([('127.0.0.1', 26379)])
+master = sentinel.master_for('mymaster')
+slave = sentinel.slave_for('mymaster')
+
+master.set('key', 'value')
+value = master.get('key')
+</code></pre>
+
+<h3>Pub/Sub et Lua Scripting</h3>
+<p>Redis Pub/Sub permet la communication en temps reel entre les services via des canaux de messages. Le Lua Scripting permet d'executer des scripts atomiques cote serveur, eliminant les conditions de course et reduisant le trafic reseau.</p>
+
+<h2 id="memcached">5. Memcached</h2>
+<p>Memcached est un systeme de cache distribue en memoire, plus ancien et plus simple que Redis. Il est optimise pour le caching simple de paires cle-valeur et est utilise par des giants comme Facebook, Twitter et YouTube.</p>
+
+<h3>Architecture</h3>
+<p>Memcached utilise une architecture client-serveur distribuee. Les clients utilisent un algorithme de hashage consistent pour determiner quel serveur stocke une cle donnee. Il n'y a pas de replication ni de persistence: si un serveur tombe, les donnees qu'il contenait sont perdues. C'est un cache « best-effort ».</p>
+
+<h3>Multithreading</h3>
+<p>Contrairement a Redis qui est single-threaded (avec des threads I/O en option), Memcached est nativement multithreaded. Cela lui permet d'exploiter pleinement les processeurs multi-coeurs et d'atteindre des debits tres eleves. Cependant, cela ajoute de la complexite pour la gestion des concurrences.</p>
+
+<h3>Slab Allocation</h3>
+<p>Memcached utilise un systeme d'allocation de memoire par slabs pour eviter la fragmentation. La memoire est divisee en slabs de tailles fixes, et chaque cle est placee dans le slab de taille appropriee. Cela optimise l'utilisation de la memoire mais peut gaspiller de l'espace si les donnees ne correspondent pas bien aux tailles de slabs.</p>
+
+<h3>CAS (Compare-And-Swap)</h3>
+<p>Memcached supporte l'operation CAS, un mecanisme de synchronisation optimiste qui permet de mettre a jour une valeur uniquement si elle n'a pas ete modifiee depuis la derniere lecture. Cela evite les conditions de course dans les environnements concurrents.</p>
+
+<table>
+<tr><th>Caracteristique</th><th>Redis</th><th>Memcached</th></tr>
+<tr><td>Structures de donnees</td><td>Riches (String, Hash, List, Set, ZSet, Stream)</td><td>String uniquement</td></tr>
+<tr><td>Persistence</td><td>RDB, AOF</td><td>Aucune</td></tr>
+<tr><td>Replication</td><td>Oui (Master-Slave, Cluster)</td><td>Non</td></tr>
+<tr><td>Scripting</td><td>Lua</td><td>Non</td></tr>
+<tr><td>Multithreading</td><td>I/O threads</td><td>Natif</td></tr>
+<tr><td>Cluster</td><td>Redis Cluster (sharding auto)</td><td>Client-side sharding</td></tr>
+<tr><td>Use Case</td><td>Cache complexe, sessions, real-time</td><td>Cache simple, tres haut debit</td></tr>
+</table>
+
+<h2 id="cdn">6. CDN Caching</h2>
+<p>Un CDN (Content Delivery Network) est un reseau de serveurs distribues geographiquement qui met en cache le contenu statique (images, CSS, JS, videos) au plus pres des utilisateurs finaux. Les CDNs les plus populaires sont Cloudflare, AWS CloudFront, Akamai et Fastly.</p>
+
+<h3>Edge Caching</h3>
+<p>Le edge caching consiste a stocker le contenu sur des serveurs situes dans des points de presence (PoP) a proximite des utilisateurs. Au lieu de traverser le reseau mondial pour atteindre le serveur d'origine, la requete est servie par le PoP le plus proche. Cela reduit la latence de 50 a 90% pour les utilisateurs eloignes du serveur d'origine.</p>
+
+<h3>Push vs Pull</h3>
+<p><strong>Pull CDN:</strong> Le contenu est mis en cache automatiquement lors de la premiere requete (cache miss). Le CDN va chercher le contenu sur le serveur d'origine, le met en cache, puis le sert aux utilisateurs suivants. Simpler mais premiere requete lente. <strong>Push CDN:</strong> Le contenu est pousse activement vers le CDN par le serveur d'origine. Ideal pour les mises a jour frequentes ou le contenu qui doit etre disponible immediatement.</p>
+
+<h3>Invalidation CDN</h3>
+<p>L'invalidation du contenu CDN peut etre lente (de quelques secondes a plusieurs heures selon le CDN). Les methodes incluent: invalidation par cle (API), purge complete, TTL sur les fichiers, et versioning des URLs (cache busting). CloudFront propose une invalidation en quelques secondes, tandis que Fastly offre une invalidation en moins de 150 millisecondes grace a son edge computing.</p>
+
+<h2 id="browser">7. Browser Caching</h2>
+<p>Le caching cote navigateur est la premiere ligne de defense contre les requetes inutiles vers le serveur. Il est configure via des en-tetes HTTP qui indiquent au navigateur combien de temps il doit garder une copie locale d'une ressource.</p>
+
+<h3>Cache-Control</h3>
+<p>L'en-tete <span class="ic">Cache-Control</span> est le mecanisme principal de caching HTTP/1.1. Les directives les plus courantes sont:</p>
+<ul>
+<li><span class="ic">max-age=N</span>: La ressource est valide pendant N secondes.</li>
+<li><span class="ic">no-cache</span>: La ressource peut etre mise en cache mais doit etre revalidee avant chaque utilisation.</li>
+<li><span class="ic">no-store</span>: Pas de mise en cache du tout.</li>
+<li><span class="ic">public</span>: La ressource peut etre mise en cache par n'importe quel cache (navigateur, CDN).</li>
+<li><span class="ic">private</span>: La ressource ne peut etre mise en cache que par le navigateur (pas les CDN).</li>
+</ul>
+
+<h3>ETag et Last-Modified</h3>
+<p>L'<strong>ETag</strong> est un identifiant unique genere par le serveur pour chaque version d'une ressource. Le navigateur envoie l'ETag dans la requete <span class="ic">If-None-Match</span>; si le serveur determine que la ressource n'a pas change, il repond avec un 304 Not Modified (sans body), economisant la bande passante. <strong>Last-Modified</strong> fonctionne de maniere similaire avec des dates. L'ETag est plus fiable car il ne depend pas de la synchronisation des horloges.</p>
+
+<h3>Service Workers</h3>
+<p>Les Service Workers offrent un controle total du caching dans le navigateur. Ils agissent comme un proxy entre le navigateur et le reseau, permettant des strategies de caching avancees comme le stale-while-revalidate, le cache-first avec fallback reseau, et le network-first avec fallback cache.</p>
+
+<pre><code>// Service Worker - Cache Strategy
+const CACHE_NAME = 'v1';
+const STATIC_ASSETS = ['/index.html', '/styles.css', '/app.js'];
+
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then(cache => cache.addAll(STATIC_ASSETS))
+    );
+});
+
+self.addEventListener('fetch', (event) => {
+    event.respondWith(
+        caches.match(event.request)
+            .then(response => {
+                if (response) return response;
+                return fetch(event.request).then(fetchResponse => {
+                    if (fetchResponse.ok) {
+                        const clone = fetchResponse.clone();
+                        caches.open(CACHE_NAME)
+                            .then(cache => cache.put(event.request, clone));
+                    }
+                    return fetchResponse;
+                });
+            })
+    );
+});
+</code></pre>
+
+<h2 id="distributed">8. Caching Distribue</h2>
+<p>Le caching distribue etend le concept de cache a plusieurs noeuds, permettant de stocker plus de donnees et d'offrir une haute disponibilite. Cependant, cela introduit des defis de coherence et de gestion des pannes.</p>
+
+<h3>Consistance</h3>
+<p>La consistance du cache distribue est le defi de maintenir les memes donnees sur tous les noeuds. En mode eventuel, un noeud peut avoir une version plus ancienne qu'un autre. Les strategies incluent: (1) TTL court pour limiter l'erreur maximale, (2) invalidation par broadcast lors des modifications, (3) quorum reads/writes pour garantir la visibilite des mises a jour.</p>
+
+<h3>Cache Coherence</h3>
+<p>La coherence du cache fait reference a la synchronisation entre le cache et la source de donnees. Les protocoles de coherence incluent le write-invalidate (invalider les copies autres que la source modifiee) et le write-update (mettre a jour toutes les copies). Le write-invalidate est plus simple et plus courant, tandis que le write-update offre une meilleure coherence mais avec un overhead reseau plus important.</p>
+
+<h3>Thundering Herd Problem</h3>
+<p>Le thundering herd dans un contexte de cache distribue se produit lorsqu'un cache populaire expire et que tous les clients tentent simultanement de recharger la donnee. Cela peut surcharger la base de donnees et provoquer une cascade de pannes. Les solutions incluent le cache lock (un seul processus recharge, les autres attendent), le pre-warming (recharger le cache avant expiration), et le randomised TTL (ajouter du jitter).</p>
+
+<h2 id="patterns">9. Cache Patterns</h2>
+
+<h3>Cache Warming</h3>
+<p>Le cache warming consiste a pre-remplir le cache avec les donnees les plus demandees avant qu'elles ne soient effectivement requises. Cela evite les cold starts apres un redemarrage ou un deploiement. Les donnees peuvent etre pre-chargees a partir de logs historiques, d'analyses de trafic, ou d'heuristiques basees sur la popularite.</p>
+
+<h3>Pre-fetching</h3>
+<p>Le pre-fetching consiste a charger dans le cache des donnees qui seront probablement demandees dans un futur proche. Par exemple, un site de e-commerce peut pre-charger les produits associes a un produit en cours de visualisation, ou un reseau social peut pre-charger les posts des amis proches. Le defi est de predire correctement les besoins futurs sans gaspiller de memoire.</p>
+
+<h3>Refresh-Ahead</h3>
+<p>Le refresh-ahead met a jour le cache de maniere asynchrone avant son expiration. Plutot que d'attendre qu'une requete detecte l'expiration, un processus en arriere-plan recharge periodiquement les donnees populaires. Cela garantit que les requetes rencontrent toujours un cache chaud, mais necessite de savoir quelles cles pre-charger.</p>
+
+<div class="diagram">
+  Strategie de Cache - Vue d'ensemble
+
+  Client Request
+       |
+       v
+  +---------+     Cache Hit     +-------+
+  |  Cache  | ----------------> | Reponse|
+  +---------+                   +-------+
+       |
+    Cache Miss
+       |
+       v
+  +---------+     Data Found    +-------+
+  |   BDD   | ----------------> | Cache |
+  +---------+                   +-------+
+       |                             |
+    No Data                     Store Data
+       |                             |
+       v                             v
+  +---------+                  +---------+
+  | Erreur  |                  | Reponse |
+  | 404/500 |                  | 200 OK  |
+  +---------+                  +---------+
+</div>
+
+<h3>Cache-Aside vs Read-Through</h3>
+<p>La difference fondamentale est dans la couche qui gere le cache miss. En cache-aside, l'application est responsable: elle verifie le cache, lit la BDD en cas de miss, et met a jour le cache. En read-through, le cache gere tout: l'application lit uniquement depuis le cache, et le cache se charge de charger les donnees depuis la BDD. Le cache-aside est plus flexible et plus courant car il donne a l'application le controle sur la logique de fallback, tandis que le read-through est plus simple mais moins configurable.</p>
+
+<h2 id="questions">10. Questions d'Entretien</h2>
+
+<div class="qa">
+<div class="qa-q">Q1: Comment gereriez-vous l'invalidation du cache pour un site e-commerce avec des millions de produits?</div>
+<div class="qa-a">
+<p><strong>Reponse:</strong> J'implementerais une strategie multi-couche. (1) <strong>TTL court (5-10 min)</strong> pour les informations de prix et de stock, qui changent frequemment. (2) <strong>TTL long (1 heure)</strong> pour les descriptions et images, qui changent rarement. (3) <strong>Invalidation event-driven</strong> via Kafka pour les mises a jour de stock et de prix: lorsqu'un produit est modifie, un evenement invalide immediatement la cle correspondante dans le cache. (4) <strong>Tag-based invalidation</strong> pour les operations bulk: si un admin modifie 1000 produits d'une categorie, on invalide toutes les entrees avec le tag de cette categorie. (5) <strong>Pre-warming</strong> pour les produits populaires: avant le Black Friday, on pre-charge les produits les plus vues dans le cache. (6) <strong>Graceful degradation:</strong> si Redis tombe, fallback sur la BDD avec rate limiting pour eviter de la surcharger.</p>
+</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q2: Comment concevoir un systeme de cache distribue qui reste coherent lors de mises a jour concurrentes?</div>
+<div class="qa-a">
+<p><strong>Reponse:</strong> La coherence parfaite dans un cache distribue est coûteuse, donc je choisis le niveau de coherence adequat selon les donnees. Pour les donnees critiques (soldes, comptes), j'utilise le write-through avec un TTL tres court (30s). Pour les donnees moins critiques (profils, prefers), le cache-aside avec un TTL de 5-10 minutes. Pour la gestion des mises a jour concurrentes, j'implemente des optimistic locks avec des tokens de version (compare-and-swap). Si deux processus tentent de modifier la meme cle, le second detecte le conflit et recharge la donnee. Pour les lectures, je configure un quorum de lecture: lire depuis 2 des 3 replicas et retourner la version la plus recente. Enfin, j'ajoute un mecanisme de reconciliation periodique qui compare le cache avec la BDD et corrige les incoherences.</p>
+</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q3: Redis ou Memcached pour un systeme de sessions utilisateur a 500 000 connexions simultanees?</div>
+<div class="qa-a">
+<p><strong>Reponse:</strong> Je recommanderais Redis pour plusieurs raisons. (1) <strong>Structures de donnees:</strong> Les sessions sont des objets complexes (preferences, panier, historique) qui se modelent naturellement avec les Hashes Redis. (2) <strong>Persistence:</strong> Avec Redis AOF, les sessions ne sont pas perdues en cas de redemarrage. (3) <strong>Replication:</strong> Redis Cluster permet de distribuer les sessions sur plusieurs noeuds avec sharding automatique. (4) <strong>TTL natif:</strong> Chaque cle peut avoir un TTL individuel, ideal pour les sessions expirees. Pour 500 000 connexions, j'utiliserais Redis Cluster avec 6 noeuds (3 masters, 3 replicas), chaque master gerant environ 160 000 cles. Memcached serait acceptable si les sessions sont simples et la persistence n'est pas requise, mais Redis offre plus de flexibilite pour un surcout de performance negligeable.</p>
+</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q4: Comment eviter le cache stampede lors de l'expiration simultanee de cles populaires?</div>
+<div class="qa-a">
+<p><strong>Reponse:</strong> Le cache stampede est particulierement dangereux car il peut transformer un probleme de cache en probleme de base de donnees. Mes solutions: (1) <strong>Jitter sur le TTL:</strong> Au lieu d'un TTL fixe de 3600s, j'utilise 3600 + random(0, 300)s. Cela etale les expirations sur 5 minutes au lieu d'un point unique. (2) <strong>Lock distribue avec Redis SETNX:</strong> Lorsqu'une cle expire, le premier processus a la detecter acquiert un verrou (TTL de 5s), recharge la donnee, et met a jour le cache. Les autres processus attendent (polling avec backoff exponentiel) ou retournent l'ancienne valeur (stale-while-revalidate). (3) <strong>Pre-refresh asynchrone:</strong> Un cron job examine les 1000 cles les plus populaires et les recharge 30 secondes avant leur expiration. (4) <strong>Circuit breaker:</strong> Si le taux de cache miss depasse un seuil (par exemple 20%), le systeme bascule en mode degraded avec des reponses stale plutot que de surcharger la BDD.</p>
+</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q5: Comment mettre en place un caching de plusieurs niveaux (multi-tier caching) efficacement?</div>
+<div class="qa-a">
+<p><strong>Reponse:</strong> Un systeme de cache multi-niveaux efficace respecte le principe de la hierarchie de memoire: plus proche de l'utilisateur = plus rapide mais plus petit. Ma configuration: (1) <strong>Niveau 1 - Browser Cache:</strong> Cache-Control avec max-age de 1 an pour les assets statiques versionnes, ETags pour la revalidation. (2) <strong>Niveau 2 - CDN Edge:</strong> CloudFront avec TTL de 24h pour les pages et 1 an pour les assets, invalidation via API pour les mises a jour urgentes. (3) <strong>Niveau 3 - Application Cache:</strong> Redis Cluster avec des TTL de 5 min a 1 heure selon la nature des donnees, cache-aside pattern. (4) <strong>Niveau 4 - Database Query Cache:</strong> Le buffer pool de MySQL/PostgreSQL. La coherence entre niveaux est geree par invalidation top-down: une modification au niveau application propage l'invalidation vers le CDN et le browser via des headers no-cache. Le monitoring track les hit rates a chaque niveau pour identifier les oportunites d'optimisation.</p>
+</div>
+</div>
+
+<div class="nav-footer">
+<a href="load-balancing.html" class="nav-btn">&larr; Precedent: Load Balancing</a>
+<a href="url-shortener.html" class="nav-btn">Suivant: URL Shortener &rarr;</a>
+</div>
+
+</main>
+</div>
+</body>
+</html>

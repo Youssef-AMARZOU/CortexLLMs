@@ -1,0 +1,217 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards - CortexLLMs.io</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0d0f;--card:#1a1a2e;--acc:#3b82f6;--acc-l:rgba(59,130,246,.15);--t1:#f1f5f9;--t2:#94a3b8;--bdr:#1e293b;--wh:#fff;--r:12px;--mx:1200px;--success:#10b981;--warning:#f59e0b;--purple:#8b5cf6}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7}
+h1,h2,h3,h4{font-family:'Source Serif 4',serif;font-weight:700;line-height:1.3}
+a{color:var(--acc);text-decoration:none}
+.header{position:sticky;top:0;z-index:100;background:rgba(13,13,15,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:16px 0}
+.nav{max-width:var(--mx);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Source Serif 4',serif;font-size:1.3rem;font-weight:800}.logo span{color:var(--acc)}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{color:var(--t2);font-size:.9rem;font-weight:500;transition:color .2s}.nav-links a:hover,.nav-links a.active{color:var(--acc)}
+.page-hero{text-align:center;padding:60px 24px 40px;background:linear-gradient(180deg,rgba(59,130,246,.08) 0%,transparent 100%)}
+.page-hero h1{font-size:2.8rem;margin-bottom:12px;background:linear-gradient(135deg,var(--acc),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-hero p{color:var(--t2);font-size:1.15rem}
+.stats-bar{display:flex;justify-content:center;gap:32px;padding:20px 24px;max-width:var(--mx);margin:0 auto;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-value{font-size:1.8rem;font-weight:700;font-family:'Source Serif 4',serif;color:var(--wh)}
+.stat-label{font-size:.75rem;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.stat-value.green{color:var(--success)}
+.stat-value.blue{color:var(--acc)}
+.stat-value.yellow{color:var(--warning)}
+.controls{max-width:var(--mx);margin:0 auto;padding:0 24px 20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:center}
+.filter-btn{background:var(--card);border:1px solid var(--bdr);color:var(--t2);padding:8px 20px;border-radius:24px;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .25s;font-family:'Inter',sans-serif}
+.filter-btn:hover{border-color:var(--acc);color:var(--acc)}
+.filter-btn.active{background:var(--acc);border-color:var(--acc);color:var(--wh)}
+.mode-btn,.action-btn{background:var(--card);border:1px solid var(--bdr);color:var(--t2);padding:8px 16px;border-radius:var(--r);font-size:.85rem;font-weight:500;cursor:pointer;transition:all .25s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px}
+.mode-btn:hover,.action-btn:hover{border-color:var(--acc);color:var(--acc)}
+.mode-btn.active{background:var(--acc);border-color:var(--acc);color:var(--wh)}
+.progress-wrap{max-width:var(--mx);margin:0 auto;padding:0 24px 30px}
+.progress-bg{height:8px;background:var(--card);border-radius:4px;overflow:hidden;border:1px solid var(--bdr)}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--success));border-radius:4px;transition:width .5s ease;width:0%}
+.progress-text{display:flex;justify-content:space-between;font-size:.75rem;color:var(--t2);margin-top:6px}
+.study-area{max-width:var(--mx);margin:0 auto;padding:0 24px 60px;min-height:500px}
+.study-mode{display:flex;flex-direction:column;align-items:center;gap:24px}
+.card-nav{display:flex;align-items:center;gap:16px}
+.nav-btn{width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--bdr);color:var(--t2);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s}
+.nav-btn:hover{border-color:var(--acc);color:var(--acc)}
+.nav-btn:disabled{opacity:.3;cursor:default}
+.card-counter{font-size:.9rem;color:var(--t2);min-width:80px;text-align:center}
+.flashcard-container{perspective:1200px;width:100%;max-width:640px;height:360px;cursor:pointer}
+.flashcard{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,.2,.2,1)}
+.flashcard.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;border:1px solid var(--bdr)}
+.card-front{background:linear-gradient(145deg,var(--card),#16213e)}
+.card-back{background:linear-gradient(145deg,#16213e,var(--card));transform:rotateY(180deg)}
+.card-category{position:absolute;top:16px;left:20px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;padding:4px 12px;border-radius:20px}
+.card-front .card-category{background:var(--acc-l);color:var(--acc)}
+.card-back .card-category{background:rgba(16,185,129,.15);color:var(--success)}
+.card-flip-hint{position:absolute;bottom:16px;font-size:.7rem;color:var(--t2);opacity:.5}
+.card-front h3{font-size:1.25rem;color:var(--wh);line-height:1.5}
+.card-back p{font-size:1rem;color:var(--t2);line-height:1.8}
+.rating-btns{display:flex;gap:12px;margin-top:8px}
+.rate-btn{padding:10px 24px;border-radius:var(--r);font-size:.9rem;font-weight:600;border:none;cursor:pointer;transition:all .25s;font-family:'Inter',sans-serif}
+.rate-btn.know{background:rgba(16,185,129,.15);color:var(--success);border:1px solid rgba(16,185,129,.3)}
+.rate-btn.know:hover{background:var(--success);color:var(--wh)}
+.rate-btn.review{background:rgba(245,158,11,.15);color:var(--warning);border:1px solid rgba(245,158,11,.3)}
+.rate-btn.review:hover{background:var(--warning);color:var(--wh)}
+.grid-mode{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.grid-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:24px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.grid-card:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 32px rgba(59,130,246,.1)}
+.grid-card.mastered{border-color:rgba(16,185,129,.4)}
+.grid-card.mastered::after{content:'&#10003;';position:absolute;top:12px;right:14px;color:var(--success);font-weight:700;font-size:1rem}
+.grid-card .grid-cat{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;display:inline-block;padding:3px 10px;border-radius:12px}
+.grid-card .grid-cat.ml{background:var(--acc-l);color:var(--acc)}
+.grid-card .grid-cat.dl{background:rgba(139,92,246,.15);color:var(--purple)}
+.grid-card .grid-cat.sd{background:rgba(16,185,129,.15);color:var(--success)}
+.grid-card .grid-cat.devops{background:rgba(245,158,11,.15);color:var(--warning)}
+.grid-card h4{font-size:.95rem;color:var(--wh);margin-bottom:8px;line-height:1.4}
+.grid-card p{font-size:.8rem;color:var(--t2);line-height:1.6;display:none}
+.grid-card.show-answer p{display:block;margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr)}
+.keyboard-hints{max-width:var(--mx);margin:0 auto;padding:0 24px 40px;text-align:center}
+.keyboard-hints p{font-size:.75rem;color:var(--t2);opacity:.6}
+kbd{background:var(--card);border:1px solid var(--bdr);border-radius:4px;padding:2px 8px;font-size:.7rem;font-family:'Inter',sans-serif;color:var(--t2)}
+.empty-state{text-align:center;padding:80px 24px;color:var(--t2)}
+.empty-state h3{font-size:1.3rem;color:var(--wh);margin-bottom:8px}
+@media(max-width:768px){.page-hero h1{font-size:2rem}.flashcard-container{height:320px}.card-face{padding:24px}.card-front h3{font-size:1.05rem}.card-back p{font-size:.9rem}.grid-mode{grid-template-columns:1fr}.rating-btns{flex-direction:column;width:100%}.rate-btn{width:100%}}
+</style>
+</head>
+<body>
+<header class="header"><nav class="nav"><a href="/" class="logo">CortexLLMs<span>.io</span></a><div class="nav-links"><a href="/">Accueil</a><a href="/pages/ai-engineering.html">Ingenierie IA</a><a href="/pages/devops.html">DevOps</a><a href="/pages/system-design.html">System Design</a><a href="/pages/dsa.html">DSA</a><a href="/pages/entreprises.html">Entreprises</a></div></nav></header>
+<div class="page-hero"><h1>Flashcards</h1><p>Revisez vos connaissances</p></div>
+<div class="stats-bar">
+<div class="stat"><div class="stat-value blue" id="stat-total">0</div><div class="stat-label">Total</div></div>
+<div class="stat"><div class="stat-value" id="stat-seen">0</div><div class="stat-label">Vues</div></div>
+<div class="stat"><div class="stat-value green" id="stat-mastered">0</div><div class="stat-label">Maitrisees</div></div>
+<div class="stat"><div class="stat-value yellow" id="stat-remaining">0</div><div class="stat-label">A revoir</div></div>
+</div>
+<div class="controls">
+<button class="filter-btn active" data-cat="all">Toutes</button>
+<button class="filter-btn" data-cat="ml">Machine Learning</button>
+<button class="filter-btn" data-cat="dl">Deep Learning</button>
+<button class="filter-btn" data-cat="sd">System Design</button>
+<button class="filter-btn" data-cat="devops">DevOps</button>
+<span style="width:1px;height:24px;background:var(--bdr)"></span>
+<button class="mode-btn active" id="btn-study" onclick="setMode('study')">Etude</button>
+<button class="mode-btn" id="btn-grid" onclick="setMode('grid')">Grille</button>
+<button class="action-btn" onclick="shuffleCards()">Melanger</button>
+<button class="action-btn" onclick="resetProgress()">Reinitialiser</button>
+</div>
+<div class="progress-wrap"><div class="progress-bg"><div class="progress-fill" id="progress-fill"></div></div><div class="progress-text"><span id="progress-left">0 maitrisees</span><span id="progress-right">0%</span></div></div>
+<div class="study-area" id="study-area"></div>
+<div class="keyboard-hints"><p><kbd>Espace</kbd> Retourner &nbsp; <kbd>&larr;</kbd> <kbd>&rarr;</kbd> Navigation &nbsp; <kbd>J</kbd> Je sais &nbsp; <kbd>K</kbd> A revoir</p></div>
+<footer style="border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:var(--t2);font-size:.85rem"><p>CortexLLMs.io &copy; 2026 &mdash; Plateforme de preparation aux entretiens IA</p></footer>
+<script>
+const CARDS=[
+{id:1,cat:"ml",front:"Qu'est-ce que le bias-variance tradeoff?",back:"Le bias est l'erreur d'un modele trop simpliste (sous-apprentissage). La variance est la sensibilite du modele aux donnees d'entrainement (surapprentissage). L'erreur totale = bias² + variance + bruit irreductible. Il faut trouver le compromis optimal."},
+{id:2,cat:"ml",front:"Quelle est la difference entre L1 et L2?",back:"L1 (Lasso) ajoute la somme des valeurs absolues des poids comme penalty. Elle peut annuler des poids completement (selection de features). L2 (Ridge) ajoute la somme des carres des poids. Elle resserre les poids vers zero sans les annuler."},
+{id:3,cat:"ml",front:"Qu'est-ce qu'une ROC curve?",back:"Courbe du True Positive Rate vs False Positive Rate pour differentes valeurs de seuil de classification. L'AUC mesure l'aire sous la courbe : 1.0 = parfait, 0.5 = classificateur aleatoire. Utile pour comparer les modeles de classification."},
+{id:4,cat:"ml",front:"Qu'est-ce que le gradient boosting?",back:"Technique d'ensemble qui combine sequentiellement des modeles faibles (arbres de decision). Chaque nouveau modele corrige les erreurs du precedent en minimisant une fonction de perte via la descente de gradient. Exemples : XGBoost, LightGBM, CatBoost."},
+{id:5,cat:"ml",front:"Qu'est-ce que le learning rate?",back:"Hyperparametre qui controle la taille des pas lors de la mise a jour des poids par gradient descent. Trop grand : le modele ne converge pas. Trop petit : convergence lente et risque de minima locaux. Souvent appele alpha ou eta."},
+{id:6,cat:"ml",front:"Comment detecter le surapprentissage?",back:"Le surapprentissage se manifeste par une performance elevee sur les donnees d'entrainement mais faible sur les donnees de validation. Solutions : regularisation (L1/L2), dropout, early stopping, data augmentation, cross-validation, reduire la complexite du modele."},
+{id:7,cat:"ml",front:"Qu'est-ce que la cross-validation?",back:"Technique de validation qui divise les donnees en k folds. Entraîne sur k-1 folds et valide sur le fold restant, k fois. Fournit une estimation plus robuste de la performance que train/test split simple. K=5 ou K=10 sont courants."},
+{id:8,cat:"ml",front:"Random Forest vs Gradient Boosting?",back:"Random Forest : arbres entraines en parallele, reduit la variance par bagging, robuste au surapprentissage. Gradient Boosting : arbres entraines sequentiellement, reduit le biais par boosting, souvent plus performant mais plus sensible aux hyperparametres."},
+{id:9,cat:"ml",front:"Qu'est-ce que la precision et le rappel?",back:"Precision = VP / (VP + FP) : parmi les positifs predits, combien sont reels. Rappel = VP / (VP + FN) : parmi les reels positifs, combien sont detectes. F1 = 2 * (precision * rappel) / (precision + rappel) : moyenne harmonique."},
+{id:10,cat:"ml",front:"Qu'est-ce que le feature scaling?",back:"Mise a l'echelle des features pour qu'elles aient des gammes comparables. MinMax : met entre 0 et 1. StandardScaler : moyenne 0, ecart-type 1. Indispensable pour les algorithmes basees sur les distances (KNN, SVM) et la descente de gradient."},
+{id:11,cat:"ml",front:"KNN : comment ca marche?",back:"K-Nearest Neighbors : a l'inférence, trouve les K plus proches voisins dans les donnees d'entrainement et predit par vote majoritaire (classification) ou moyenne (regression). Pas d'entrainement explicite. Sensible a la dimensionnalite et au choix de K."},
+{id:12,cat:"ml",front:"Qu'est-ce que le SVM?",back:"Support Vector Machine : algorithme qui trouve l'hyperplan de separation maximale entre les classes. Le margin maximise la distance aux points les plus proches (support vectors). Le noyau (RBF, polynomial) permet de traiter les problemes non lineaires."},
+{id:13,cat:"ml",front:"Pourquoi utiliser la regularisation?",back:"La regularisation previent le surapprentissage en penalisant la complexite du modele. L1 (Lasso) pour la selection de features. L2 (Ridge) pour stabiliser les coefficients. Elastic Net combine les deux. Le parametre lambda controle l'intensite."},
+{id:14,cat:"ml",front:"Qu'est-ce que le bagging vs boosting?",back:"Bagging (Bootstrap Aggregating) : entraine plusieurs modeles en parallele sur des echantillons bootstrap, puis agrège par vote/moyenne. Boosting : entraine des modeles sequentiellement, chaque corrections les erreurs du precedent. Bagging réduit variance, boosting réduit biais."},
+{id:15,cat:"ml",front:"Comment gerer les donnees desequilibrees?",back:"Solutions : 1) Sur-echantillonnage (SMOTE), 2) Sous-echantillonnage, 3) Poids de classe dans la fonction de perte, 4) Metriques adaptees (F1, AUC-ROC), 5) Changement de seuil de decision, 6) Ensemble methods avec sampling integre."},
+{id:16,cat:"dl",front:"Qu'est-ce que le vanishing gradient?",back:"Les gradients deviennent tres petits lors de la retropropagation dans les premieres couches d'un reseau profond. Resultat : les poids des premieres couches ne sont plus mis a jour. Causee par les fonctions d'activation sigmoid/tanh dont la derivee est < 1."},
+{id:17,cat:"dl",front:"Pourquoi ReLU plutot que Sigmoid?",back:"ReLU : f(x) = max(0,x). Avantages : 1) Evite le vanishing gradient (derivee = 1 pour x > 0), 2) Calcul tres rapide, 3) Sparse activation (beaucoup de zeros). Inconvenient : 'dead neurons' si x < 0 en permanence. Leaky ReLU corrige ce probleme."},
+{id:18,cat:"dl",front:"Qu'est-ce que Batch Normalization?",back:"Normalise les activations par batch (moyenne 0, variance 1) puis applique une transformation apprise. Benefices : 1) Stabilise l'entrainement, 2) Permet des learning rates plus eleves, 3) Reduce la sensibilite a l'initialisation, 4) Effet de regularisation leger."},
+{id:19,cat:"dl",front:"Qu'est-ce que le Dropout?",back:"Technique de regularisation : pendant l'entrainement, desactive aleatoirement des neurones avec une probabilite p (souvent 0.2-0.5). Force le reseau a ne pas dependre de neurones specifiques. A l'inférence, tous les neurones sont actifs (scaled par 1-p)."},
+{id:20,cat:"dl",front:"CNN : comment ca marche?",back:"Reseau de neurones convolutif : 1) Couches de convolution extraient des features (contours, textures) avec des filtres partages. 2) Pooling reduit la dimensionnalite. 3) Couches denses classifient. Partage de poids = moins de parametres, invariance par translation."},
+{id:21,cat:"dl",front:"Qu'est-ce que le transfer learning?",back:"Reutiliser un modele pre-entraine sur une tache similaire. On gele les premieres couches (features generiques) et on entraine les dernieres couches sur les nouvelles donnees. Exemples : ImageNet pour la vision, BERT/GPT pour le NLP. Gain de temps et de donnees."},
+{id:22,cat:"dl",front:"RNN vs LSTM vs Transformer?",back:"RNN : traite les sequences element par element, mais oublie le contexte long. LSTM : ajoute des portes (input, forget, output) pour memoriser le contexte long. Transformer : attention self-attention, parallele, capture les dependances longues, base de GPT/BERT."},
+{id:23,cat:"dl",front:"Qu'est-ce que l'attention?",back:"Mecanisme qui permet au modele de 'se concentrer' sur les parties pertinentes de l'input. L'attention calcule des poids de pertinence entre chaque paire de tokens. Self-attention : chaque token regarde tous les autres. Base des transformers et des modeles modernes."},
+{id:24,cat:"dl",front:"Qu'est-ce que le learning rate scheduling?",back:"Strategie qui ajuste le learning rate pendant l'entrainement. Warmup : increase progressive au debut. Decay : diminution progressive. Cosine annealing : variation sinusoideale. Cyclical : oscillation entre min et max. Ameliore la convergence et les performances finales."},
+{id:25,cat:"dl",front:"GAN : comment ca marche?",back:"Generative Adversarial Network : deux reseaux s'affrontent. Le Generateur cree de fausses donnees, le Discriminateur essaye de les distinguer des vraies. Entrainement adversarial : le generateur s'ameliore jusqu'a ce que le discriminant ne puisse plus distinguer."},
+{id:26,cat:"sd",front:"Qu'est-ce que le CAP theorem?",back:"Un systeme distribue ne peut garantir que 2 des 3 proprietes : Consistency (tous les noeuds voient les memes donnees), Availability (toute requete recoit une reponse), Partition tolerance (le systeme fonctionne malgre les coupures reseau). En pratique, on choisit CP ou AP."},
+{id:27,cat:"sd",front:"SQL vs NoSQL quand?",back:"SQL : donnees structurees, schema fixe, transactions ACID, relations complexes (banques, ERP). NoSQL : schema flexible, scalabilite horizontale, donnees semi/non structurees. Document (MongoDB), Key-Value (Redis), Column (Cassandra), Graph (Neo4j)."},
+{id:28,cat:"sd",front:"Qu'est-ce que le consistent hashing?",back:"Technique de distribution qui minimise les re-mappings quand des noeuds sont ajoutes ou retires. Les noeuds et cles sont mappes sur un anneau virtuel. Seule la cle entre le nouveau et ancien noeud est reassignee. Utilise par DynamoDB, Cassandra."},
+{id:29,cat:"sd",front:"Qu'est-ce que la monolithe vs microservices?",back:"Monolithe : application unique, deploiement unitaire, simple au debut mais difficile a scaler. Microservices : application decomposee en services independants, deploiement separe, scalabilite par service. Complexite operationnelle accrue (reseau, donnees, observabilite)."},
+{id:30,cat:"sd",front:"Comment concevoir un systeme de rate limiting?",back:"Algorithmes : 1) Token Bucket : tokens ajoutes periodiquement, chaque requete consomme un token. 2) Sliding Window : compte les requetes sur une fenetre glissante. 3) Fixed Window : compte par periode fixe. 4) Leaky Bucket : file d'attente avec debit fixe. Implementation : Redis, nginx."},
+{id:31,cat:"sd",front:"Qu'est-ce que le CQRS?",back:"Command Query Responsibility Segregation : separe les operations de lecture (Query) et d'ecriture (Command) en modeles distincts. Les ecritures vont vers un optimise pour l'ecriture, les lectures vers un optimise pour la lecture. Souvent combine avec Event Sourcing."},
+{id:32,cat:"sd",front:"Qu'est-ce que le circuit breaker pattern?",back:"Patron de design qui empeche les appels en cascade en cas d'echec. Etats : Ferme (tout va bien) -> Ouvert (echecs detectes, appels bloques) -> Semi-ouvert (test progressif). Bibliothekes : Hystrix (Netflix), Resilience4j."},
+{id:33,cat:"sd",front:"CDN : comment ca marche?",back:"Content Delivery Network : reseau de serveurs distribues geographiquement. Les contenus statiques (images, CSS, JS) sont caches proche des utilisateurs. Reduction de la latence, mise en cache, protection contre les DDoS. Exemples : Cloudflare, AWS CloudFront, Akamai."},
+{id:34,cat:"sd",front:"Qu'est-ce que le sharding?",back:"Partitionnement horizontal des donnees sur plusieurs serveurs. Chaque shard contient un sous-ensemble des donnees. Permet de scaler horizontalement. Defis : distribution des donnees, transactions distribuees, re-sharding. Solutions : hash-based, range-based, directory-based."},
+{id:35,cat:"sd",front:"SQL vs NoSQL : transactions?",back:"SQL : transactions ACID completes (Atomicite, Consistance, Isolation, Durabilite). NoSQL : modeles BASE (Basically Available, Soft state, Eventual consistency). Les NoSQL modernes offrent des transactions (MongoDB 4.0+, Cosmos DB)."},
+{id:36,cat:"sd",front:"Comment assurer la haute disponibilite?",back:"Strategie eliminate de points de defaillance unique : 1) Redondance (replicas), 2) Load balancing, 3) Failover automatique, 4) Health checks, 5) Multi-AZ/region, 6) DNS failover, 7) Circuit breakers. Objectif : 99.99% (4 min 32s d'arret/an)."},
+{id:37,cat:"sd",front:"Qu'est-ce que l'Event Sourcing?",back:"Pattern qui stocke tous les changements d'etat comme une sequence d'evenements. L'etat courant est reconstruit en rejouant les evenements. Avantages : audit trail complet, undo/redo, historique. Inconvenients : complexite, eventual consistency."},
+{id:38,cat:"sd",front:"Load balancer : L4 vs L7?",back:"L4 (Transport) : routage basé sur IP/port, plus rapide, pas d'inspection du contenu. L7 (Application) : routage basé sur le contenu HTTP (URL, headers, cookies), plus intelligent, SSL termination, caching. Exemples : L4 = AWS NLB, L7 = AWS ALB, nginx."},
+{id:39,cat:"sd",front:"Qu'est-ce que le PACELC theorem?",back:"Extension du CAP : en cas de Partition (P), choisissez entre Availability (A) et Consistency (C). Sinon (E = Else), choisissez entre Latency (L) et Consistency (C). Exemple : DynamoDB = PA/EL, HBase = PC/EC, Cassandra = PA/EL."},
+{id:40,cat:"sd",front:"Comment gerer la coherence des donnees distribuees?",back:"1) Two-Phase Commit (2PC) : atomique mais bloquant. 2) Saga pattern : transactions compensatoires. 3) Eventual consistency + CRDTs. 4) Vector clocks pour l'ordre. 5) Consensus (Raft, Paxos) pour l'ordonnancement. Choix selon les besoins de consistency."},
+{id:41,cat:"devops",front:"Docker vs VM?",back:"Les containers partagent le noyau OS (plus legers, demarrage en secondes). Les VMs ont leur propre OS (plus isoles, demarrage en minutes). Docker : portabilite, isolation par namespaces/cgroups, image legere. VM : securite renforcee, compatible multi-OS."},
+{id:42,cat:"devops",front:"Qu'est-ce que CI/CD?",back:"CI (Continuous Integration) : merge automatique du code + tests automatises a chaque commit. CD (Continuous Delivery) : preparation automatique du release. CD (Continuous Deployment) : deploiement automatique en production. Outils : Jenkins, GitHub Actions, GitLab CI."},
+{id:43,cat:"devops",front:"Kubernetes pods?",back:"Unite de deploiement minimale dans K8s. Contient 1+ containers partageant le meme reseau (meme IP) et stockage. Containers d'un pod commencent et s'arretent ensemble. Patterns : sidecar (logging, proxy), init containers, ambassador."},
+{id:44,cat:"devops",front:"Qu'est-ce que IaC?",back:"Infrastructure as Code : gestion de l'infrastructure par du code versionne au lieu de configurations manuelles. Avantages : reproductibilite, versioning, peer review, automatisation. Outils : Terraform (multi-cloud), CloudFormation (AWS), Pulumi (programmatique)."},
+{id:45,cat:"devops",front:"Qu'est-ce que le blue-green deployment?",back:"Strategie de deploiement avec deux environnements identiques. Blue = production actuelle. Green = nouvelle version. Test de la version green puis switch instantane du traffic. Rollback rapide en revenant a blue. Necessite le double de ressources."},
+{id:46,cat:"devops",front:"Canary vs Blue-Green vs Rolling?",back:"Canary : deploie a un sous-ensemble d'utilisateurs d'abord. Blue-Green : deux environnements, switch instantane. Rolling : met a jour les instances progressivement. Canary = plus sur, Blue-Green = rollback instantane, Rolling = economique en ressources."},
+{id:47,cat:"devops",front:"Qu'est-ce que la observabilite?",back:"Capacite a comprendre l'etat interne d'un systeme par ses sorties externes. Les 3 piliers : 1) Logs (evenements), 2) Metriques (mesures numeriques), 3) Traces (parcours d'une requete). Outils : ELK, Prometheus/Grafana, Jaeger, Datadog."},
+{id:48,cat:"devops",front:"Prometheus vs Grafana?",back:"Prometheus : collecte et stocke les metriques (pull-based), langage de requete PromQL, alerting. Grafana : visualisation et tableaux de bord, connecte a multiples sources de donnees (Prometheus, InfluxDB, etc.). Complementaires : Prometheus collecte, Grafana affiche."},
+{id:49,cat:"devops",front:"Qu'est-ce que le GitOps?",back:"Approche DevOps ou Git est la source unique de verite pour l'infrastructure et les deploiements. Les changements sont faits via des pull requests, et un agent (ArgoCD, Flux) synchronise automatiquement l'etat desire avec l'etat reel du cluster."},
+{id:50,cat:"devops",front:"Helm : qu'est-ce que c'est?",back:"Gestionnaire de packages pour Kubernetes. Un 'chart' est un ensemble de templates Helm pour deployer une application. Permet la configuration via valeurs, le versioning des releases, et le rollbacks. Comparable a apt/yum pour K8s."},
+{id:51,cat:"devops",front:"Qu'est-ce que le liveness vs readiness probe?",back:"Liveness probe : verifie si le conteneur est en vie. Si echec, K8s redemarre le conteneur. Readiness probe : verifie si le conteneur est pret a recevoir du traffic. Si echec, retire du service load balancer. Startup probe pour les applications a demarrage lent."},
+{id:52,cat:"ml",front:"Qu'est-ce que la PCA?",back:"Principal Component Analysis : technique de reduction de dimensionnalite qui projette les donnees sur les directions de variance maximale. Utile pour la visualisation, le bruit, la multicolinéarite. Garde k composants expliquant X% de la variance totale."},
+{id:53,cat:"dl",front:"Qu'est-ce que le scheduler?",back:"Algorithme qui decide dans quel ordre les taches sont executees dans un reseau de neurones. Scheduler learning rate : cosine, linear warmup, polynomial decay. Importance : impact direct sur la vitesse de convergence et la qualite du modele final."},
+{id:54,cat:"sd",front:"Qu'est-ce que le geo-replication?",back:"Copie des donnees dans plusieurs regions geographiques pour reduire la latence et ameliorer la disponibilite. Strategies : synchrone (forte consistency, latence elevee) vs asynchrone (eventual consistency, latence faible). Exemples : CockroachDB, Cassandra, Cosmos DB."},
+{id:55,cat:"devops",front:"Qu'est-ce que le service mesh?",back:"Couche d'infrastructure dediee a la communication entre microservices. Fournit : mTLS, load balancing, observabilite, rate limiting, retry. Sidecar proxies (Envoy) interceptent le traffic. Outils : Istio, Linkerd, Consul Connect."}
+];
+const CAT_NAMES={ml:"Machine Learning",dl:"Deep Learning",sd:"System Design",devops:"DevOps"};
+let currentFilter="all",currentMode="study",currentIndex=0,filteredCards=[...CARDS],isFlipped=false;
+function getProgress(){try{return JSON.parse(localStorage.getItem("fc_progress")||"{}")}catch(e){return{}}}
+function saveProgress(p){localStorage.setItem("fc_progress",JSON.stringify(p))}
+function updateStats(){const p=getProgress(),f=filteredCards;const mastered=f.filter(c=>p[c.id]==="master").length;const seen=f.filter(c=>p[c.id]).length;document.getElementById("stat-total").textContent=f.length;document.getElementById("stat-seen").textContent=seen;document.getElementById("stat-mastered").textContent=mastered;document.getElementById("stat-remaining").textContent=f.length-mastered;const pct=f.length?Math.round(mastered/f.length*100):0;document.getElementById("progress-fill").style.width=pct+"%";document.getElementById("progress-left").textContent=mastered+" maitrisees";document.getElementById("progress-right").textContent=pct+"%"}
+function setFilter(cat){currentFilter=cat;currentIndex=0;isFlipped=false;filteredCards=cat==="all"?[...CARDS]:CARDS.filter(c=>c.cat===cat);shuffleArray(filteredCards);document.querySelectorAll(".filter-btn").forEach(b=>b.classList.toggle("active",b.dataset.cat===cat));render()}
+function setMode(m){currentMode=m;isFlipped=false;document.getElementById("btn-study").classList.toggle("active",m==="study");document.getElementById("btn-grid").classList.toggle("active",m==="grid");render()}
+function shuffleArray(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}}
+function shuffleCards(){shuffleArray(filteredCards);currentIndex=0;isFlipped=false;render()}
+function resetProgress(){if(confirm("Reinitialiser toute la progression?")){localStorage.removeItem("fc_progress");render();updateStats()}}
+function flipCard(){isFlipped=!isFlipped;const fc=document.querySelector(".flashcard");if(fc)fc.classList.toggle("flipped",isFlipped)}
+function nextCard(){if(currentIndex<filteredCards.length-1){currentIndex++;isFlipped=false;render()}}
+function prevCard(){if(currentIndex>0){currentIndex--;isFlipped=false;render()}}
+function markCard(id,type){const p=getProgress();p[id]=type;saveProgress(p);updateStats();if(currentMode==="study"&&currentIndex<filteredCards.length-1){currentIndex++;isFlipped=false}render()}
+function renderStudy(){const c=filteredCards[currentIndex];if(!c){document.getElementById("study-area").innerHTML='<div class="empty-state"><h3>Aucune carte</h3><p>Changez de categorie ou reinitialisez la progression.</p></div>';return}const p=getProgress();const status=p[c.id]||"";const statusBadge=status==="master"?'<span style="position:absolute;top:16px;right:20px;font-size:.7rem;padding:4px 12px;border-radius:20px;background:rgba(16,185,129,.15);color:var(--success)">Maitrisee</span>':status==="review"?'<span style="position:absolute;top:16px;right:20px;font-size:.7rem;padding:4px 12px;border-radius:20px;background:rgba(245,158,11,.15);color:var(--warning)">A revoir</span>':'';document.getElementById("study-area").innerHTML=
+<div class="study-mode">
+<div class="card-nav">
+<button class="nav-btn" onclick="prevCard()" >&larr;</button>
+<div class="card-counter"> / </div>
+<button class="nav-btn" onclick="nextCard()" >&rarr;</button>
+</div>
+<div class="flashcard-container" onclick="flipCard()">
+<div class="flashcard" id="the-card">
+<div class="card-face card-front">
+<span class="card-category"></span>
+
+<h3></h3>
+<span class="card-flip-hint">Cliquez pour retourner</span>
+</div>
+<div class="card-face card-back">
+<span class="card-category">Reponse</span>
+<p></p>
+<span class="card-flip-hint">Cliquez pour retourner</span>
+</div>
+</div>
+</div>
+<div class="rating-btns">
+<button class="rate-btn know" onclick="event.stopPropagation();markCard(,'master')">Je sais</button>
+<button class="rate-btn review" onclick="event.stopPropagation();markCard(,'review')">A revoir</button>
+</div>
+</div>;setTimeout(()=>{const fc=document.getElementById("the-card");if(fc&&isFlipped)fc.classList.add("flipped")},10)}
+function renderGrid(){const p=getProgress();let html='<div class="grid-mode">';filteredCards.forEach(c=>{const status=p[c.id]||"";const masteredClass=status==="master"?" mastered":"";html+=<div class="grid-card" onclick="this.classList.toggle('show-answer')"><span class="grid-cat "></span><h4></h4><p></p></div>});html+="</div>";document.getElementById("study-area").innerHTML=html}
+function render(){if(currentMode==="study")renderStudy();else renderGrid();updateStats()}
+document.querySelectorAll(".filter-btn").forEach(b=>b.addEventListener("click",()=>setFilter(b.dataset.cat)));
+document.addEventListener("keydown",e=>{if(e.target.tagName==="INPUT")return;switch(e.code){case"Space":e.preventDefault();flipCard();break;case"ArrowLeft":prevCard();break;case"ArrowRight":nextCard();break;case"KeyJ":if(filteredCards[currentIndex])markCard(filteredCards[currentIndex].id,"master");break;case"KeyK":if(filteredCards[currentIndex])markCard(filteredCards[currentIndex].id,"review");break}});
+render();
+</script>
+</body>
+</html>

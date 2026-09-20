@@ -1,0 +1,419 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker Fundamentals - CortexLLMs.io</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0d0f;--card:#1a1a2e;--acc:#3b82f6;--acc-l:rgba(59,130,246,.15);--t1:#f1f5f9;--t2:#94a3b8;--bdr:#1e293b;--wh:#fff;--r:12px;--mx:1200px;--success:#10b981;--warning:#f59e0b}
+body{font-family:Inter,sans-serif;background:var(--bg);color:var(--t1);line-height:1.7}
+h1,h2,h3,h4{font-family:Source Serif 4,serif;font-weight:700;line-height:1.3}
+a{color:var(--acc);text-decoration:none}
+.header{position:sticky;top:0;z-index:100;background:rgba(13,13,15,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:16px 0}
+.nav{max-width:var(--mx);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:Source Serif 4,serif;font-size:1.3rem;font-weight:800}.logo span{color:var(--acc)}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{color:var(--t2);font-size:.9rem;font-weight:500;transition:color .2s}.nav-links a:hover,.nav-links a.active{color:var(--acc)}
+.container{max-width:var(--mx);margin:0 auto;padding:24px;display:grid;grid-template-columns:1fr 280px;gap:40px}
+.breadcrumb{color:var(--t2);font-size:.85rem;margin-bottom:8px}.breadcrumb a{color:var(--t2)}.breadcrumb a:hover{color:var(--acc)}
+.lesson-meta{display:flex;gap:16px;align-items:center;margin:16px 0 24px;flex-wrap:wrap}
+.badge{padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600}
+.badge-easy{background:rgba(16,185,129,.15);color:var(--success)}
+.badge-medium{background:rgba(245,158,11,.15);color:var(--warning)}
+.badge-hard{background:rgba(239,68,68,.15);color:#ef4444}
+.meta-item{color:var(--t2);font-size:.85rem}
+.content h2{margin:40px 0 16px;font-size:1.5rem;color:var(--wh);padding-top:20px;border-top:1px solid var(--bdr)}
+.content h3{margin:24px 0 12px;font-size:1.2rem;color:var(--wh)}
+.content p{margin-bottom:16px;color:var(--t2)}
+.content ul,.content ol{margin:12px 0 16px 24px;color:var(--t2)}
+.content li{margin-bottom:8px}
+pre{background:#111;border:1px solid var(--bdr);border-radius:var(--r);padding:20px;overflow-x:auto;margin:16px 0;font-size:.85rem;line-height:1.5}
+code{font-family:JetBrains Mono,monospace;color:#a5f3fc}
+.callout{border-left:4px solid var(--acc);background:var(--acc-l);border-radius:0 var(--r) var(--r) 0;padding:16px 20px;margin:20px 0}
+.callout.warning{border-color:var(--warning);background:rgba(245,158,11,.1)}
+.callout strong{color:var(--wh)}
+.formula{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:20px;margin:16px 0;text-align:center;font-size:1.1rem;font-family:Source Serif 4,serif;color:var(--wh)}
+.qa{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:20px;margin:16px 0}
+.qa h4{color:var(--acc);margin-bottom:8px;font-size:1rem}
+.qa p{margin:0}
+.sidebar{position:sticky;top:80px;align-self:start}
+.sidebar-box{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.sidebar-box h4{font-size:.9rem;margin-bottom:12px;color:var(--wh)}
+.toc a{display:block;padding:6px 0;color:var(--t2);font-size:.85rem;border-left:2px solid transparent;padding-left:12px;transition:all .2s}
+.toc a:hover,.toc a.active{color:var(--acc);border-color:var(--acc)}
+.nav-lesson{display:flex;justify-content:space-between;margin:40px 0;gap:16px}
+.nav-lesson a{flex:1;background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:16px 20px;transition:all .2s}
+.nav-lesson a:hover{border-color:var(--acc)}
+.nav-lesson a span{display:block;color:var(--t2);font-size:.8rem;margin-bottom:4px}
+.quiz-cta{background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:var(--r);padding:32px;text-align:center;margin:40px 0}
+.quiz-cta h3{color:var(--wh);margin-bottom:8px}
+.quiz-cta p{color:rgba(255,255,255,.8);margin-bottom:16px}
+.quiz-cta a{background:var(--wh);color:#3b82f6;padding:10px 24px;border-radius:8px;font-weight:600;display:inline-block}
+@media(max-width:900px){.container{grid-template-columns:1fr}.sidebar{display:none}}
+</style>
+</head>
+<body>
+<header class="header"><nav class="nav"><a href="/" class="logo">CortexLLMs<span>.io</span></a><div class="nav-links"><a href="/">Accueil</a><a href="/pages/ai-engineering.html">Ingenierie IA</a><a href="/pages/devops.html" class="active">DevOps</a><a href="/pages/system-design.html">System Design</a><a href="/pages/dsa.html">DSA</a><a href="/pages/entreprises.html">Entreprises</a></div></nav></header>
+<div class="container">
+<main>
+<div class="breadcrumb"><a href="/">Accueil</a> / <a href="/pages/devops.html">DevOps</a> / Docker Fundamentals</div>
+<h1>Docker Fundamentals</h1>
+<div class="lesson-meta">
+<span class="meta-item">Module 1 : Conteneurs</span>
+<span class="meta-item">Lecon 1/10</span>
+<span class="meta-item">35 min</span>
+<span class="badge badge-easy">Facile</span>
+</div>
+<div class="content">
+<h2 id="containerisation">Containerisation vs Virtualisation</h2>
+<p>La containerisation et la virtualisation sont deux approches differentes pour isoler des applications et leurs dependances. Comprendre leurs differences fondamentales est essentiel pour architecturer correctement son infrastructure.</p>
+
+<h3>Virtualisation classique</h3>
+<p>La virtualisation classique repose sur un <strong>hyperviseur</strong> (Type 1 comme VMware ESXi, ou Type 2 comme VirtualBox) qui cree des machines virtuelles completes. Chaque VM possede son propre systeme d exploitation (OS) complet, son noyau, ses pilotes et ses bibliothèques. Cela permet une isolation totale mais entraine une surcharge (overhead) importante en termes de ressources (RAM, CPU, stockage) et de temps de demarrage (plusieurs minutes).</p>
+<ul>
+<li><strong>Avantages</strong> : isolation complete, compatibilite avec n importe quel OS, securite renforcee grace a l isolation du noyau.</li>
+<li><strong>Inconvenients</strong> : consommation de ressources elevee (chaque VM tourne un OS complet), demarrage lent (boot complet requis), images volumineuses (plusieurs Go).</li>
+</ul>
+
+<h3>Containerisation avec Docker</h3>
+<p>Docker utilise la <strong>virtualisation au niveau du noyau</strong> (OS-level virtualisation). Les conteneurs partagent le noyau de l hote mais s execute dans des espaces de noms (namespaces) isoles. Chaque conteneur n inclut que l application, ses dependances et ses bibliothèques, sans OS complet. C est pourquoi les conteneurs demarrent en quelques secondes et sont extremement legers (quelques Mo).</p>
+<ul>
+<li><strong>Avantages</strong> : demarrage ultra-rapide (millisecondes a secondes), faible overhead ressources, images legere (Mo vs Go), portabilite excellente, integration native avec CI/CD.</li>
+<li><strong>Inconvenients</strong> : partage du noyau (moins isole qu une VM), tous les conteneurs tournent sur le meme OS (Linux principalement), la securite depend de la configuration du noyau.</li>
+</ul>
+
+<div class="callout">
+<strong>En resume :</strong> Les VM offrent une isolation complete mais sont lourdes. Les conteneurs sont legers et rapides mais partagent le noyau. En pratique, on utilise souvent les deux ensemble : les conteneurs dans des VMs pour combiner la portabilite de Docker avec l isolation de la virtualisation. Kubernetes tourne typiquement sur des VMs (AWS EC2, GCP Compute Engine) qui hebergent des conteneurs.
+</div>
+<h2 id="dockerfile">Dockerfile : Construire ses images</h2>
+<p>Le Dockerfile est un fichier texte qui contient les instructions pour construire une image Docker. Chaque instruction cree un <strong>calque (layer)</strong> dans l image. Les instructions sont executees sequentiellement et chaque calque est mis en cache pour accelerer les reconstructions futures.</p>
+
+<h3>Instructions essentielles</h3>
+<pre><code>FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+EXPOSE 8000
+CMD ["python", "main.py"]</code></pre>
+
+<p><strong>FROM</strong> definit l image de base. Toujours commencer par une image officielle et minimale. Les variantes slim ou alpine sont plus petites (quelques dizaines de Mo vs plusieurs centaines). <strong>WORKDIR</strong> definit le repertoire de travail. <strong>COPY</strong> copie les fichiers de l hote vers le conteneur. <strong>RUN</strong> execute une commande pendant la construction (installation de paquets, compilation). <strong>EXPOSE</strong> documente les ports utilises (ne les ouvre pas reels). <strong>CMD</strong> definit la commande par defaut au demarrage du conteneur.</p>
+
+<h3>ENTRYPOINT vs CMD</h3>
+<p><strong>CMD</strong> peut etre ecrase par l utilisateur lors du demarrage : docker run mon-image autremode. <strong>ENTRYPOINT</strong> configure le conteneur comme un executable. Les arguments passes a docker run sont ajoutes a l entree. On utilise souvent les deux ensemble : ENTRYPOINT definit l executble, CMD fournit les arguments par defaut.</p>
+<pre><code>ENTRYPOINT ["python"]
+CMD ["main.py"]</code></pre>
+<p>Cette configuration permet de lancer docker run mon-image pour executer python main.py, ou docker run mon-image test.py pour executer python test.py.</p>
+
+<h3>Multi-stage builds</h3>
+<p>Les <strong>multi-stage builds</strong> sont essentiels pour creer des images de production optimisees. L idee est d utiliser une image complete pour compiler ou construire, puis de copier uniquement les artefacts dans une image minimale pour la production.</p>
+<pre><code>FROM golang:1.21 AS builder
+WORKDIR /src
+COPY . .
+RUN go build -o /app
+
+FROM alpine:3.18
+COPY --from=builder /app /app
+CMD ["/app"]</code></pre>
+<p>L image finale ne contient que l executable compile et l image alpine (5 Mo), sans les outils de compilation (几百 Mo). Cela reduit significativement la taille de l image et la surface d attaque.</p>
+
+<div class="callout warning">
+<strong>Bonnes pratiques Dockerfile :</strong> 1) Ordonner les instructions du moins changeable au plus changeable (COPY requirements.txt avant COPY .). 2) Utiliser .dockerignore pour exclure fichiers inutiles. 3) Ne jamais stocker de secrets dans les layers (utiliser des variables d environnement ou des secrets Docker). 4) Utiliser des images officielles et verified publishers. 5) Fixer les versions des dependances pour la reproductibilite.
+</div>
+<h2 id="images">Images, Layers et Cache</h2>
+<p>Une image Docker est un modele en lecture seule qui contient tout ce dont un conteneur a besoin pour s executer. Les images sont construites a partir de <strong>calques (layers)</strong> empiles. Chaque instruction du Dockerfile cree un nouveau calque.</p>
+
+<h3>Le systeme de cache</h3>
+<p>Docker utilise un systeme de cache intelligent pour accelerer la construction des images. Si un calque et ses dependances n ont pas change, Docker reutilise le calque en cache au lieu de le recreer. C est pourquoi l ordre des instructions dans le Dockerfile est crucial : il faut placer les instructions les moins frequentement changees en premier.</p>
+<p>Par exemple, si vous modifiez le code source mais pas les dependances, Docker reutilisera le calque d installation des paquets et ne reconstruira que les calques ulterieurs. La commande <strong>docker build --no-cache</strong> force la reconstruction complete sans utiliser le cache.</p>
+
+<h3>Optimisation des images</h3>
+<ul>
+<li><strong>Images de base minimales</strong> : utiliser python:3.11-slim au lieu de python:3.11, ou alpine au lieu de ubuntu.</li>
+<li><strong>Combinaison de RUN</strong> : grouper plusieurs commandes RUN en une seule pour reduire le nombre de calques et la taille totale.</li>
+<li><strong>Clean-up dans RUN</strong> : nettoyer les caches et fichiers temporaires dans la meme instruction RUN (car chaque RUN est un calque independant).</li>
+<li><strong>Multi-stage builds</strong> : separer la phase de build de la phase de production pour exclure les outils de developpement de l image finale.</li>
+<li><strong>.dockerignore</strong> : exclure les fichiers non necessaires (node_modules, .git, __pycache__, tests) pour accelerer la copie et reduire la taille.</li>
+</ul>
+
+<pre><code>FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json .
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80</code></pre>
+<h2 id="containers">Containers et Lifecycle</h2>
+<p>Un conteneur Docker est une instance en cours d execution d une image. Il est <strong>ephemere</strong> par defaut : toutes les donnees ecrites dans le conteneur sont perdues lorsqu il est supprime. Comprendre le cycle de vie d un conteneur est fondamental pour gerer correctement les applications.</p>
+
+<h3>Le cycle de vie</h3>
+<p>Un conteneur passe par plusieurs etapes : <strong>Created</strong> (cree mais pas demarre), <strong>Running</strong> (en cours d execution), <strong>Paused</strong> (suspendu avec SIGSTOP), <strong>Stopped</strong> (arrete proprement avec SIGTERM puis SIGKILL), <strong>Deleted</strong> (supprime). Les commandes docker start, docker stop, docker pause, docker rm controlent ces transitions.</p>
+
+<h3>Namespaces et cgroups</h3>
+<p>Docker repose sur deux mecanismes du noyau Linux pour l isolation :</p>
+<ul>
+<li><strong>Namespaces</strong> : chaque conteneur a son propre espace pour les processus (PID), le reseau (NET), les systemes de fichiers (MNT), les utilisateurs (USER), et le hostname (UTS). Un processus dans un conteneur ne voit que les autres processus de ce conteneur.</li>
+<li><strong>cgroups (Control Groups)</strong> : limitent et isolent les ressources (CPU, RAM, E/S) allouees a un conteneur. Un conteneur ne peut pas consommer plus de ressources que ce qui est defini, empechant ainsi qu une application monopolise les ressources de l hote.</li>
+</ul>
+
+<h3>Commandes essentielles du lifecycle</h3>
+<pre><code>docker run -d --name web -p 8080:80 nginx
+docker ps                          # conteneurs en cours
+docker ps -a                       # tous les conteneurs
+docker stop web                     # arret propre (SIGTERM)
+docker start web                    # redemarrer
+docker restart web                  # arreter puis demarrer
+docker logs web                     # voir les logs
+docker exec -it web sh              # shell interactif
+docker rm web                       # supprimer (arrete)
+docker rm -f web                    # supprimer (force)
+docker inspect web                  # details complets
+docker stats web                    # usage CPU/RAM en temps reel</code></pre>
+
+<div class="callout">
+<strong>Important :</strong> Les conteneurs sont ephemeres par design. Ne jamais stocker de donnees persistantes (bases de donnees, fichiers uploades) dans le systeme de fichiers d un conteneur. Utilisez toujours des volumes pour les donnees qui doivent survivre a l arret ou a la suppression du conteneur.
+</div>
+<h2 id="volumes">Volumes et Persistence</h2>
+<p>Les volumes sont le mecanisme Docker pour persister les donnees au-dela du cycle de vie des conteneurs. Ils sont geres par Docker et stockes dans un repertoire special sur l hote (/var/lib/docker/volumes/).</p>
+
+<h3>Types de persistance</h3>
+<ul>
+<li><strong>Volumes</strong> : stockes par Docker, geres par docker volume create. Meilleure option pour les donnees persistantes (bases de donnees). Isolation du systeme de fichiers hote.</li>
+<li><strong>Bind Mounts</strong> : montent un repertoire de l hote directement dans le conteneur. Utile en developpement pour monter le code source en temps reel.</li>
+<li><strong>tmpfs</strong> : stocke en memoire RAM uniquement. Pour les donnees sensibles qui ne doivent jamais etre sur disque.</li>
+</ul>
+
+<pre><code># Volume nomme
+docker volume create pgdata
+docker run -v pgdata:/var/lib/postgresql/data postgres
+
+# Bind mount
+docker run -v /chemin/local:/app/data nginx
+
+# En lecture seule
+docker run -v /chemin/local:/app/config:ro nginx
+
+# Creation automatique
+docker run --mount type=volume,source=pgdata,target=/var/lib/postgresql/data postgres</code></pre>
+
+<h2 id="reseaux">Reseaux Docker</h2>
+<p>Docker fournit plusieurs drivers reseau pour connecter les conteneurs entre eux et avec l exterieur. Le bon choix depend de l architecture de l application.</p>
+
+<h3>Drivers reseau</h3>
+<ul>
+<li><strong>bridge</strong> (defaut) : cree un reseau prive sur l hote. Les conteneurs sur le meme bridge peuvent communiquer. Ideal pour un seul hote.</li>
+<li><strong>host</strong> : le conteneur partage directement le reseau de l hote. Pas d isolation reseau, mais performance maximale.</li>
+<li><strong>overlay</strong> : permet la communication entre conteneurs sur des hotes differents. Utilise avec Docker Swarm ou Kubernetes.</li>
+<li><strong>none</strong> : aucun reseau. Le conteneur est completement isole.</li>
+</ul>
+
+<pre><code>docker network create mon-reseau
+docker run -d --name app1 --network mon-reseau nginx
+docker run -d --name app2 --network mon-reseau alpine ping app1</code></pre>
+<p>Sur le meme reseau, les conteneurs se comunicent via leur nom comme hostname (app1, app2). C est le mecanisme de DNS interne de Docker.
+<h2 id="compose">Docker Compose</h2>
+<p>Docker Compose est un outil pour definir et orchestrer des applications multi-conteneurs via un fichier YAML. Il est ideal pour les environnements de developpement, les tests, et les deploiements simples.</p>
+
+<h3>Exemple de fichier docker-compose.yml</h3>
+<pre><code>version: "3.9"
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    networks:
+      - frontend
+
+  api:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./api:/app
+    command: npm start
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+    networks:
+      - frontend
+      - backend
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: myapp
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  pgdata:
+
+networks:
+  frontend:
+  backend:</code></pre>
+
+<h3>Commandes compose essentielles</h3>
+<pre><code>docker compose up -d           # demarrer en arriere-plan
+docker compose down            # arreter et supprimer
+docker compose logs -f api     # suivre les logs
+docker compose ps              # etat des services
+docker compose exec api sh     # shell dans un service
+docker compose build --no-cache # reconstruire sans cache
+docker compose pull            # telecharger les images
+docker compose restart api     # redemarrer un service</code></pre>
+
+<div class="callout">
+<strong>Compose v2 :</strong> La version 2 de Docker Compose est integree en tant que plugin Docker (docker compose sans tiret) au lieu d un binaire separe (docker-compose). Elle supporte les profiles, les healthchecks, et une meilleure gestion des secrets.
+</div>
+<h2 id="bonnes-pratiques">Bonnes Pratiques et Securite</h2>
+<p>La securite des conteneurs Docker est un sujet critique en production. Voici les pratiques essentielles pour deployer des conteneurs de maniere securisee.</p>
+
+<ul>
+<li><strong>Ne jamais tourner en root</strong> : creer un utilisateur dedie dans le Dockerfile avec USER et donner les permissions necessaires. Un conteneur root peut s echapper et compromettre l hote.</li>
+<li><strong>Images minimales</strong> : utiliser des images slim ou alpine pour reduire la surface d attaque. Moins de binaires signifie moins de vulnerabilites potentielles.</li>
+<li><strong>Scanner les vulnerabilites</strong> : utiliser docker scout, trivy, ou snyk pour scanner les images avant le deploiement.</li>
+<li><strong>Secrets management</strong> : ne jamais hardcoder de mots de passe ou cles API dans les Dockerfiles ou les images. Utiliser Docker Secrets, des variables d environnement, ou des outils comme HashiCorp Vault.</li>
+<li><strong>Read-only filesystem</strong> : utiliser --read-only pour empecher l ecriture dans le conteneur, en montant les repertoires necessaires en volumes.</li>
+<li><strong>Resource limits</strong> : toujours definir --memory et --cpus pour eviter qu un conteneur ne consomme toutes les ressources de l hote.</li>
+<li><strong>Network policies</strong> : isoler les reseaux et ne connecter que les conteneurs qui doivent communiquer.</li>
+</ul>
+
+<pre><code>docker run -d --name app \
+  --read-only \
+  --tmpfs /tmp \
+  --user 1000:1000 \
+  --memory 512m \
+  --cpus 1.0 \
+  --cap-drop ALL \
+  --cap-add NET_BIND_SERVICE \
+  nginx</code></pre>
+
+<h2 id="commandes">Commandes Essentielles</h2>
+<pre><code># Gestion des images
+docker build -t mon-app:1.0 .
+docker pull ubuntu:22.04
+docker push mon-app:1.0
+docker images
+docker rmi mon-app:1.0
+docker image prune -a
+
+# Gestion des conteneurs
+docker run -d --name web -p 80:80 nginx
+docker ps -a
+docker stop/start/restart web
+docker rm web
+
+# Debugging
+docker logs -f web
+docker exec -it web sh
+docker inspect web
+docker stats
+
+# Nettoyage
+docker system prune -a      # tout supprimer
+docker volume prune          # volumes orphelins
+docker container prune       # conteneurs arretes
+
+# Inspection
+docker system df             # espace utilise
+docker history mon-app:1.0   # couches d une image</code></pre>
+<h2 id="interview">Questions d entretien frequentes</h2>
+
+<div class="qa">
+<h4>Q1 : Quelle est la difference entre CMD et ENTRYPOINT dans un Dockerfile ?</h4>
+<p><strong>CMD</strong> definit la commande par defaut qui peut etre ecrasee lors du docker run (ex: docker run image alire). <strong>ENTRYPOINT</strong> configure le conteneur comme un executable dont les arguments passes a docker run sont ajoutes. On utilise souvent les deux ensemble : ENTRYPOINT pour l executable principal, CMD pour les arguments par defaut. Par exemple, ENTRYPOINT ["python"] et CMD ["app.py"] permet de lancer python app.py par defaut, ou python autre chose si on passe un argument.</p>
+</div>
+
+<div class="qa">
+<h4>Q2 : Comment fonctionne le cache des couches Docker et comment l optimiser ?</h4>
+<p>Docker cache chaque couche (instruction) d un Dockerfile. Si la couche et ses dependances n ont pas change, Docker reutilise le cache. Pour optimiser, placez les instructions les moins changeables en premier (FROM, installation de systeme), puis les dependances (COPY requirements.txt, RUN pip install), et enfin le code source (COPY .). Utilisez --no-cache pour forcher la reconstruction. Les multi-stage builds reduisent aussi la taille finale en excluant les outils de build.</p>
+</div>
+
+<div class="qa">
+<h4>Q3 : Quand utiliser un volume Docker vs un bind mount ?</h4>
+<p><strong>Volume Docker</strong> : pour les donnees persistantes en production (bases de donnees, backups). Gere par Docker, portable, supporte les drivers de stockage (NFS, cloud). <strong>Bind mount</strong> : pour le developpement local (monter le code source en temps reel). Plus simple mais depend de la structure de l hote, pas portable. <strong>tmpfs</strong> : pour les secrets ou donnees temporaires en memoire uniquement.</p>
+</div>
+
+<div class="qa">
+<h4>Q4 : Un conteneur Docker est-il aussi isole qu une machine virtuelle ?</h4>
+<p>Non. Les conteneurs partagent le noyau Linux de l hote, ce qui signifie qu une vulnerabilite du noyau peut potentiellement permettre une echappatoire (container escape). Les VMs ont un noyau完全 isole. En pratique, on combine les deux : les conteneurs dans des VMs, avec des measures de securite comme seccomp, AppArmor, SELinux, et --cap-drop pour reduire les privileges. Kubernetes utilise souvent des sandboxing comme gVisor ou Kata Containers pour renforcer l isolation.</p>
+</div>
+
+<div class="qa">
+<h4>Q5 : Comment reduire la taille d une image Docker de production ?</h4>
+<p>1) Utiliser des images de base minimales (alpine, slim, distroless). 2) Multi-stage builds pour exclure les outils de build. 3) Combinaison des RUN pour reduire les couches. 4) Nettoyage des caches dans la meme instruction RUN. 5) .dockerignore pour exclure fichiers inutiles. 6) Supprimer les outils de debug de production. 7) Docker Slim ou docker-slim pour l optimisation automatique. Une image node optimisee peut passer de 900 Mo a moins de 50 Mo.</p>
+</div>
+<div class="quiz-cta">
+<h3>Testez vos connaissances</h3>
+<p>5 quiz de 15 questions sur Docker</p>
+<a href="/pages/quizzes.html">Commencer le Quiz</a>
+</div>
+
+<div class="nav-lesson">
+<a href="/pages/devops.html"><span>Module precedant</span>DevOps - Introduction</a>
+<a href="/pages/devops/docker-images.html"><span>Lecon suivante</span>Docker Images Avancees</a>
+</div>
+</main>
+
+<aside class="sidebar">
+<div class="sidebar-box">
+<h4>Sommaire</h4>
+<div class="toc">
+<a href="#containerisation">Containerisation vs Virtualisation</a>
+<a href="#dockerfile">Dockerfile</a>
+<a href="#images">Images et Layers</a>
+<a href="#containers">Containers Lifecycle</a>
+<a href="#volumes">Volumes</a>
+<a href="#reseaux">Reseaux Docker</a>
+<a href="#compose">Docker Compose</a>
+<a href="#bonnes-pratiques">Bonnes Pratiques</a>
+<a href="#commandes">Commandes</a>
+<a href="#interview">Questions d entretien</a>
+</div>
+</div>
+<div class="sidebar-box">
+<h4>Quiz Conteneurs</h4>
+<p style="color:var(--t2);font-size:.85rem;margin-bottom:12px">Testez sur les Conteneurs</p>
+<a href="/pages/quizzes.html" style="display:block;text-align:center;background:var(--acc);color:var(--wh);padding:10px;border-radius:8px;font-weight:600">Commencer</a>
+</div>
+<div class="sidebar-box">
+<h4>Lecons du module</h4>
+<a href="/pages/devops/docker.html" style="display:block;padding:6px 0;color:var(--acc);font-size:.85rem;font-weight:600">1. Docker Fundamentals</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">2. Docker Images Avancees</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">3. Docker Compose</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">4. Docker Networking</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">5. Docker Security</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">6. Kubernetes Intro</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">7. K8s Pods et Services</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">8. K8s Deployments</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">9. CI/CD Pipeline</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">10. Monitoring</a>
+</div>
+</aside>
+</div>
+
+<footer style="border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:var(--t2);font-size:.85rem">
+<p>CortexLLMs.io 2026 - Plateforme de preparation aux entretiens IA</p>
+</footer>
+
+<script>
+const toc=document.querySelectorAll(".toc a");
+const sections=document.querySelectorAll("h2[id]");
+window.addEventListener("scroll",()=>{
+  let current="";
+  sections.forEach(s=>{if(window.scrollY>=s.offsetTop-100)current=s.id});
+  toc.forEach(a=>{a.classList.toggle("active",a.getAttribute("href")==="#"+current)});
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conception d'un URL Shortener - CortexLLMs.io</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0d0f;--card:#1a1a2e;--accent:#3b82f6;--accent-glow:rgba(59,130,246,.15);--text:#e4e4e7;--text2:#a1a1aa;--text3:#71717a;--border:#27272a;--code:#111118;--green:#22c55e;--yellow:#f59e0b;--red:#ef4444}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:16px}
+.layout{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:none}}
+.sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--card);border-right:1px solid var(--border);padding:2rem 1.5rem}
+.sidebar-logo{font-family:'Source Serif 4',serif;font-size:1.4rem;font-weight:700;color:var(--accent);margin-bottom:.5rem}
+.sidebar-module{font-size:.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.sidebar h3{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);margin:1.5rem 0 .75rem}
+.sidebar a{display:block;color:var(--text2);text-decoration:none;font-size:.85rem;padding:.4rem .75rem;border-radius:6px;margin-bottom:2px;transition:all .2s}
+.sidebar a:hover{background:var(--accent-glow);color:var(--accent)}
+.sidebar a.active{background:var(--accent-glow);color:var(--accent);font-weight:500}
+.main{max-width:860px;margin:0 auto;padding:3rem 2.5rem 6rem}
+@media(max-width:900px){.main{padding:2rem 1.25rem 4rem}}
+.breadcrumb{font-size:.8rem;color:var(--text3);margin-bottom:1rem}
+.breadcrumb span{color:var(--accent)}
+h1{font-family:'Source Serif 4',serif;font-size:2.5rem;font-weight:700;line-height:1.2;margin-bottom:.75rem}
+.lesson-meta{display:flex;gap:1.5rem;font-size:.85rem;color:var(--text3);margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.tag{background:var(--accent-glow);color:var(--accent);padding:.2rem .6rem;border-radius:4px;font-size:.75rem;font-weight:500}
+h2{font-family:'Source Serif 4',serif;font-size:1.6rem;font-weight:600;margin:3rem 0 1rem;padding-top:1rem;border-top:1px solid var(--border)}
+h2:first-of-type{border-top:none}
+h3{font-size:1.15rem;font-weight:600;margin:2rem 0 .75rem;color:var(--accent)}
+p{margin-bottom:1rem;color:var(--text2)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.card-accent{border-left:3px solid var(--accent)}
+.card-warn{border-left:3px solid var(--yellow);background:rgba(245,158,11,.05)}
+.card-ok{border-left:3px solid var(--green);background:rgba(34,197,94,.05)}
+.card-title{font-weight:600;font-size:.95rem;margin-bottom:.5rem;color:var(--text)}
+pre{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:1.25rem;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.6}
+code{font-family:'JetBrains Mono','Fira Code',monospace;color:var(--accent)}
+pre code{color:var(--text)}
+.ic{background:var(--code);padding:.15rem .4rem;border-radius:4px;font-size:.88em;color:var(--accent)}
+ul,ol{margin:.75rem 0 1.25rem 1.5rem;color:var(--text2)}
+li{margin-bottom:.4rem}
+li strong{color:var(--text)}
+table{width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:.9rem}
+th,td{padding:.7rem 1rem;text-align:left;border:1px solid var(--border)}
+th{background:var(--card);font-weight:600;color:var(--text)}
+td{color:var(--text2)}
+.qa{background:var(--card);border:1px solid var(--border);border-radius:12px;margin:1.5rem 0;overflow:hidden}
+.qa-q{padding:1rem 1.5rem;font-weight:600;color:var(--accent);background:var(--accent-glow);border-bottom:1px solid var(--border)}
+.qa-a{padding:1.25rem 1.5rem;color:var(--text2)}
+.qa-a p:last-child{margin-bottom:0}
+.nav-footer{display:flex;justify-content:space-between;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);gap:1rem}
+.nav-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text2);text-decoration:none;font-size:.9rem;transition:all .2s}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-glow)}
+.progress-bar{height:3px;background:var(--border);border-radius:2px;margin:1.5rem 0;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;width:10%}
+.diagram{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0;overflow-x:auto;white-space:pre;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.5;color:var(--text2)}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+<div class="sidebar-logo">CortexLLMs.io</div>
+<div class="sidebar-module">System Design</div>
+<h3>Concepts Fondamentaux</h3>
+<a href="load-balancing.html">1. Load Balancing</a>
+<a href="caching.html">2. Caching</a>
+<a href="#">3. Base de Donnees</a>
+<a href="#">4. Message Queues</a>
+<a href="#">5. CAP Theorem</a>
+<h3>Conception</h3>
+<a href="url-shortener.html" class="active">1. URL Shortener</a>
+<a href="#">2. Rate Limiter</a>
+<a href="#">3. Chat System</a>
+<a href="#">4. News Feed</a>
+<a href="#">5. Search Engine</a>
+</aside>
+<main class="main">
+<div class="breadcrumb">System Design / <span>URL Shortener</span></div>
+<h1>Conception d'un URL Shortener</h1>
+<div class="lesson-meta">
+<span class="tag">Conception</span>
+<span>Lecon 1 / 10</span>
+<span>Temps de lecture: ~30 min</span>
+</div>
+<div class="progress-bar"><div class="progress-fill"></div></div>
+<h2 id="requirements">1. Requirements</h2>
+<p>Un URL Shortener est un systeme qui transforme une URL longue en une URL courte et facile a partager. Des services comme Bitly, TinyURL et t.co gerent des milliards de redirections quotidiennes. Ce cas d'etude est un classique de l'entretien System Design car il couvre presque tous les concepts fondamentaux: design de base de donnees, caching, hashing, load balancing et strategies de scaling.</p>
+<h3>Requirements Fonctionnelles</h3>
+<ul>
+<li><strong>Creer un raccourci:</strong> L'utilisateur fournit une URL longue, le systeme genere et retourne une URL courte unique.</li>
+<li><strong>Rediriger:</strong> Lorsqu'un utilisateur visite l'URL courte, il est redirige vers l'URL originale.</li>
+<li><strong>Personnalisation:</strong> (Optionnel) L'utilisateur peut choisir le raccourci au lieu d'un genere automatiquement.</li>
+<li><strong>Expiration:</strong> Les URLs courtes peuvent avoir une date d'expiration optionnelle.</li>
+<li><strong>Analytics:</strong> Nombre de clics, sources, localisation geographique, appareils.</li>
+</ul>
+<h3>Requirements Non-Fonctionnelles</h3>
+<ul>
+<li><strong>Haute disponibilite:</strong> Le systeme doit etre disponible 99,99% du temps. Une redirection cassee signifie des liens casse partout.</li>
+<li><strong>Latence faible:</strong> La redirection doit etre extremement rapide (moins de 10ms) car elle ajoute un saut supplementaire avant le contenu reel.</li>
+<li><strong>Echelle massive:</strong> Supporter 100 millions de creations et 10 milliards de redirections par mois.</li>
+<li><strong>Court raccourci:</strong> Les URLs courtes doivent etre vraiment courtes (6-7 caracteres max).</li>
+<li><strong>Unicite:</strong> Chaque URL longue doit mapper vers une URL courte unique, et chaque URL courte doit etre unique.</li>
+</ul>
+<div class="card card-accent">
+<div class="card-title">Estimation de Capacite</div>
+<p>10 milliards de redirections/mois = environ 3 700 redirections/seconde. 100 millions de creations/mois = environ 40 creations/seconde. Ratio lecture/ecriture: 100:1 (beaucoup plus de redirections que de creations). Stockage: 500 caracteres/URL longue + 7 caracteres URL courte + metadonnees = environ 1KB par entree. 100 millions/mois x 5 ans = 6 milliards d'entrees = environ 6 To de stockage brut.</p>
+</div>
+<h2 id="api">2. Design de l'API</h2>
+<p>L'API d'un URL Shortener est simple mais doit etre bien concue pour supporter les besoins de performance et d'evolutivite.</p>
+<h3>Endpoint de Creation</h3>
+<pre><code>POST /api/v1/shorten
+Content-Type: application/json
+Authorization: Bearer &lt;token&gt;
+
+{
+    "url": "https://www.example.com/very/long/path?with=params&and=more",
+    "custom_alias": "monlien",
+    "expiration": "2025-12-31T23:59:59Z"
+}
+
+Response: 201 Created
+{
+    "short_url": "https://sho.rt/abc123",
+    "short_code": "abc123",
+    "original_url": "https://www.example.com/very/long/path?with=params&and=more",
+    "expires_at": "2025-12-31T23:59:59Z",
+    "created_at": "2025-01-15T10:30:00Z"
+}</code></pre>
+<h3>Endpoint de Redirection</h3>
+<pre><code>GET /:shortCode
+
+Response: 301 Moved Permanently
+Location: https://www.example.com/very/long/path?with=params&and=more
+
+# Ou 302 Found pour les redirections trackables
+Response: 302 Found
+Location: https://www.example.com/very/long/path?with=params&and=more</code></pre>
+<div class="card card-warn">
+<div class="card-title">301 vs 302</div>
+<p>Le code 301 (Moved Permanently) indique au navigateur de mettre en cache la redirection, ce qui reduit les requetes vers notre serveur mais empeche le tracking. Le code 302 (Found) force le navigateur a revenir vers notre serveur a chaque fois, permettant le tracking mais augmentant la charge. La plupart des URL shorteners utilisent le 302.</p>
+</div>
+<h2 id="hashing">3. Strategie de Hachage</h2>
+<p>La partie centrale d'un URL Shortener est la generation du code court (short code) a partir de l'URL longue. Il existe plusieurs approches, chacune avec des compromis differents en termes de performance, d'unicite et de complexite.</p>
+<h3>MD5/SHA256 + Base62</h3>
+<p>On applique une fonction de hash (MD5 ou SHA256) a l'URL longue, puis on convertit le resultat en base62 (a-z, A-Z, 0-9) pour obtenir un code court. MD5 produit un hash de 128 bits, ce qui donne environ 22 caracteres en base62. On peut tronquer a 7 caracteres pour obtenir un code plus court.</p>
+<pre><code>function generateShortCode(url) {
+    const hash = md5(url);
+    const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let code = '';
+    let num = BigInt('0x' + hash.substring(0, 12));
+    for (let i = 0; i < 7; i++) {
+        code = alphabet[Number(num % 62n)] + code;
+        num = num / 62n;
+    }
+    return code;
+}
+
+console.log(generateShortCode('https://example.com/long/path'));
+// Resultat: "xK9mZp2"</code></pre>
+<div class="card card-warn">
+<div class="card-title">Collisions</div>
+<p>Avec 7 caracteres en base62, on a 62^7 = environ 3,5 trillions de combinaisons possibles. Pour 1 milliard d'URLs, la probabilite de collision est d'environ 0,03% (loi des birthday). En cas de collision, on regenere un nouveau code. Avec un compteur atomique, les collisions sont impossiblees.</p>
+</div>
+<h3>Counter-Based (Compteur Serveur)</h3>
+<p>Un compteur atomique genere un numero unique a chaque requete. Ce numero est converti en base62. C'est le systeme le plus simple et le plus fiable: aucune collision possible, codes sequentiels et previsibles.</p>
+<pre><code>class ShortCodeGenerator {
+    constructor() {
+        this.counter = 0;
+        this.alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    }
+    generate() {
+        this.counter++;
+        return this.toBase62(this.counter);
+    }
+    toBase62(num) {
+        let result = '';
+        while (num > 0) {
+            result = this.alphabet[num % 62] + result;
+            num = Math.floor(num / 62);
+        }
+        return result.padStart(7, 'a');
+    }
+}</code></pre>
+<h3>Pre-Generated Keys</h3>
+<p>Une approche encore plus rapide consiste a pre-generer des millions de codes courts et a les stocker dans une file d'attente (Redis List). A chaque requete de creation, on dequeue un code. Cette approche est utilisee par les systemes a tres haute vitesse comme t.co de Twitter.</p>
+<table>
+<tr><th>Methode</th><th>Performance</th><th>Unicite</th><th>Complexite</th></tr>
+<tr><td>MD5 + Base62</td><td>Rapide</td><td>Collision possible</td><td>Moyenne</td></tr>
+<tr><td>Compteur</td><td>Tres rapide</td><td>Garantie</td><td>Simple</td></tr>
+<tr><td>Pre-generation</td><td>Ultra rapide</td><td>Garantie</td><td>Plus complexe</td></tr>
+</table>
+<h2 id="database">4. Design de la Base de Donnees</h2>
+<p>Le choix de la base de donnees est critique pour un URL Shortener. Le pattern d'acces est extremement asymetrique: 99% des operations sont des lectures (redirections) et seulement 1% sont des ecritures (creations).</p>
+<h3>SQL vs NoSQL</h3>
+<p>Pour un URL Shortener, une base NoSQL comme DynamoDB, Cassandra ou MongoDB est generalement preferee. Les raisons: (1) Le schema est simple (cle-valeur), (2) La disponibilite est plus importante que la coherence stricte (eventual consistency), (3) Le sharding est naturel, (4) Les operations de lecture sont tres simples et rapides. Cependant, PostgreSQL avec un bon index peut etre performant pour des echelles moyennes.</p>
+<h3>Schema</h3>
+<pre><code>-- Schema SQL pour URL Shortener
+CREATE TABLE urls (
+    short_code VARCHAR(10) PRIMARY KEY,
+    original_url TEXT NOT NULL,
+    user_id INTEGER,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP,
+    is_active BOOLEAN DEFAULT TRUE,
+    click_count BIGINT DEFAULT 0
+);
+
+CREATE INDEX idx_urls_original ON urls(original_url);
+CREATE INDEX idx_urls_user ON urls(user_id);
+
+-- Schema MongoDB (alternative)
+{
+    "_id": "abc123",
+    "original_url": "https://...",
+    "user_id": "user_456",
+    "created_at": ISODate("2025-01-15"),
+    "expires_at": ISODate("2025-12-31"),
+    "is_active": true,
+    "click_count": NumberLong(15234),
+    "tags": ["marketing", "campagne-ete"]
+}</code></pre>
+<h3>Sharding Strategy</h3>
+<p>Le sharding est essentiel pour gerer des milliards d'entrees. La strategie la plus courante est le sharding par short_code: chaque shard gere une range de codes. Le consistent hashing peut etre utilise pour distribuer les donnees de maniere equilibree. Un autre approche est le sharding par region: les redirections sont routees vers le shard le plus proche geographiquement.</p>
+<h2 id="architecture">5. Architecture</h2>
+<p>L'architecture d'un URL Shortener optimise pour la performance en lecture, car les redirections sont le cas d'usage principal.</p>
+<div class="diagram">
+  Architecture URL Shortener
+
+  +--------+     +-----------+     +--------------+
+  | Client | --> |    LB     | --> | App Servers  |
+  +--------+     | (Nginx)   |     |  (Stateless) |
+                 +-----------+     +------+-------+
+                                        |
+                          +-------------+-------------+
+                          |                           |
+                    +-----v-----+              +------v------+
+                    |   Cache   |              |   Database  |
+                    |  (Redis)  |              | (DynamoDB / |
+                    |  Cluster  |              |  Cassandra) |
+                    +-----------+              +-------------+
+
+  Flow de redirection:
+  1. Client GET /abc123
+  2. LB route vers un App Server
+  3. App Server verifie le Cache Redis
+  4. Cache Hit: retourne l URL originale (latence < 1ms)
+  5. Cache Miss: interroge la DB, met en cache, retourne
+  6. App Server retourne 301/302 avec Location header
+</div>
+<h3>Optimisation Read-Heavy</h3>
+<p>Le pattern cache-aside est ideal ici: pour chaque redirection, on verifie d'abord Redis (cache hit rate de 80-90% avec un bon TTL). Les 10-20% de cache miss interrogent la base de donnees. Le TTL du cache est de 24 heures pour les URLs actives, et les URLs expirees sont supprimees du cache automatiquement. En cas de panne Redis, le fallback va directement a la base de donnees avec rate limiting pour eviter de la surcharger.</p>
+<h2 id="scaling">6. Scaling</h2>
+<p>Le scaling horizontal est la cle pour gerer la croissance du trafic d'un URL Shortener.</p>
+<h3>Horizontal Scaling</h3>
+<p>Les serveurs d'application sont stateless, ce qui permet d'en ajouter autant que necessaire derriere le load balancer. Chaque requete est traitee de maniere independante, sans dependance a l'etat d'un serveur specifique. Le scaling est automatique via des autoscaling groups (AWS) ou Kubernetes HPA.</p>
+<h3>Database Sharding</h3>
+<p>La base de donnees est sharde par range de codes courts. Chaque shard est gere par un ensemble de noeuds avec replication. Le routing est effectue par la couche applicative ou par un proxy de base de donnees comme Vitess ou ProxySQL. Le sharding par range est simple mais peut creer des hotspots si certains codes sont plus populaires que d'autres.</p>
+<h3>Read Replicas</h3>
+<p>Pour les bases de donnees relationnelles, les read replicas permettent de repartir la charge de lecture sur plusieurs instances. Le primary gere les ecritures, tandis que les replicas servent les lectures. La replication est asynchrone, ce qui introduit un legger delai (eventual consistency), acceptable dans notre cas d'usage.</p>
+<h3>Distribution Geographique</h3>
+<p>Pour les utilisateurs mondiaux, le deploiement multi-region est essentiel. Chaque region dispose de sa propre base de donnees avec replication inter-region. Le DNS geolocalise (Route53, Cloudflare) route les utilisateurs vers la region la plus proche. Les donnees sont repliquees de maniere asynchrone entre les regions, avec une coherent eventuelle acceptee.</p>
+<h2 id="analytics">7. Analytics</h2>
+<p>Les analytics sont une fonctionnalite importante pour les utilisateurs d'un URL Shortener. Ils veulent savoir combien de fois leur lien a ete clique, d'ou viennent les visiteurs, et quand les clics se sont produits.</p>
+<h3>Click Tracking</h3>
+<p>Chaque redirection genere un evenement de clic qui doit etre enregistre. Les donnees collectees incluent: timestamp, adresse IP (anonymisee), user-agent (navigateur, appareil), referer (site source), pays/geolocalisation, et device type (mobile/desktop). Ces donnees sont stockees dans un systeme optimise pour les series temporelles.</p>
+<h3>Real-Time vs Batch</h3>
+<p>Pour le compteur de clics en temps reel, on utilise Redis INCR sur une cle comme <span class="ic">clicks:abc123:2025-01-15</span>. Pour l'agregation historique, un pipeline batch (Spark, Lambda) processe les clics toutes les heures ou tous les jours et met a jour les compteurs aggregates. Le real-time est utilise pour les dashboards en direct, le batch pour les rapports historiques.</p>
+<h3>Series Temporelles</h3>
+<p>Les donnees de clics sont naturellement des series temporelles. Les bases de donnees optimisees pour ce type de donnees incluent InfluxDB, TimescaleDB (extension PostgreSQL), et Amazon Timestream. Elles supportent l'agregation temporelle (comptage par heure, jour, mois) de maniere tres efficace.</p>
+<h2 id="rate-limiting">8. Rate Limiting</h2>
+<p>Le rate limiting est essentiel pour proteger le systeme contre les abus, le spam et les attaques DDoS. Sans limites, un seul utilisateur pourrait creer des millions d'URLs et surcharger la base de donnees.</p>
+<h3>Token Bucket</h3>
+<p>Le Token Bucket est l'algorithme de rate limiting le plus courant. Chaque utilisateur dispose d'un seau de tokens qui se remplit a un rythme constant. Chaque requete consomme un token. Si le seau est vide, la requete est refusee. Cet algorithme autorise les rafales (burst) tout en limitant le debit moyen.</p>
+<pre><code>class TokenBucket {
+    constructor(capacity, refillRate) {
+        this.capacity = capacity;
+        this.tokens = capacity;
+        this.refillRate = refillRate;
+        this.lastRefill = Date.now();
+    }
+    allow() {
+        this.refill();
+        if (this.tokens >= 1) {
+            this.tokens--;
+            return true;
+        }
+        return false;
+    }
+    refill() {
+        const now = Date.now();
+        const elapsed = (now - this.lastRefill) / 1000;
+        this.tokens = Math.min(
+            this.capacity,
+            this.tokens + elapsed * this.refillRate
+        );
+        this.lastRefill = now;
+    }
+}</code></pre>
+<h3>Sliding Window</h3>
+<p>Le Sliding Window compte les requetes dans une fenetre de temps glissante. Par exemple: maximum 100 creations par heure. Contrairement a la fenetre fixe, il n'y a pas de frontiere temporelle rigide, ce qui evite les pics aux bornes de la fenetre.</p>
+<h3>Limits par Utilisateur</h3>
+<p>Les limites sont appliquees par utilisateur (authentifie) et par IP (non authentifie). Un utilisateur gratuit peut avoir 10 creations/jour, un payant 1000/jour. Les limites par IP sont plus agressives pour prevenir les abus.</p>
+<h2 id="full-arch">9. Architecture Complete</h2>
+<p>Voici l'architecture complete d'un URL Shortener a grande echelle, integrant tous les composants discusses dans les sections precedentes.</p>
+<div class="diagram">
+  Architecture Compl URL Shortener
+
+                    +------------------+
+                    |   DNS Global     |
+                    | (Route53/CF)     |
+                    +--------+---------+
+                             |
+              +--------------+--------------+
+              |                             |
+     +--------v--------+          +---------v--------+
+     |   CDN (CF)      |          |  WAF / DDoS     |
+     | (assets statiques)|        |  Protection     |
+     +--------+--------+          +---------+--------+
+              |                             |
+     +--------v----------------------------v--------+
+     |           Load Balancer (L7)                  |
+     |           HAProxy / AWS ALB                   |
+     +----+--------+--------+--------+------+-------+
+          |        |        |        |      |
+     +----v---+ +--v---+ +--v---+ +--v---++v----+
+     | App 1  | | App 2| | App 3| | App N |     |
+     +---+----+ +--+---+ +--+---+ +--+---++----+
+         |         |        |        |      |
+         +----+----+--------+--------+------+
+              |                             |
+    +---------v----------+    +-------------v---------+
+    |   Redis Cluster    |    |   DB Cluster          |
+    |   (Cache 80%+)     |    |   (DynamoDB/Cassandra)|
+    +--------------------+    +-----------------------+
+                                         |
+                              +----------v----------+
+                              | Analytics Pipeline  |
+                              | (Kafka -> Flink ->  |
+                              |  ClickHouse)        |
+                              +---------------------+
+</div>
+<h2 id="questions">10. Questions d'Entretien</h2>
+<div class="qa">
+<div class="qa-q">Q1: Comment concevriez-vous un URL Shortener capable de gerer 10 milliards de redirections par mois avec moins de 10ms de latence?</div>
+<div class="qa-a">
+<p><strong>Reponse:</strong> L'architecture repose sur trois piliers: (1) <strong>Cache distribue:</strong> Un cluster Redis avec 80-90% de cache hit rate. Chaque redirection interroge Redis en premier (< 1ms), seuls les 10-20% de cache miss vont a la base de donnees. (2) <strong>Database distribuee:</strong> DynamoDB ou Cassandra avec consistent hashing pour distribuer les donnees sur des dizaines de noeuds. Chaque requete de lecture touche un seul noeud (O(1)). (3) <strong>Load balancer:</strong> HAProxy ou AWS NLB en L7 pour distribuer le trafic sur des serveurs stateless. Avec cette architecture, 99% des redirections sont traitees en moins de 5ms (cache Redis), et les 1% restants en moins de 15ms (base de donnees).</p>
+</div></div>
+<div class="qa">
+<div class="qa-q">Q2: Comment eviter les collisions lors de la generation des codes courts?</div>
+<div class="qa-a">
+<p><strong>Reponse:</strong> Trois approches selon les besoins: (1) <strong>Compteur atomique</strong> (Redis INCR): Le plus fiable. Le compteur est distribue et atomique, garantissant l'unicite absolue. (2) <strong>UUID + Base62:</strong> Genere un UUID unique (128 bits), le convertit en base62, et tronque. La probabilite de collision est negligeable (< 10^-18). (3) <strong>Pre-generation avec verification:</strong> On genere des codes aleatoires, on verifie l'unicite en base de donnees avant de les attribuer, et on stocke des batchs de codes pre-valides dans Redis. En cas de collision, on regenere. La premiere approche (compteur) est recommandee pour la plupart des cas d'usage.</p>
+</div></div>
+<div class="qa">
+<div class="qa-q">Q3: Comment gerer les URLs expirees sans impact sur les performances?</div>
+<div class="qa-a">
+<p><strong>Reponse:</strong> (1) <strong>TTL Redis:</strong> Les entrees Redis ont un TTL automatique, donc les URLs expirees sont supprimees du cache sans intervention. (2) <strong>Lazy deletion en base:</strong> Lorsqu'une redirection trouve une URL expiree, elle retourne une erreur 410 Gone et supprime l'entree de maniere lazy. (3) <strong>Cron job de nettoyage:</strong> Un job periodique supprime les URLs expirees de la base de donnees (TTL index sur expires_at). (4) <strong>Bloom filter:</strong> Pour eviter d'interroger la base pour les codes qui n'existent pas, un Bloom filter en memoire verifie rapidement si un code est potentiellement valide. Cela evite des requetes inutiles vers la base de donnees pour des codes inexistants.</p>
+</div></div>
+<div class="qa">
+<div class="qa-q">Q4: Comment implementerait-vous les analytics en temps reel pour millions d'utilisateurs?</div>
+<div class="qa-a">
+<p><strong>Reponse:</strong> L'architecture analytics est un pipeline event-driven: (1) <strong>Emission:</strong> Chaque redirection emet un evenement Kafka avec les metadonnees (code, timestamp, IP, user-agent). (2) <strong>Stream processing:</strong> Apache Flink ou Kafka Streams processe les evenements en temps reel, comptant les clics par code URL et par fenetre temporelle (1 min, 1h, 1j). (3) <strong>Stockage:</strong> ClickHouse ou InfluxDB stockent les metriques agregees pour les dashboards temps reel. (4) <strong>Batch:</strong> Un job Spark aggreg les donnees toutes les heures pour les rapports historiques. (5) <strong>API:</strong> L'API analytics lit depuis le cache Redis (metriques temps reel) et ClickHouse (historique). Cette architecture gere des millions d'evenements/seconde avec une latence de quelques secondes pour l'affichage en temps reel.</p>
+</div></div>
+<div class="qa">
+<div class="qa-q">Q5: Comment securiser un systeme d'URL Shortening contre les abus et le spam?</div>
+<div class="qa-a">
+<p><strong>Reponse:</strong> Securite multi-couches: (1) <strong>Rate limiting:</strong> Token bucket par utilisateur (10/jour gratuit, 1000/jour payant) et par IP (50/heure). (2) <strong>Validation d'URL:</strong> Verifier que l'URL est bien formatee, rejeter les scripts, les data URIs, les IP privees (SSRF), et les domaines malveillants (bloc liste). (3) <strong>Authentication:</strong> API key ou OAuth pour les creates, avec tracking des abus. (4) <strong>Monitoring:</strong> Detecter les patterns suspects (milliers de creations depuis une IP, redirections vers des domaines de phishing). (5) <strong>Expiration automatique:</strong> Les URLs non authentiquees expirent apres 30 jours pour limiter la surface d'attaque. (6) <strong>Rate limit adaptatif:</strong> Augmenter les limites progressivement pour les utilisateurs de confiance.</p>
+</div></div>
+<div class="nav-footer">
+<a href="caching.html" class="nav-btn">&larr; Precedent: Caching</a>
+<a href="#" class="nav-btn">Suivant: Rate Limiter &rarr;</a>
+</div>
+</main>
+</div>
+</body>
+</html>
