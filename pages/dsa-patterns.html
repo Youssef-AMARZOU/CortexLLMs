@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patterns DSA-31 - CortexLLMs.io</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0d0f;--card:#1a1a2e;--acc:#3b82f6;--acc-l:rgba(59,130,246,.15);--t1:#f1f5f9;--t2:#94a3b8;--bdr:#1e293b;--wh:#fff;--r:12px;--mx:1200px;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--cyan:#06b6d4;--orange:#f97316;--pink:#ec4899}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7}
+h1,h2,h3,h4{font-family:'Source Serif 4',serif;font-weight:700;line-height:1.3}
+a{color:var(--acc);text-decoration:none}
+
+.header{position:sticky;top:0;z-index:100;background:rgba(13,13,15,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:16px 0}
+.nav{max-width:var(--mx);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Source Serif 4',serif;font-size:1.3rem;font-weight:800}.logo span{color:var(--acc)}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{color:var(--t2);font-size:.9rem;font-weight:500;transition:color .2s}.nav-links a:hover,.nav-links a.active{color:var(--acc)}
+
+.hero{text-align:center;padding:60px 24px 40px;max-width:var(--mx);margin:0 auto}
+.hero h1{font-size:2.8rem;font-weight:800;background:linear-gradient(135deg,var(--acc),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px}
+.hero .subtitle{font-size:1.2rem;color:var(--t2);max-width:600px;margin:0 auto 8px}
+.hero .stats{display:flex;gap:32px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.hero .stat{text-align:center}.hero .stat .num{font-size:2rem;font-weight:800;color:var(--wh)}.hero .stat .lbl{font-size:.8rem;color:var(--t2);text-transform:uppercase;letter-spacing:1px}
+
+.controls{max-width:var(--mx);margin:0 auto;padding:0 24px 24px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.search-box{flex:1;min-width:250px;position:relative}
+.search-box input{width:100%;padding:12px 16px 12px 44px;border-radius:var(--r);border:1px solid var(--bdr);background:var(--card);color:var(--t1);font-size:.95rem;font-family:inherit;outline:none;transition:border-color .2s}
+.search-box input:focus{border-color:var(--acc)}
+.search-box::before{content:"&#128269;";position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1.1rem;opacity:.5}
+.search-box .clear-search{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--t2);cursor:pointer;font-size:1.1rem;display:none}
+.search-box .clear-search.visible{display:block}
+
+.filter-btns{display:flex;gap:6px;flex-wrap:wrap}
+.filter-btn{padding:8px 16px;border-radius:20px;border:1px solid var(--bdr);background:var(--card);color:var(--t2);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.filter-btn:hover{border-color:var(--acc);color:var(--acc)}
+.filter-btn.active{background:var(--acc);color:var(--wh);border-color:var(--acc)}
+
+.progress-bar{max-width:var(--mx);margin:0 auto;padding:0 24px 20px}
+.progress-track{background:var(--card);border-radius:20px;height:8px;overflow:hidden;border:1px solid var(--bdr)}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--purple));border-radius:20px;transition:width .4s ease}
+.progress-text{display:flex;justify-content:space-between;margin-top:8px;font-size:.8rem;color:var(--t2)}
+
+.patterns-grid{max-width:var(--mx);margin:0 auto;padding:0 24px 60px;display:grid;gap:16px}
+
+.pattern-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;transition:all .3s}
+.pattern-card:hover{border-color:var(--border-hover);box-shadow:0 4px 24px rgba(0,0,0,.3)}
+.pattern-card.expanded{border-color:var(--acc)}
+.pattern-card.bookmarked .card-header{border-left:3px solid var(--warning)}
+
+.card-header{padding:16px 20px;cursor:pointer;display:flex;align-items:center;gap:12px;user-select:none}
+.card-header .pattern-num{background:var(--acc-l);color:var(--acc);width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0}
+.card-header .card-info{flex:1;min-width:0}
+.card-header .card-info h3{font-size:1rem;color:var(--wh);margin-bottom:4px;font-family:'Inter',sans-serif;font-weight:600}
+.card-header .card-info .card-tags{display:flex;gap:6px;flex-wrap:wrap}
+.card-header .bookmark-btn{background:none;border:none;color:var(--t2);cursor:pointer;font-size:1.2rem;padding:4px;transition:color .2s;flex-shrink:0}
+.card-header .bookmark-btn:hover,.card-header .bookmark-btn.active{color:var(--warning)}
+.card-header .expand-icon{color:var(--t2);font-size:1.2rem;transition:transform .3s;flex-shrink:0}
+.pattern-card.expanded .expand-icon{transform:rotate(180deg)}
+
+.badge{padding:3px 10px;border-radius:12px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.badge-cat{background:rgba(59,130,246,.15);color:var(--acc)}
+.badge-easy{background:rgba(16,185,129,.15);color:var(--success)}
+.badge-medium{background:rgba(245,158,11,.15);color:var(--warning)}
+.badge-hard{background:rgba(239,68,68,.15);color:var(--danger)}
+.badge-cat-arrays{background:rgba(59,130,246,.15);color:var(--acc)}
+.badge-cat-linked{background:rgba(139,92,246,.15);color:var(--purple)}
+.badge-cat-trees{background:rgba(16,185,129,.15);color:var(--success)}
+.badge-cat-graphs{background:rgba(236,72,153,.15);color:var(--pink)}
+.badge-cat-dp{background:rgba(249,115,22,.15);color:var(--orange)}
+.badge-cat-advanced{background:rgba(6,182,212,.15);color:var(--cyan)}
+
+.card-body{display:none;padding:0 20px 20px;border-top:1px solid var(--bdr)}
+.pattern-card.expanded .card-body{display:block}
+
+.section-block{margin-top:16px}
+.section-block h4{font-size:.85rem;color:var(--acc);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;font-family:'Inter',sans-serif}
+.section-block p,.section-block li{color:var(--t2);font-size:.9rem}
+.section-block ul{margin-left:20px}
+.section-block li{margin-bottom:4px}
+.section-block .complexity{display:flex;gap:16px;flex-wrap:wrap}
+.section-block .complexity span{background:rgba(255,255,255,.05);padding:4px 12px;border-radius:8px;font-size:.8rem;color:var(--t1);font-family:'JetBrains Mono',monospace}
+
+pre{background:#111;border:1px solid var(--bdr);border-radius:var(--r);padding:16px;overflow-x:auto;margin:12px 0;font-size:.82rem;line-height:1.6;position:relative}
+code{font-family:'JetBrains Mono',monospace;color:#a5f3fc}
+.code-wrapper{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--card);border:1px solid var(--bdr);color:var(--t2);padding:4px 10px;border-radius:6px;font-size:.7rem;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{border-color:var(--acc);color:var(--acc)}
+.copy-btn.copied{background:rgba(16,185,129,.15);color:var(--success);border-color:var(--success)}
+
+.sidebar{position:sticky;top:80px;align-self:start}
+.sidebar-box{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.sidebar-box h4{font-size:.9rem;margin-bottom:12px;color:var(--wh)}
+.toc a{display:block;padding:5px 0;color:var(--t2);font-size:.82rem;border-left:2px solid transparent;padding-left:12px;transition:all .2s}
+.toc a:hover,.toc a.active{color:var(--acc);border-color:var(--acc)}
+.toc a .toc-count{float:right;font-size:.75rem;color:var(--text-muted)}
+
+.kb-shortcut{display:inline-flex;align-items:center;gap:4px;font-size:.75rem;color:var(--text-muted);margin-top:8px}
+.kb-shortcut kbd{background:var(--card);border:1px solid var(--bdr);border-radius:4px;padding:2px 6px;font-family:'JetBrains Mono',monospace;font-size:.7rem}
+
+.print-mode .header,.print-mode .hero .stats,.print-mode .controls,.print-mode .progress-bar,.print-mode .sidebar,.print-mode footer,.print-mode .card-header .bookmark-btn,.print-mode .card-header .expand-icon,.print-mode .copy-btn{display:none!important}
+.print-mode .hero h1{-webkit-text-fill-color:var(--wh);font-size:1.8rem}
+.print-mode .hero .subtitle{margin-bottom:0}
+.print-mode .card-body{display:block!important}
+.print-mode .patterns-grid{padding:0}
+.print-mode .pattern-card{break-inside:avoid;border:1px solid #ccc}
+@media print{.header,.hero .stats,.controls,.progress-bar,.sidebar,.footer,.card-header .bookmark-btn,.card-header .expand-icon,.copy-btn{display:none!important}.hero h1{-webkit-text-fill-color:var(--wh)!important;font-size:1.8rem}.hero .subtitle{margin-bottom:0}.card-body{display:block!important}.patterns-grid{padding:0}.pattern-card{break-inside:avoid;border:1px solid #ccc}.hero{padding:20px 0}}
+
+@media(max-width:900px){
+    .container{grid-template-columns:1fr}
+    .sidebar{display:none}
+    .hero h1{font-size:2rem}
+    .controls{flex-direction:column}
+    .card-header{gap:8px}
+}
+
+.catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin-top:12px}
+.catalog-item{padding:8px 12px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;font-size:.8rem;color:var(--t2);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px}
+.catalog-item:hover{border-color:var(--acc);color:var(--acc)}
+.catalog-item .cat-num{color:var(--acc);font-weight:700;font-family:'JetBrains Mono',monospace;font-size:.75rem}
+.catalog-item.done{border-color:var(--success)}
+.catalog-item.done .cat-num{color:var(--success)}
+.catalog-item.done::after{content:"&#10003";margin-left:auto;color:var(--success);font-size:.9rem}
+</style>
+</head>
+<body>
+
+<header class="header"><nav class="nav"><a href="/" class="logo">CortexLLMs<span>.io</span></a><div class="nav-links"><a href="/">Accueil</a><a href="/pages/ai-engineering.html">Ingenierie IA</a><a href="/pages/devops.html">DevOps</a><a href="/pages/system-design.html">System Design</a><a href="/pages/dsa.html" class="active">DSA</a><a href="/pages/entreprises.html">Entreprises</a></div></nav></header>
+
+<div class="hero">
+<h1>DSA-31 Patterns</h1>
+<p class="subtitle">Les 31 patterns essentiels pour les entretiens techniques</p>
+<div class="stats">
+<div class="stat"><div class="num">31</div><div class="lbl">Patterns</div></div>
+<div class="stat"><div class="num">6</div><div class="lbl">Categories</div></div>
+<div class="stat"><div class="num">120+</div><div class="lbl">Problemes classiques</div></div>
+</div>
+</div>
+
+<div class="container" style="max-width:var(--mx);margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr 260px;gap:32px">
+<main>
+<div class="controls" style="padding:0 0 16px">
+<div class="search-box">
+<input type="text" id="searchInput" placeholder="Rechercher un pattern, un probleme...">
+<button class="clear-search" id="clearSearch">&times;</button>
+</div>
+<div class="filter-btns" id="filterBtns">
+<button class="filter-btn active" data-cat="all">Tous</button>
+<button class="filter-btn" data-cat="arrays">Arrays</button>
+<button class="filter-btn" data-cat="linked">Linked Lists</button>
+<button class="filter-btn" data-cat="trees">Trees</button>
+<button class="filter-btn" data-cat="graphs">Graphs</button>
+<button class="filter-btn" data-cat="dp">DP</button>
+<button class="filter-btn" data-cat="advanced">Avance</button>
+<button class="filter-btn" data-cat="bookmarked">&#9733; Favoris</button>
+</div>
+</div>
+
+<div class="progress-bar">
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+<div class="progress-text"><span id="progressText">0/31 patterns maitrises</span><span id="progressPct">0%</span></div>
+</div>
+
+<div class="patterns-grid" id="patternsGrid"></div>
+</main>
+
+<aside class="sidebar">
+<div class="sidebar-box">
+<h4>Catalogue rapide</h4>
+<div class="catalog-grid" id="catalogGrid"></div>
+</div>
+<div class="sidebar-box">
+<h4>Table des matieres</h4>
+<div class="toc" id="tocList"></div>
+</div>
+<div class="sidebar-box">
+<h4>Raccourcis clavier</h4>
+<div class="kb-shortcut"><kbd>/</kbd> Recherche</div>
+<div class="kb-shortcut"><kbd>&uarr;</kbd><kbd>&darr;</kbd> Naviguer</div>
+<div class="kb-shortcut"><kbd>Enter</kbd> Developper</div>
+<div class="kb-shortcut"><kbd>B</kbd> Favori</div>
+<div class="kb-shortcut"><kbd>M</kbd> Maitrise</div>
+</div>
+<div class="sidebar-box">
+<h4>Progression</h4>
+<p style="color:var(--t2);font-size:.85rem;margin-bottom:8px">Cochez les patterns maitrises pour suivre votre avancee.</p>
+<button onclick="resetProgress()" style="background:none;border:1px solid var(--bdr);color:var(--t2);padding:6px 12px;border-radius:6px;font-size:.8rem;cursor:pointer;font-family:inherit">Reinitialiser</button>
+</div>
+</aside>
+</div>
+
+<div class="quiz-cta" style="max-width:var(--mx);margin:0 auto 40px;padding:0 24px">
+<div style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:var(--r);padding:32px;text-align:center">
+<h3 style="color:#fff;margin-bottom:8px">Besoin d'entrainer ces patterns ?</h3>
+<p style="color:rgba(255,255,255,.8);margin-bottom:16px">Testez vos connaissances avec nos quiz interactifs</p>
+<a href="/pages/quizzes.html" style="background:#fff;color:#3b82f6;padding:10px 24px;border-radius:8px;font-weight:600;display:inline-block">Commencer le Quiz</a>
+</div>
+</div>
+
+<footer style="border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:var(--t2);font-size:.85rem">
+<p>CortexLLMs.io &copy; 2026 &mdash; Plateforme de preparation aux entretiens IA</p>
+</footer>
+
+<script>
+const PATTERNS = [
+  {
+    id:1, name:"Two Pointers", cat:"arrays", difficulty:"Facile",
+    when:"Utilise quand vous devez trouver des paires ou triplets dans un tableau triee, ou gerer une condition de symetrie (debut/fin).",
+    code:`def two_pointers(arr, target):
+    left, right = 0, len(arr) - 1
+    while left < right:
+        current = arr[left] + arr[right]
+        if current == target:
+            return [left, right]
+        elif current < target:
+            left += 1
+        else:
+            right -= 1
+    return []`,
+    problems:["Two Sum (trié)","3Sum","Container With Most Water","Pair With Target Sum"],
+    time:"O(n)", space:"O(1)", difficultyBadge:"easy"
+  },
+  {
+    id:2, name:"Sliding Window", cat:"arrays", difficulty:"Facile-Moyen",
+    when:"Utilise quand vous cherchez une sous-sequence contigue optimale (max, min, somme) dans un tableau ou une chaine de caracteres.",
+    code:`def sliding_window(arr, k):
+    window_sum = sum(arr[:k])
+    max_sum = window_sum
+    for i in range(k, len(arr)):
+        window_sum += arr[i] - arr[i - k]
+        max_sum = max(max_sum, window_sum)
+    return max_sum`,
+    problems:["Maximum Sum Subarray of Size K","Longest Substring Without Repeating","Minimum Window Substring","Fruits Into Baskets"],
+    time:"O(n)", space:"O(1)", difficultyBadge:"easy"
+  },
+  {
+    id:3, name:"Fast & Slow Pointers", cat:"arrays", difficulty:"Moyen",
+    when:"Utilise pour detecter des cycles dans une liste chainee ou trouver le milieu d'une liste sans compteur.",
+    code:`def has_cycle(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow == fast:
+            return True
+    return False
+
+def find_middle(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+    return slow`,
+    problems:["Linked List Cycle","Middle of the Linked List","Happy Number","Start of Cycle"],
+    time:"O(n)", space:"O(1)", difficultyBadge:"medium"
+  },
+  {
+    id:4, name:"Merge Intervals", cat:"arrays", difficulty:"Moyen",
+    when:"Utilise quand vous devez fusionner, chevaucher ou inserer des intervalles dans un ensemble de plannings.",
+    code:`def merge_intervals(intervals):
+    intervals.sort(key=lambda x: x[0])
+    merged = [intervals[0]]
+    for start, end in intervals[1:]:
+        if start <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    return merged`,
+    problems:["Merge Intervals","Insert Interval","Non-overlapping Intervals","Meeting Rooms II"],
+    time:"O(n log n)", space:"O(n)", difficultyBadge:"medium"
+  },
+  {
+    id:5, name:"Cyclic Sort", cat:"arrays", difficulty:"Moyen",
+    when:"Utilise pour des tableaux contenant des nombres dans la range [1,n], pour trouver des nombres manquants ou en double.",
+    code:`def cyclic_sort(arr):
+    i = 0
+    while i < len(arr):
+        correct = arr[i] - 1
+        if arr[i] != arr[correct]:
+            arr[i], arr[correct] = arr[correct], arr[i]
+        else:
+            i += 1
+    return arr`,
+    problems:["Find All Numbers Disappeared","Find the Duplicate Number","Missing Number","Find All Duplicates"],
+    time:"O(n)", space:"O(1)", difficultyBadge:"medium"
+  },
+  {
+    id:6, name:"In-place Reversal", cat:"arrays", difficulty:"Moyen",
+    when:"Utilise pour inverser une sous-liste dans une liste chainee sans utiliser d'espace supplementaire.",
+    code:`def reverse_sublist(head, left, right):
+    if left == right:
+        return head
+    dummy = ListNode(0, head)
+    prev = dummy
+    for _ in range(left - 1):
+        prev = prev.next
+    curr = prev.next
+    for _ in range(right - left):
+        next_node = curr.next
+        curr.next = next_node.next
+        next_node.next = prev.next
+        prev.next = next_node
+    return dummy.next`,
+    problems:["Reverse Linked List","Reverse Linked List II","Reverse Nodes in k-Group","Swap Nodes in Pairs"],
+    time:"O(n)", space:"O(1)", difficultyBadge:"medium"
+  },
+  {
+    id:7, name:"Top K Elements", cat:"arrays", difficulty:"Moyen",
+    when:"Utilise pour trouver les K plus grands, K plus petits, ou K elements les plus frequents.",
+    code:`import heapq
+
+def top_k_frequent(nums, k):
+    freq = {}
+    for n in nums:
+        freq[n] = freq.get(n, 0) + 1
+    return heapq.nlargest(k, freq, key=freq.get)
+
+def kth_largest(nums, k):
+    min_heap = []
+    for n in nums:
+        heapq.heappush(min_heap, n)
+        if len(min_heap) > k:
+            heapq.heappop(min_heap)
+    return min_heap[0]`,
+    problems:["Top K Frequent Elements","Kth Largest Element","Find K Closest Points","Top K Frequent Words"],
+    time:"O(n log k)", space:"O(n + k)", difficultyBadge:"medium"
+  },
+  {
+    id:8, name:"Monotonic Stack", cat:"arrays", difficulty:"Moyen",
+    when:"Utilise pour trouver le prochain element plus grand (ou plus petit) pour chaque element d'un tableau.",
+    code:`def next_greater_element(nums):
+    n = len(nums)
+    result = [-1] * n
+    stack = []
+    for i in range(n):
+        while stack and nums[i] > nums[stack[-1]]:
+            idx = stack.pop()
+            result[idx] = nums[i]
+        stack.append(i)
+    return result`,
+    problems:["Next Greater Element","Daily Temperatures","Largest Rectangle in Histogram","Trapping Rain Water"],
+    time:"O(n)", space:"O(n)", difficultyBadge:"medium"
+  },
+  {
+    id:9, name:"Reverse Linked List", cat:"linked", difficulty:"Facile",
+    when:"Utilise pour inverser une liste chainee entiere, en iteratif ou recursif. Base de nombreux autres patterns linked list.",
+    code:`def reverse_list(head):
+    prev = None
+    curr = head
+    while curr:
+        next_node = curr.next
+        curr.next = prev
+        prev = curr
+        curr = next_node
+    return prev
+
+def reverse_list_recursive(head):
+    if not head or not head.next:
+        return head
+    new_head = reverse_list_recursive(head.next)
+    head.next.next = head
+    head.next = None
+    return new_head`,
+    problems:["Reverse Linked List","Reverse Linked List II","Palindrome Linked List","Reverse Nodes in k-Group"],
+    time:"O(n)", space:"O(1) iteratif, O(n) recursif", difficultyBadge:"easy"
+  },
+  {
+    id:10, name:"In-place Merge", cat:"linked", difficulty:"Moyen",
+    when:"Utilise pour fusionner deux listes chainees triees sans espace supplementaire, en reorganisant les pointeurs.",
+    code:`def merge_two_lists(l1, l2):
+    dummy = ListNode(0)
+    curr = dummy
+    while l1 and l2:
+        if l1.val <= l2.val:
+            curr.next = l1
+            l1 = l1.next
+        else:
+            curr.next = l2
+            l2 = l2.next
+        curr = curr.next
+    curr.next = l1 or l2
+    return dummy.next`,
+    problems:["Merge Two Sorted Lists","Merge k Sorted Lists","Sort List","Odd Even Linked List"],
+    time:"O(n + m)", space:"O(1)", difficultyBadge:"medium"
+  },
+  {
+    id:11, name:"Floyd's Cycle Detection", cat:"linked", difficulty:"Moyen",
+    when:"Utilise pour detecter et localiser le debut d'un cycle dans une liste chainee avec la technique tortue/lievre.",
+    code:`def detect_cycle(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow == fast:
+            slow = head
+            while slow != fast:
+                slow = slow.next
+                fast = fast.next
+            return slow
+    return None`,
+    problems:["Linked List Cycle II","Find the Duplicate Number","Happy Number","Circular Array Loop"],
+    time:"O(n)", space:"O(1)", difficultyBadge:"medium"
+  },
+  {
+    id:12, name:"Tree BFS", cat:"trees", difficulty:"Facile-Moyen",
+    when:"Utilise pour parcourir un arbre niveau par niveau (level-order traversal). Utile pour les problemes de largeur ou de niveaux.",
+    code:`from collections import deque
+
+def level_order(root):
+    if not root:
+        return []
+    result = []
+    queue = deque([root])
+    while queue:
+        level = []
+        for _ in range(len(queue)):
+            node = queue.popleft()
+            level.append(node.val)
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+        result.append(level)
+    return result`,
+    problems:["Binary Tree Level Order","Binary Tree Right Side View","Level Order Traversal II","Zigzag Level Order"],
+    time:"O(n)", space:"O(n)", difficultyBadge:"easy"
+  },
+  {
+    id:13, name:"Tree DFS", cat:"trees", difficulty:"Facile-Moyen",
+    when:"Utilise pour parcourir un arbre en profondeur (pre/in/post order) ou pour trouver des chemins specifiques (path sum).",
+    code:`def preorder(root):
+    if not root:
+        return []
+    return [root.val] + preorder(root.left) + preorder(root.right)
+
+def has_path_sum(root, target):
+    if not root:
+        return False
+    if not root.left and not root.right:
+        return root.val == target
+    remaining = target - root.val
+    return (has_path_sum(root.left, remaining) or
+            has_path_sum(root.right, remaining))`,
+    problems:["Maximum Depth of Binary Tree","Path Sum","Binary Tree Paths","Lowest Common Ancestor"],
+    time:"O(n)", space:"O(h) hauteur de l'arbre", difficultyBadge:"easy"
+  },
+  {
+    id:14, name:"Binary Search Tree", cat:"trees", difficulty:"Moyen",
+    when:"Utilise pour exploiter les proprietes BST : gauche < racine < droite. Recherche, insertion, validation, K-eme element.",
+    code:`def search_bst(root, val):
+    if not root or root.val == val:
+        return root
+    if val < root.val:
+        return search_bst(root.left, val)
+    return search_bst(root.right, val)
+
+def is_valid_bst(root, low=float('-inf'), high=float('inf')):
+    if not root:
+        return True
+    if root.val <= low or root.val >= high:
+        return False
+    return (is_valid_bst(root.left, low, root.val) and
+            is_valid_bst(root.right, root.val, high))`,
+    problems:["Search in a BST","Validate BST","Kth Smallest in BST","Inorder Successor"],
+    time:"O(h)", space:"O(h)", difficultyBadge:"medium"
+  },
+  {
+    id:15, name:"Tree Construction", cat:"trees", difficulty:"Moyen-Difficile",
+    when:"Utilise pour reconstruire un arbre a partir de ses traversals (preorder + inorder, ou postorder + inorder).",
+    code:`def build_tree(preorder, inorder):
+    if not preorder or not inorder:
+        return None
+    root = TreeNode(preorder[0])
+    mid = inorder.index(preorder[0])
+    root.left = build_tree(preorder[1:mid+1], inorder[:mid])
+    root.right = build_tree(preorder[mid+1:], inorder[mid+1:])
+    return root`,
+    problems:["Construct Binary Tree from Preorder and Inorder","From Postorder and Inorder","Serialize and Deserialize","Flatten Binary Tree to Linked List"],
+    time:"O(n)", space:"O(n)", difficultyBadge:"hard"
+  },
+  {
+    id:16, name:"View of Tree", cat:"trees", difficulty:"Moyen",
+    when:"Utilise pour trouver la vue gauche, droite, ou le sommet d'un arbre (elements visibles depuis cette direction).",
+    code:`def right_side_view(root):
+    if not root:
+        return []
+    result = []
+    queue = deque([root])
+    while queue:
+        level_size = len(queue)
+        for i in range(level_size):
+            node = queue.popleft()
+            if i == level_size - 1:
+                result.append(node.val)
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+    return result`,
+    problems:["Binary Tree Right Side View","Left Side View","Top View of Binary Tree","Bottom View of Binary Tree"],
+    time:"O(n)", space:"O(n)", difficultyBadge:"medium"
+  },
+  {
+    id:17, name:"Graph BFS", cat:"graphs", difficulty:"Moyen",
+    when:"Utilise pour trouver le plus court chemin (non pondere), explorer par niveaux, ou verifier l'accessibilite dans un graphe.",
+    code:`from collections import deque
+
+def bfs(graph, start):
+    visited = set([start])
+    queue = deque([start])
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+    return order`,
+    problems:["Number of Islands","Rotting Oranges","Word Ladder","Open the Lock"],
+    time:"O(V + E)", space:"O(V)", difficultyBadge:"medium"
+  },
+  {
+    id:18, name:"Graph DFS", cat:"graphs", difficulty:"Moyen",
+    when:"Utilise pour explorer tous les noeuds d'un composant connexe, detecter des cycles, ou trouver tous les chemins possibles.",
+    code:`def dfs(graph, node, visited=None):
+    if visited is None:
+        visited = set()
+    visited.add(node)
+    order = [node]
+    for neighbor in graph[node]:
+        if neighbor not in visited:
+            order.extend(dfs(graph, neighbor, visited))
+    return order
+
+def has_cycle(graph, node, visited, rec_stack):
+    visited.add(node)
+    rec_stack.add(node)
+    for neighbor in graph[node]:
+        if neighbor not in visited:
+            if has_cycle(graph, neighbor, visited, rec_stack):
+                return True
+        elif neighbor in rec_stack:
+            return True
+    rec_stack.remove(node)
+    return False`,
+    problems:["Number of Provinces","Clone Graph","Course Schedule","Pacific Atlantic Water Flow"],
+    time:"O(V + E)", space:"O(V)", difficultyBadge:"medium"
+  },
+  {
+    id:19, name:"Topological Sort", cat:"graphs", difficulty:"Moyen-Difficile",
+    when:"Utilise pour ordonner des elements avec des dependances (plannification de taches, compilation). Graehe oriente acyclique (DAG).",
+    code:`from collections import deque
+
+def topological_sort_kahn(num_courses, prerequisites):
+    in_degree = [0] * num_courses
+    graph = [[] for _ in range(num_courses)]
+    for dest, src in prerequisites:
+        graph[src].append(dest)
+        in_degree[dest] += 1
+    queue = deque([i for i in range(num_courses) if in_degree[i] == 0])
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            in_degree[neighbor] -= 1
+            if in_degree[neighbor] == 0:
+                queue.append(neighbor)
+    return order if len(order) == num_courses else []`,
+    problems:["Course Schedule","Course Schedule II","Alien Dictionary","Task Scheduler"],
+    time:"O(V + E)", space:"O(V)", difficultyBadge:"hard"
+  },
+  {
+    id:20, name:"Union-Find", cat:"graphs", difficulty:"Moyen",
+    when:"Utilise pour gerer les composantes connectees dynamiquement : union de deux ensembles et recherche de connectivite.",
+    code:`class UnionFind:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        px, py = self.find(x), self.find(y)
+        if px == py:
+            return False
+        if self.rank[px] < self.rank[py]:
+            px, py = py, px
+        self.parent[py] = px
+        if self.rank[px] == self.rank[py]:
+            self.rank[px] += 1
+        return True`,
+    problems:["Number of Provinces","Redundant Connection","Accounts Merge","Number of Islands II"],
+    time:"O(alpha(n)) amorti", space:"O(n)", difficultyBadge:"medium"
+  },
+  {
+    id:21, name:"0/1 Knapsack", cat:"dp", difficulty:"Moyen",
+    when:"Utilise quand vous devez selectionner des elements avec un poids et une valeur, en maximisant la valeur sous une contrainte de poids.",
+    code:`def knapsack(weights, values, capacity):
+    n = len(weights)
+    dp = [[0] * (capacity + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for w in range(capacity + 1):
+            dp[i][w] = dp[i-1][w]
+            if weights[i-1] <= w:
+                dp[i][w] = max(dp[i][w],
+                    dp[i-1][w - weights[i-1]] + values[i-1])
+    return dp[n][capacity]
+
+def knapsack_1d(weights, values, capacity):
+    dp = [0] * (capacity + 1)
+    for i in range(len(weights)):
+        for w in range(capacity, weights[i] - 1, -1):
+            dp[w] = max(dp[w], dp[w - weights[i]] + values[i])
+    return dp[capacity]`,
+    problems:["0/1 Knapsack","Partition Equal Subset Sum","Target Sum","Last Stone Weight II"],
+    time:"O(n * capacity)", space:"O(n * capacity) ou O(capacity)", difficultyBadge:"medium"
+  },
+  {
+    id:22, name:"Unbounded Knapsack", cat:"dp", difficulty:"Moyen",
+    when:"Utilise quand chaque element peut etre utilise un nombre illimite de fois (coin change, rod cutting).",
+    code:`def coin_change(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0
+    for coin in coins:
+        for x in range(coin, amount + 1):
+            dp[x] = min(dp[x], dp[x - coin] + 1)
+    return dp[amount] if dp[amount] != float('inf') else -1
+
+def rod_cutting(prices, n):
+    dp = [0] * (n + 1)
+    for i in range(1, n + 1):
+        for j in range(i):
+            dp[i] = max(dp[i], prices[j] + dp[i - j - 1])
+    return dp[n]`,
+    problems:["Coin Change","Coin Change II","Rod Cutting","Minimum Cost For Tickets"],
+    time:"O(amount * n)", space:"O(amount)", difficultyBadge:"medium"
+  },
+  {
+    id:23, name:"Longest Common Subsequence", cat:"dp", difficulty:"Moyen",
+    when:"Utilise pour comparer deux sequences et trouver la plus longue sous-sequence commune, ou calculer la distance d'edition.",
+    code:`def lcs(s1, s2):
+    m, n = len(s1), len(s2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if s1[i-1] == s2[j-1]:
+                dp[i][j] = dp[i-1][j-1] + 1
+            else:
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+    return dp[m][n]
+
+def edit_distance(s1, s2):
+    m, n = len(s1), len(s2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(m + 1):
+        dp[i][0] = i
+    for j in range(n + 1):
+        dp[0][j] = j
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if s1[i-1] == s2[j-1]:
+                dp[i][j] = dp[i-1][j-1]
+            else:
+                dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])
+    return dp[m][n]`,
+    problems:["Longest Common Subsequence","Edit Distance","Distinct Subsequences","Shortest Common Supersequence"],
+    time:"O(m * n)", space:"O(m * n)", difficultyBadge:"medium"
+  },
+  {
+    id:24, name:"Longest Increasing Subsequence", cat:"dp", difficulty:"Moyen-Difficile",
+    when:"Utilise pour trouver la plus longue sous-suite croissante dans un tableau non trie. Variante patience sorting pour O(n log n).",
+    code:`def lis_dp(nums):
+    n = len(nums)
+    dp = [1] * n
+    for i in range(1, n):
+        for j in range(i):
+            if nums[j] < nums[i]:
+                dp[i] = max(dp[i], dp[j] + 1)
+    return max(dp)
+
+def lis_patience(nums):
+    import bisect
+    tails = []
+    for num in nums:
+        pos = bisect.bisect_left(tails, num)
+        if pos == len(tails):
+            tails.append(num)
+        else:
+            tails[pos] = num
+    return len(tails)`,
+    problems:["Longest Increasing Subsequence","Russian Doll Envelopes","Number of Longest Increasing Subsequence","Frog Jump"],
+    time:"O(n^2) ou O(n log n)", space:"O(n)", difficultyBadge:"hard"
+  },
+  {
+    id:25, name:"Matrix Chain Multiplication", cat:"dp", difficulty:"Difficile",
+    when:"Utilise pour trouver l'ordre optimal de multiplication de matrices en minimisant le nombre d'operations scalaires.",
+    code:`def matrix_chain(dims):
+    n = len(dims) - 1
+    dp = [[0] * n for _ in range(n)]
+    for length in range(2, n + 1):
+        for i in range(n - length + 1):
+            j = i + length - 1
+            dp[i][j] = float('inf')
+            for k in range(i, j):
+                cost = (dp[i][k] + dp[k+1][j] +
+                        dims[i] * dims[k+1] * dims[j+1])
+                dp[i][j] = min(dp[i][j], cost)
+    return dp[0][n-1]
+
+def palindrome_partition(s):
+    n = len(s)
+    dp = [[0] * n for _ in range(n)]
+    for i in range(n):
+        dp[i][i] = 0
+    for length in range(2, n + 1):
+        for i in range(n - length + 1):
+            j = i + length - 1
+            if s[i] == s[j] and length <= 3:
+                dp[i][j] = dp[i+1][j-1]
+            else:
+                dp[i][j] = min(dp[i][k] + dp[k+1][j] + 1
+                    for k in range(i, j))
+    return dp[0][n-1]`,
+    problems:["Matrix Chain Multiplication","Burst Balloons","Minimum Cost Tree From Leaf Values","Palindrome Partitioning II"],
+    time:"O(n^3)", space:"O(n^2)", difficultyBadge:"hard"
+  },
+  {
+    id:26, name:"Trie", cat:"advanced", difficulty:"Moyen-Difficile",
+    when:"Utilise pour la recherche de prefis, l'autocomplete, et les problemes de dictionnaire avec de nombreux mots partageant des prefis.",
+    code:`class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_end = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_end = True
+
+    def search(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        return node.is_end
+
+    def starts_with(self, prefix):
+        node = self.root
+        for char in prefix:
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        return True`,
+    problems:["Implement Trie","Word Search II","Replace Words","Longest Word in Dictionary"],
+    time:"O(m) par opération, m = longueur du mot", space:"O(N * 26) ou O(N * alphabet)", difficultyBadge:"hard"
+  },
+  {
+    id:27, name:"Heap / Median", cat:"advanced", difficulty:"Moyen",
+    when:"Utilise pour maintenir un flux de donnees et trouver rapidement la mediane, le K-eme element, ou le top K en temps reel.",
+    code:`import heapq
+
+class MedianFinder:
+    def __init__(self):
+        self.max_heap = []  # moitie inferieure
+        self.min_heap = []  # moitie superieure
+
+    def add_number(self, num):
+        heapq.heappush(self.max_heap, -num)
+        heapq.heappush(self.min_heap, -heapq.heappop(self.max_heap))
+        if len(self.min_heap) > len(self.max_heap):
+            heapq.heappush(self.max_heap, -heapq.heappop(self.min_heap))
+
+    def find_median(self):
+        if len(self.max_heap) > len(self.min_heap):
+            return -self.max_heap[0]
+        return (-self.max_heap[0] + self.min_heap[0]) / 2.0`,
+    problems:["Find Median from Data Stream","Kth Largest in Stream","Sliding Window Median","Top K Frequent Elements"],
+    time:"O(log n) ajout, O(1) mediane", space:"O(n)", difficultyBadge:"medium"
+  },
+  {
+    id:28, name:"Subsets & Permutations", cat:"advanced", difficulty:"Moyen",
+    when:"Utilise pour generer toutes les combinaisons possibles (backtracking) : sous-ensembles, permutations, combinaisons de somme cible.",
+    code:`def subsets(nums):
+    result = []
+    def backtrack(start, current):
+        result.append(current[:])
+        for i in range(start, len(nums)):
+            current.append(nums[i])
+            backtrack(i + 1, current)
+            current.pop()
+    backtrack(0, [])
+    return result
+
+def permutations(nums):
+    result = []
+    def backtrack(current):
+        if len(current) == len(nums):
+            result.append(current[:])
+            return
+        for num in nums:
+            if num in current:
+                continue
+            current.append(num)
+            backtrack(current)
+            current.pop()
+    backtrack([])
+    return result`,
+    problems:["Subsets","Permutations","Combination Sum","Letter Combinations of Phone Number"],
+    time:"O(2^n) subsets, O(n!) permutations", space:"O(n)", difficultyBadge:"medium"
+  },
+  {
+    id:29, name:"Binary Search", cat:"advanced", difficulty:"Facile-Moyen",
+    when:"Utilise pour chercher dans un espace trie ou monotone : tableau trie, recherche dans un intervalle, array roti, minimum dans un minimum.",
+    code:`def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = left + (right - left) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+
+def search_rotated(nums, target):
+    left, right = 0, len(nums) - 1
+    while left <= right:
+        mid = left + (right - left) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[left] <= nums[mid]:
+            if nums[left] <= target < nums[mid]:
+                right = mid - 1
+            else:
+                left = mid + 1
+        else:
+            if nums[mid] < target <= nums[right]:
+                left = mid + 1
+            else:
+                right = mid - 1
+    return -1`,
+    problems:["Binary Search","Search in Rotated Sorted Array","Find Minimum in Rotated Sorted Array","Search a 2D Matrix"],
+    time:"O(log n)", space:"O(1)", difficultyBadge:"easy"
+  },
+  {
+    id:30, name:"Bit Manipulation", cat:"advanced", difficulty:"Moyen",
+    when:"Utilise pour les operations bit a bit : XOR pour trouver l'element unique, masking, counting bits, power of two.",
+    code:`def single_number(nums):
+    result = 0
+    for num in nums:
+        result ^= num
+    return result
+
+def count_bits(n):
+    dp = [0] * (n + 1)
+    for i in range(1, n + 1):
+        dp[i] = dp[i >> 1] + (i & 1)
+    return dp
+
+def power_of_two(n):
+    return n > 0 and (n & (n - 1)) == 0`,
+    problems:["Single Number","Number of 1 Bits","Counting Bits","Power of Two","Bitwise AND of Numbers Range"],
+    time:"O(n)", space:"O(1) ou O(n)", difficultyBadge:"medium"
+  },
+  {
+    id:31, name:"Greedy", cat:"advanced", difficulty:"Moyen-Difficile",
+    when:"Utilise quand un choix localement optimal mene a un optimum global : selection d'activites, interval scheduling, taches avec deadlines.",
+    code:`def activity_selection(activities):
+    activities.sort(key=lambda x: x[1])
+    result = [activities[0]]
+    for i in range(1, len(activities)):
+        if activities[i][0] >= result[-1][1]:
+            result.append(activities[i])
+    return result
+
+def jump_game(nums):
+    max_reach = 0
+    for i in range(len(nums)):
+        if i > max_reach:
+            return False
+        max_reach = max(max_reach, i + nums[i])
+    return True
+
+def gas_station(gas, cost):
+    total_tank = curr_tank = start = 0
+    for i in range(len(gas)):
+        diff = gas[i] - cost[i]
+        total_tank += diff
+        curr_tank += diff
+        if curr_tank < 0:
+            start = i + 1
+            curr_tank = 0
+    return start if total_tank >= 0 else -1`,
+    problems:["Jump Game","Jump Game II","Gas Station","Task Scheduler"],
+    time:"O(n log n) ou O(n)", space:"O(1)", difficultyBadge:"hard"
+  }
+];
+
+const CATS = {
+  arrays:{name:"Arrays & Strings",badge:"badge-cat-arrays",patterns:[1,2,3,4,5,6,7,8]},
+  linked:{name:"Linked Lists",badge:"badge-cat-linked",patterns:[9,10,11]},
+  trees:{name:"Trees",badge:"badge-cat-trees",patterns:[12,13,14,15,16]},
+  graphs:{name:"Graphs",badge:"badge-cat-graphs",patterns:[17,18,19,20]},
+  dp:{name:"Dynamic Programming",badge:"badge-cat-dp",patterns:[21,22,23,24,25]},
+  advanced:{name:"Avance",badge:"badge-cat-advanced",patterns:[26,27,28,29,30,31]}
+};
+
+let bookmarks = JSON.parse(localStorage.getItem('dsa31_bookmarks')||'[]');
+let mastered = JSON.parse(localStorage.getItem('dsa31_mastered')||'[]');
+let expandedCards = new Set();
+let activeFilter = 'all';
+let focusedIdx = -1;
+
+function saveBookmarks(){localStorage.setItem('dsa31_bookmarks',JSON.stringify(bookmarks))}
+function saveMastered(){localStorage.setItem('dsa31_mastered',JSON.stringify(mastered))}
+
+function toggleBookmark(id){
+  const idx = bookmarks.indexOf(id);
+  if(idx>=0) bookmarks.splice(idx,1); else bookmarks.push(id);
+  saveBookmarks();
+  renderPatterns();
+}
+
+function toggleMastered(id){
+  const idx = mastered.indexOf(id);
+  if(idx>=0) mastered.splice(idx,1); else mastered.push(id);
+  saveMastered();
+  updateProgress();
+  renderCatalog();
+}
+
+function updateProgress(){
+  const pct = Math.round((mastered.length/31)*100);
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressText').textContent=`${mastered.length}/31 patterns maitrises`;
+  document.getElementById('progressPct').textContent=pct+'%';
+}
+
+function renderCatalog(){
+  const g=document.getElementById('catalogGrid');
+  g.innerHTML='';
+  PATTERNS.forEach(p=>{
+    const d=document.createElement('div');
+    d.className='catalog-item'+(mastered.includes(p.id)?' done':'');
+    d.innerHTML=`<span class="cat-num">${p.id}</span>${p.name}`;
+    d.onclick=()=>{
+      const el=document.querySelector(`[data-id="${p.id}"]`);
+      if(el){el.scrollIntoView({behavior:'smooth',block:'center'});if(!expandedCards.has(p.id)){expandedCards.add(p.id);el.classList.add('expanded')}}
+    };
+    g.appendChild(d);
+  });
+}
+
+function renderToc(){
+  const toc=document.getElementById('tocList');
+  toc.innerHTML='';
+  Object.entries(CATS).forEach(([key,cat])=>{
+    const a=document.createElement('a');
+    a.href='#cat-'+key;
+    a.innerHTML=`${cat.name}<span class="toc-count">${cat.patterns.length}</span>`;
+    toc.appendChild(a);
+  });
+}
+
+function escapeHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function renderPatterns(){
+  const grid=document.getElementById('patternsGrid');
+  const search=document.getElementById('searchInput').value.toLowerCase();
+  grid.innerHTML='';
+
+  let sections=[];
+  Object.entries(CATS).forEach(([key,cat])=>{
+    if(activeFilter!=='all' && activeFilter!=='bookmarked' && activeFilter!==key) return;
+    const patterns = cat.patterns.map(id=>PATTERNS.find(p=>p.id===id));
+    let filtered;
+    if(activeFilter==='bookmarked'){
+      filtered=patterns.filter(p=>bookmarks.includes(p.id));
+    }else{
+      filtered=patterns.filter(p=>{
+        if(!search) return true;
+        return (p.name.toLowerCase().includes(search)||
+                p.when.toLowerCase().includes(search)||
+                p.problems.some(pr=>pr.toLowerCase().includes(search))||
+                p.cat.includes(search));
+      });
+    }
+    if(filtered.length===0) return;
+    sections.push({cat:cat,key,patterns:filtered});
+  });
+
+  sections.forEach(({cat,key,patterns:pl})=>{
+    const sec=document.createElement('div');
+    sec.id='cat-'+key;
+    const hdr=document.createElement('h2');
+    hdr.style.cssText='margin:32px 0 12px;font-size:1.3rem;color:var(--wh)';
+    hdr.textContent=cat.name;
+    sec.appendChild(hdr);
+    pl.forEach(p=>{
+      const card=document.createElement('div');
+      card.className='pattern-card'+(expandedCards.has(p.id)?' expanded':'')+(bookmarks.includes(p.id)?' bookmarked':'');
+      card.dataset.id=p.id;
+
+      const diffBadgeClass=p.difficultyBadge==='easy'?'badge-easy':p.difficultyBadge==='medium'?'badge-medium':'badge-hard';
+      const codeHtml=escapeHtml(p.code).replace(/def /g,'<span style="color:#c084fc">def </span>').replace(/class /g,'<span style="color:#c084fc">class </span>').replace(/return /g,'<span style="color:#f87171">return </span>').replace(/for /g,'<span style="color:#fb923c">for </span>').replace(/if /g,'<span style="color:#fb923c">if </span>').replace(/while /g,'<span style="color:#fb923c">while </span>').replace(/import /g,'<span style="color:#fb923c">import </span>').replace(/self\./g,'<span style="color:#94a3b8">self.</span>');
+
+      card.innerHTML=`
+        <div class="card-header" onclick="toggleExpand(${p.id})">
+          <div class="pattern-num">${p.id}</div>
+          <div class="card-info">
+            <h3>${p.name}</h3>
+            <div class="card-tags">
+              <span class="badge ${cat.badge}">${cat.name}</span>
+              <span class="badge ${diffBadgeClass}">${p.difficulty}</span>
+            </div>
+          </div>
+          <button class="bookmark-btn ${bookmarks.includes(p.id)?'active':''}" onclick="event.stopPropagation();toggleBookmark(${p.id})" title="Ajouter aux favoris">&#9733;</button>
+          <span class="expand-icon">&#9662;</span>
+        </div>
+        <div class="card-body">
+          <div class="section-block">
+            <h4>Quand l'utiliser</h4>
+            <p>${p.when}</p>
+          </div>
+          <div class="section-block">
+            <h4>Template code (Python)</h4>
+            <div class="code-wrapper">
+              <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+              <pre><code>${codeHtml}</code></pre>
+            </div>
+          </div>
+          <div class="section-block">
+            <h4>Problemes classiques</h4>
+            <ul>${p.problems.map(pr=>`<li>${pr}</li>`).join('')}</ul>
+          </div>
+          <div class="section-block">
+            <h4>Complexite</h4>
+            <div class="complexity">
+              <span>Temps: ${p.time}</span>
+              <span>Espace: ${p.space}</span>
+            </div>
+          </div>
+          <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--bdr)">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--t2);font-size:.85rem">
+              <input type="checkbox" ${mastered.includes(p.id)?'checked':''} onchange="toggleMastered(${p.id})" style="accent-color:var(--success)">
+              Pattern maitrise
+            </label>
+          </div>
+        </div>`;
+      sec.appendChild(card);
+    });
+    grid.appendChild(sec);
+  });
+}
+
+function toggleExpand(id){
+  const card=document.querySelector(`[data-id="${id}"]`);
+  if(!card)return;
+  if(expandedCards.has(id)){expandedCards.delete(id);card.classList.remove('expanded')}
+  else{expandedCards.add(id);card.classList.add('expanded')}
+}
+
+function copyCode(btn){
+  const code=btn.parentElement.querySelector('code').textContent;
+  navigator.clipboard.writeText(code).then(()=>{
+    btn.textContent='Copie !';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copier';btn.classList.remove('copied')},2000);
+  });
+}
+
+function resetProgress(){
+  if(!confirm('Reinitialiser la progression ?'))return;
+  bookmarks=[];mastered=[];
+  saveBookmarks();saveMastered();
+  updateProgress();renderPatterns();renderCatalog();
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter=btn.dataset.cat;
+    renderPatterns();
+  };
+});
+
+document.getElementById('searchInput').addEventListener('input',e=>{
+  document.getElementById('clearSearch').classList.toggle('visible',e.target.value.length>0);
+  renderPatterns();
+});
+document.getElementById('clearSearch').onclick=()=>{
+  document.getElementById('searchInput').value='';
+  document.getElementById('clearSearch').classList.remove('visible');
+  renderPatterns();
+};
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'){e.preventDefault();document.getElementById('searchInput').focus();return}
+  if(e.key==='Escape'){document.getElementById('searchInput').blur();document.getElementById('searchInput').value='';renderPatterns();return}
+  if(document.activeElement.tagName==='INPUT')return;
+  const cards=document.querySelectorAll('.pattern-card');
+  if(!cards.length)return;
+  if(e.key==='ArrowDown'){e.preventDefault();focusedIdx=Math.min(focusedIdx+1,cards.length-1);cards[focusedIdx].scrollIntoView({behavior:'smooth',block:'nearest'});cards[focusedIdx].focus()}
+  if(e.key==='ArrowUp'){e.preventDefault();focusedIdx=Math.max(focusedIdx-1,0);cards[focusedIdx].scrollIntoView({behavior:'smooth',block:'nearest'});cards[focusedIdx].focus()}
+  if(e.key==='Enter'&&focusedIdx>=0){const id=parseInt(cards[focusedIdx].dataset.id);toggleExpand(id)}
+  if((e.key==='b'||e.key==='B')&&focusedIdx>=0){toggleBookmark(parseInt(cards[focusedIdx].dataset.id))}
+  if((e.key==='m'||e.key==='M')&&focusedIdx>=0){toggleMastered(parseInt(cards[focusedIdx].dataset.id))}
+});
+
+renderToc();
+renderCatalog();
+renderPatterns();
+updateProgress();
+</script>
+</body>
+</html>

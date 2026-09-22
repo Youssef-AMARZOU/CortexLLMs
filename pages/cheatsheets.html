@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheatsheets - CortexLLMs.io</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0d0f;--card:#1a1a2e;--acc:#3b82f6;--acc-l:rgba(59,130,246,.15);--t1:#f1f5f9;--t2:#94a3b8;--bdr:#1e293b;--wh:#fff;--r:12px;--mx:1200px;--success:#10b981;--warning:#f59e0b;--danger:#ef4444}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7}
+h1,h2,h3,h4{font-family:'Source Serif 4',serif;font-weight:700;line-height:1.3}
+a{color:var(--acc);text-decoration:none}
+.header{position:sticky;top:0;z-index:100;background:rgba(13,13,15,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:16px 0}
+.nav{max-width:var(--mx);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Source Serif 4',serif;font-size:1.3rem;font-weight:800}.logo span{color:var(--acc)}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{color:var(--t2);font-size:.9rem;font-weight:500;transition:color .2s}.nav-links a:hover,.nav-links a.active{color:var(--acc)}
+.hero{text-align:center;padding:60px 24px 40px}
+.hero h1{font-size:2.5rem;margin-bottom:12px;background:linear-gradient(135deg,var(--acc),#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--t2);font-size:1.15rem;max-width:600px;margin:0 auto 32px}
+.hero-stats{display:flex;justify-content:center;gap:40px;margin-top:24px}
+.hero-stat{text-align:center}
+.hero-stat .num{font-size:1.8rem;font-weight:700;color:var(--wh)}
+.hero-stat .label{font-size:.8rem;color:var(--t2)}
+.filters{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;padding:0 24px 32px}
+.filter-btn{padding:8px 20px;border-radius:20px;border:1px solid var(--bdr);background:transparent;color:var(--t2);font-size:.85rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.filter-btn:hover,.filter-btn.active{background:var(--acc-l);border-color:var(--acc);color:var(--acc)}
+.grid{max-width:var(--mx);margin:0 auto;padding:0 24px 60px;display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:20px}
+.cheat-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;transition:all .3s}
+.cheat-card:hover{border-color:var(--acc);transform:translateY(-2px)}
+.cheat-header{padding:20px 24px;cursor:pointer;display:flex;align-items:center;gap:16px;user-select:none}
+.cheat-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.cheat-header h3{font-size:1.05rem;font-weight:600;color:var(--wh);font-family:'Inter',sans-serif;flex:1}
+.cheat-header .tag{font-size:.7rem;padding:3px 8px;border-radius:10px;background:var(--acc-l);color:var(--acc);font-weight:600;flex-shrink:0}
+.cheat-header .expand-icon{color:var(--t2);transition:transform .3s;font-size:1.2rem}
+.cheat-card.open .cheat-header .expand-icon{transform:rotate(180deg)}
+.cheat-body{display:none;padding:0 24px 24px;border-top:1px solid var(--bdr)}
+.cheat-card.open .cheat-body{display:block}
+.cheat-body .copy-btn{float:right;padding:6px 14px;border-radius:6px;border:1px solid var(--bdr);background:transparent;color:var(--t2);font-size:.75rem;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;margin:-4px 0 12px}
+.cheat-body .copy-btn:hover{border-color:var(--acc);color:var(--acc)}
+.cheat-body .copy-btn.copied{border-color:var(--success);color:var(--success)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.82rem}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--bdr)}
+th{color:var(--acc);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.5px}
+td{color:var(--t2)}
+tr:hover td{background:rgba(59,130,246,.05)}
+code{font-family:'JetBrains Mono',monospace;font-size:.8rem;background:rgba(59,130,246,.1);padding:2px 6px;border-radius:4px;color:#a5f3fc}
+pre{background:#111;border:1px solid var(--bdr);border-radius:8px;padding:16px;overflow-x:auto;margin:12px 0;font-size:.8rem;line-height:1.5}
+pre code{background:none;padding:0}
+.section-title{font-size:.8rem;text-transform:uppercase;letter-spacing:.8px;color:var(--acc);margin:20px 0 8px;font-weight:600;font-family:'Inter',sans-serif}
+.footer{border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:var(--t2);font-size:.85rem}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.hero h1{font-size:1.8rem}}
+</style>
+</head>
+<body>
+<header class="header"><nav class="nav"><a href="/" class="logo">CortexLLMs<span>.io</span></a><div class="nav-links"><a href="/">Accueil</a><a href="/pages/ai-engineering.html">Ingenierie IA</a><a href="/pages/devops.html">DevOps</a><a href="/pages/system-design.html">System Design</a><a href="/pages/dsa.html">DSA</a><a href="/pages/cheatsheets.html" class="active">Cheatsheets</a><a href="/pages/entreprises.html">Entreprises</a></div></nav></header>
+
+<div class="hero">
+<h1>Cheatsheets</h1>
+<p>Aides-memoire pour vos entretiens techniques</p>
+<div class="hero-stats">
+<div class="hero-stat"><div class="num">10</div><div class="label">Aides-memoire</div></div>
+<div class="hero-stat"><div class="num">200+</div><div class="label">Concepts</div></div>
+<div class="hero-stat"><div class="num">5</div><div class="label">Categories</div></div>
+</div>
+</div>
+
+<div class="filters">
+<button class="filter-btn active" data-cat="all">Tous</button>
+<button class="filter-btn" data-cat="algo">Algorithme</button>
+<button class="filter-btn" data-cat="data">Donnees</button>
+<button class="filter-btn" data-cat="devops">DevOps</button>
+<button class="filter-btn" data-cat="lang">Langages</button>
+<button class="filter-btn" data-cat="design">System Design</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<footer class="footer">
+<p>CortexLLMs.io &copy; 2026 &mdash; Plateforme de preparation aux entretiens IA</p>
+</footer>
+
+<script>
+const cheatsheets=[
+{
+id:1,title:"Complexite Algorithmique",icon:"&#x1F4D0;",tag:"Algorithme",cat:"algo",
+content:`<div class="section-title">Notation Grand O</div>
+<table>
+<tr><th>Notation</th><th>Nom</th><th>Exemple</th><th>Description</th></tr>
+<tr><td><code>O(1)</code></td><td>Constant</td><td>Acces tableau par index</td><td>Temps fixe quelle que soit la taille</td></tr>
+<tr><td><code>O(log n)</code></td><td>Logarithmique</td><td>Binary search</td><td>Divise l'espace de recherche par 2</td></tr>
+<tr><td><code>O(n)</code></td><td>Lineaire</td><td>Boucle simple</td><td>Parcourt tous les elements</td></tr>
+<tr><td><code>O(n log n)</code></td><td>Lineaire-log</td><td>Merge sort, Quick sort (moy)</td><td>Diviser pour regner optimal</td></tr>
+<tr><td><code>O(n²)</code></td><td>Quadratique</td><td>Boucles imbriquees</td><td>Paire d'elements comparee</td></tr>
+<tr><td><code>O(2ⁿ)</code></td><td>Exponentiel</td><td>Sous-ensembles, brute force</td><td>Double a chaque ajout</td></tr>
+</table>
+<div class="section-title">Complexites courantes</div>
+<pre><code># Recherche lineaire : O(n)
+for x in arr:
+    if x == target: return i
+
+# Binary search : O(log n)
+while lo <= hi:
+    mid = (lo+hi)//2
+    if arr[mid]==target: return mid
+    elif arr[mid]<target: lo=mid+1
+    else: hi=mid-1
+
+# Tri fusion : O(n log n)
+def merge_sort(arr):
+    if len(arr)<=1: return arr
+    mid=len(arr)//2
+    return merge(merge_sort(arr[:mid]),merge_sort(arr[mid:]))</code></pre>`
+},
+{
+id:2,title:"Structures de Donnees",icon:"&#x1F4E6;",tag:"Donnees",cat:"data",
+content:`<div class="section-title">Operations et Complexites</div>
+<table>
+<tr><th>Structure</th><th>Acces</th><th>Recherche</th><th>Insertion</th><th>Suppression</th></tr>
+<tr><td>Array</td><td><code>O(1)</code></td><td><code>O(n)</code></td><td><code>O(n)</code></td><td><code>O(n)</code></td></tr>
+<tr><td>LinkedList</td><td><code>O(n)</code></td><td><code>O(n)</code></td><td><code>O(1)</code></td><td><code>O(1)</code></td></tr>
+<tr><td>Stack</td><td><code>O(n)</code></td><td><code>O(n)</code></td><td><code>O(1)</code></td><td><code>O(1)</code></td></tr>
+<tr><td>Queue</td><td><code>O(n)</code></td><td><code>O(n)</code></td><td><code>O(1)</code></td><td><code>O(1)</code></td></tr>
+<tr><td>HashMap</td><td><code>N/A</code></td><td><code>O(1)</code></td><td><code>O(1)</code></td><td><code>O(1)</code></td></tr>
+<tr><td>BST</td><td><code>O(log n)</code></td><td><code>O(log n)</code></td><td><code>O(log n)</code></td><td><code>O(log n)</code></td></tr>
+<tr><td>Heap</td><td><code>N/A</code></td><td><code>O(n)</code></td><td><code>O(log n)</code></td><td><code>O(log n)</code></td></tr>
+<tr><td>Graph (adj list)</td><td><code>N/A</code></td><td><code>O(V+E)</code></td><td><code>O(1)</code></td><td><code>O(E)</code></td></tr>
+</table>
+<div class="section-title">Quand utiliser quoi</div>
+<table>
+<tr><th>Besoin</th><th>Structure</th><th>Raison</th></tr>
+<tr><td>Acces rapide par index</td><td>Array</td><td>Acces O(1) par position</td></tr>
+<tr><td>Pile / Undo</td><td>Stack</td><td>LIFO, push/pop O(1)</td></tr>
+<tr><td>FIFO / File d'attente</td><td>Queue</td><td>FIFO, enqueue/dequeue O(1)</td></tr>
+<tr><td>Mapping cle-valeur</td><td>HashMap</td><td>Recherche O(1) en moyenne</td></tr>
+<tr><td>Tri dynamique</td><td>Heap</td><td>Insert/suppr min O(log n)</td></tr>
+<tr><td>Donnees hierarchiques</td><td>Tree</td><td>Navigation parent-enfant</td></tr>
+<tr><td>Plus court chemin</td><td>Graph</td><td>Modele de reseau/routes</td></tr>
+</table>`
+},
+{
+id:3,title:"SQL Essentiel",icon:"&#x1F5C3;",tag:"Donnees",cat:"data",
+content:`<div class="section-title">Types de JOIN</div>
+<pre><code>-- INNER JOIN : lignes correspondantes uniquement
+SELECT * FROM A INNER JOIN B ON A.id=B.fk;
+
+-- LEFT JOIN : toutes les lignes de A
+SELECT * FROM A LEFT JOIN B ON A.id=B.fk;
+
+-- RIGHT JOIN : toutes les lignes de B
+SELECT * FROM A RIGHT JOIN B ON A.id=B.fk;
+
+-- FULL OUTER JOIN : toutes les lignes
+SELECT * FROM A FULL OUTER JOIN B ON A.id=B.fk;</code></pre>
+<div class="section-title">Window Functions</div>
+<pre><code>-- Rank avec ROW_NUMBER, RANK, DENSE_RANK
+SELECT name, score,
+  ROW_NUMBER() OVER (ORDER BY score DESC) AS rn,
+  RANK() OVER (ORDER BY score DESC) AS rnk,
+  SUM(score) OVER (PARTITION BY dept ORDER BY date) AS running_total,
+  AVG(score) OVER (PARTITION BY dept) AS dept_avg
+FROM employees;</code></pre>
+<div class="section-title">Optimisation</div>
+<pre><code>-- Analyser une requete
+EXPLAIN ANALYZE SELECT * FROM users WHERE email='x';
+
+-- Creer un index
+CREATE INDEX idx_users_email ON users(email);
+
+-- Index composite
+CREATE INDEX idx_orders_date_status ON orders(created_at, status);</code></pre>
+<div class="section-title">GROUP BY et HAVING</div>
+<pre><code>SELECT department, COUNT(*) AS nb, AVG(salary) AS sal
+FROM employees
+GROUP BY department
+HAVING AVG(salary) > 50000
+ORDER BY sal DESC;</code></pre>`
+},
+{
+id:4,title:"Git Commandes",icon:"&#x1F500;",tag:"DevOps",cat:"devops",
+content:`<div class="section-title">Commandes courantes</div>
+<pre><code># Stager et commiter
+git add .                        # Tout ajouter
+git add -p                       # Stager par hunk
+git commit -m "message"          # Commiter
+git commit --amend               # Modifier le dernier commit
+
+# Push / Pull
+git push origin branch           # Pousser
+git pull --rebase origin branch  # Pull avec rebase
+git fetch --all                  # Recuperer sans merger</code></pre>
+<div class="section-title">Branches et Rebase</div>
+<pre><code># Branches
+git branch feature               # Creer
+git checkout -b feature          # Creer et switcher
+git merge feature                # Merge dans courant
+git branch -d feature            # Supprimer
+
+# Rebase
+git rebase main                  # Rebase sur main
+git rebase -i HEAD~5             # Interactive rebase
+
+# Cherry-pick
+git cherry-pick abc1234          # Appliquer un commit</code></pre>
+<div class="section-title">Utilitaires</div>
+<pre><code># Stash
+git stash push -m "wip"          # Sauvegarder
+git stash pop                    # Restaurer
+git stash list                   # Lister
+
+# Bisect (recherche binary du bug)
+git bisect start
+git bisect bad                   # Commit actuel = bug
+git bisect good v1.0             # Version precedente = ok
+# Git teste automatiquement
+
+# Utile
+git log --oneline --graph        # Visualiser historique
+git diff --staged                # Voir ce qui sera commite
+git reflog                       # Historique des actions</code></pre>`
+},
+{
+id:5,title:"Docker Commandes",icon:"&#x1F433;",tag:"DevOps",cat:"devops",
+content:`<div class="section-title">Container Lifecycle</div>
+<pre><code># Build
+docker build -t mon-app:latest .       # Construire image
+docker build --no-cache -t mon-app .   # Sans cache
+
+# Run
+docker run -d -p 8080:80 --name web nginx   # Detache, port
+docker run -it ubuntu bash                  # interactif
+docker run -v /local:/container app         # Mount volume
+docker run --env-file .env app              # Variables
+
+# Exec / Logs
+docker exec -it web bash               # Shell dans container
+docker logs -f web                      # Suivre les logs
+docker inspect web                      # Details complets</code></pre>
+<div class="section-title">Docker Compose</div>
+<pre><code># docker-compose.yml
+services:
+  web:
+    build: .
+    ports: ["8080:80"]
+    depends_on: [db]
+  db:
+    image: postgres:15
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    environment:
+      POSTGRES_PASSWORD: secret
+
+# Commandes
+docker compose up -d               # Demarrer
+docker compose down                # Arreter
+docker compose ps                  # Statut
+docker compose logs -f web         # Logs service</code></pre>
+<div class="section-title">Images et Reseaux</div>
+<pre><code># Images
+docker images                      # Lister
+docker rmi image_id                # Supprimer
+docker system prune -a             # Nettoyer tout
+
+# Reseaux
+docker network create mon-reseau
+docker run --network mon-reseau app
+docker network ls</code></pre>`
+},
+{
+id:6,title:"Kubernetes Resources",icon:"&#x2699;",tag:"DevOps",cat:"devops",
+content:`<div class="section-title">Resources de base</div>
+<pre><code># Pod : unite minimale
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mon-pod
+spec:
+  containers:
+  - name: app
+    image: nginx
+    ports:
+    - containerPort: 80
+
+# Deployment : gestion replicas
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mon-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mon-app
+  template:
+    metadata:
+      labels:
+        app: mon-app
+    spec:
+      containers:
+      - name: app
+        image: nginx</code></pre>
+<div class="section-title">Service et Ingress</div>
+<pre><code># Service : accès aux pods
+apiVersion: v1
+kind: Service
+metadata:
+  name: mon-service
+spec:
+  selector:
+    app: mon-app
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP
+
+# Ingress : routage HTTP
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mon-ingress
+spec:
+  rules:
+  - host: mon-app.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mon-service
+            port:
+              number: 80</code></pre>
+<div class="section-title">ConfigMap, Secret, PV/PVC</div>
+<pre><code># ConfigMap
+kubectl create configmap mon-config --from-literal=KEY=VALUE
+
+# Secret
+kubectl create secret generic mon-secret --from-literal=password=abc
+
+# PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mon-pvc
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 10Gi</code></pre>
+<div class="section-title">Commandes kubectl</div>
+<pre><code>kubectl get pods -o wide
+kubectl describe pod mon-pod
+kubectl logs -f mon-pod
+kubectl exec -it mon-pod -- bash
+kubectl apply -f config.yaml
+kubectl delete -f config.yaml
+kubectl scale deployment mon-app --replicas=5</code></pre>`
+},
+{
+id:7,title:"Linux Commandes",icon:"&#x1F427;",tag:"DevOps",cat:"devops",
+content:`<div class="section-title">Recherche et Fichiers</div>
+<pre><code># find : recherche de fichiers
+find / -name "*.log" -mtime -7          # Fichiers .log des 7 derniers jours
+find . -size +100M -type f              # Fichiers > 100Mo
+
+# grep : recherche dans fichiers
+grep -rn "pattern" .                    # Recursif avec numeros de ligne
+grep -i "error" *.log                   # Insensible a la casse
+grep -A3 -B1 "Exception" app.log       # Contexte avant/apres
+
+# sed : transformation
+sed -i 's/ancien/nouveau/g' fichier     # Remplacer globalement
+sed -n '10,20p' fichier                 # Afficher lignes 10-20</code></pre>
+<div class="section-title">awk et tri</div>
+<pre><code># awk : traitement de texte
+awk '{print $1, $3}' fichier           # Colonnes 1 et 3
+awk -F: '{print $1}' /etc/passwd       # Champ delimite
+awk '/error/ {print NR, $0}' log       # Lignes contenant "error"
+
+# tri et comptage
+sort fichier | uniq -c | sort -rn       # Compter et trier
+cut -d',' -f2 fichier | sort | uniq -c  # Valeurs uniques colonne 2</code></pre>
+<div class="section-title">Systeme et Reseau</div>
+<pre><code># Processus
+ps aux | grep node                      # Processus
+top -bn1 | head -20                     # Snapshot
+kill -9 PID                             # Forcer arret
+htop                                     # Monitor interactif
+
+# Reseau
+netstat -tlnp                           # Ports en ecoute
+curl -I https://example.com             # Headers HTTP
+wget -q -O- url                         # Telecharger
+
+# Archive
+tar -czvf archive.tar.gz dossier/       # Creer
+tar -xzvf archive.tar.gz               # Extraire</code></pre>
+<div class="section-title">Permissions</div>
+<pre><code>chmod 755 script.sh          # rwxr-xr-x
+chmod 644 config.txt         # rw-r--r--
+chown user:group file.txt    # Changer proprietaire
+ls -la                       # Voir permissions</code></pre>`
+},
+{
+id:8,title:"Python Data Science",icon:"&#x1F40D;",tag:"Langage",cat:"lang",
+content:`<div class="section-title">NumPy</div>
+<pre><code>import numpy as np
+
+arr = np.array([1,2,3,4,5])
+arr.reshape(5,1)              # Matrice colonne
+np.zeros((3,3))               # Matrice zeros
+np.random.randn(100,3)        # Aleatoire normal
+np.mean(arr, axis=0)          # Moyenne par colonne
+np.dot(A, B)                  # Produit matriciel
+arr[arr > 3]                  # Filtrage boolean</code></pre>
+<div class="section-title">Pandas</div>
+<pre><code>import pandas as pd
+
+df = pd.read_csv("data.csv")
+df.head()                     # Apercu
+df.describe()                 # Statistiques
+df.groupby("col").mean()     # Grouper
+df["new"] = df["a"] + df["b"]# Nouvelle colonne
+df.dropna()                   # Supprimer NaN
+df.fillna(0)                  # Remplacer NaN
+df.merge(df2, on="key")      # Jointure
+df.pivot_table(values="val", index="a", columns="b")
+pd.get_dummies(df["cat"])    # One-hot encoding</code></pre>
+<div class="section-title">Matplotlib</div>
+<pre><code>import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10,6))
+plt.plot(x, y, label="ligne")
+plt.scatter(x, y, c=colors)
+plt.bar(categories, values)
+plt.hist(data, bins=30)
+plt.xlabel("X"); plt.ylabel("Y")
+plt.title("Titre"); plt.legend()
+plt.savefig("graph.png", dpi=150)</code></pre>
+<div class="section-title">Scikit-learn</div>
+<pre><code>from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+print(classification_report(y_test, y_pred))</code></pre>`
+},
+{
+id:9,title:"System Design",icon:"&#x1F3D7;",tag:"Design",cat:"design",
+content:`<div class="section-title">Load Balancing</div>
+<table>
+<tr><th>Algorithme</th><th>Description</th><th>Usage</th></tr>
+<tr><td>Round Robin</td><td>Tour par tour</td><td>Serveurs egaux</td></tr>
+<tr><td>Least Connections</td><td>Moins de connexions actives</td><td>Charge variable</td></tr>
+<tr><td>IP Hash</td><td>Hash de l'IP client</td><td>Affinite de session</td></tr>
+<tr><td>Weighted</td><td>Basé sur la capacite</td><td>Serveurs heterogenes</td></tr>
+</table>
+<div class="section-title">Caching</div>
+<table>
+<tr><th>Niveau</th><th>Exemple</th><th>Latence</th></tr>
+<tr><td>CDN</td><td>CloudFront, Cloudflare</td><td>&lt;50ms</td></tr>
+<tr><td>Application</td><td>Redis, Memcached</td><td>&lt;1ms</td></tr>
+<tr><td>Database</td><td>Query cache, Buffer pool</td><td>~1ms</td></tr>
+</table>
+<div class="section-title">Theoreme CAP</div>
+<pre><code>CAP : impossible d'avoir les 3 en meme temps
+- CP : Consistent + Partition tolerant (MongoDB, HBase)
+- AP : Disponible + Partition tolerant (Cassandra, DynamoDB)
+- CA : Consistent + Disponible (sans partition = rare)
+
+Choix : 
+- Finance → CP (pas de donnees incoherentes)
+- Reseau social → AP (dispo > cohérence temporaire)</code></pre>
+<div class="section-title">Selection Base de Donnees</div>
+<table>
+<tr><th>Besoin</th><th>Choix</th><th>Raison</th></tr>
+<tr><td>Transactions ACID</td><td>PostgreSQL</td><td>Fiabilite, JOIN</td></tr>
+<tr><td>Echelle massive lecture</td><td>MongoDB</td><td>Schema flexible</td></tr>
+<tr><td>Cache temps reel</td><td>Redis</td><td>Donnees en memoire</td></tr>
+<tr><td>Temps reel / Chat</td><td>DynamoDB</td><td>Scale automatique</td></tr>
+<tr><td>Analytics</td><td>ClickHouse</td><td>OLAP optimise</td></tr>
+</table>
+<div class="section-title">Message Queues</div>
+<table>
+<tr><th>Systeme</th><th>Modele</th><th>Usage</th></tr>
+<tr><td>Kafka</td><td>Pub/Sub persistant</td><td>Event streaming</td></tr>
+<tr><td>RabbitMQ</td><td>Queue avec routing</td><td>Task processing</td></tr>
+<tr><td>SQS</td><td>Managed queue</td><td>Decoupling services</td></tr>
+</table>`
+},
+{
+id:10,title:"Behavioral STAR",icon:"&#x1F4AC;",tag:"Design",cat:"design",
+content:`<div class="section-title">Methode STAR</div>
+<table>
+<tr><th>Etape</th><th>Description</th><th>Temps</th></tr>
+<tr><td><strong>S</strong>ituation</td><td>Decrivez le contexte</td><td>15%</td></tr>
+<tr><td><strong>T</strong>ask</td><td>Expliquez votre mission</td><td>10%</td></tr>
+<tr><td><strong>A</strong>ction</td><td>Detaillez vos actions</td><td>60%</td></tr>
+<tr><td><strong>R</strong>esultat</td><td>Donnez les resultats mesurables</td><td>15%</td></tr>
+</table>
+<div class="section-title">Template de reponse</div>
+<pre><code>SITUATION: "Dans mon precedent poste chez [entreprise],
+nous avions un probleme de [description]."
+TASK: "En tant que [role], j'etais responsable de [mission]."
+ACTION: "J'ai [action 1]. Ensuite, j'ai [action 2].
+J'ai aussi [action 3] pour [raison]."
+RESULT: "Grace a ces actions, [metrique positive].
+Par exemple, [KPI] a augmente de X%."</code></pre>
+<div class="section-title">Exemples de questions frequentes</div>
+<table>
+<tr><th>Question</th><th>Points a couvrir</th></tr>
+<tr><td>Parlez-moi d'un echec</td><td>Humilite, lecon apprise, amelioration</td></tr>
+<tr><td>Conflit avec un collegue</td><td>Communication, resolution, diplomatie</td></tr>
+<tr><td>Decision difficile</td><td>Analyse, impact, outcome</td></tr>
+<tr><td>Projet ambitieux</td><td>Leadership, delegation, resultats</td></tr>
+<tr><td>Deadline serrée</td><td>Priorisation, communication, succes</td></tr>
+</table>
+<div class="section-title">Exemple de reponse</div>
+<pre><code>S: "Notre API traitait 10k req/s mais avait des 
+    pics a 50k pendant Black Friday, causant des timeouts."
+T: "J'etais charge de resoudre ce goulot d'etranglement 
+    en 2 semaines avant l'evenement."
+A: "J'ai implemente un cache Redis pour les 20 requetes 
+    les plus frequentes, ajoute un rate limiter, et mis 
+    en place un auto-scaling avec CloudWatch alarms."
+R: "L'API a gere 120k req/s sans timeout. Le cout 
+    d'infrastructure a diminue de 30% grace au cache."</code></pre>`
+}];
+
+const grid=document.getElementById('grid');
+cheatsheets.forEach(c=>{
+const card=document.createElement('div');
+card.className='cheat-card';
+card.dataset.cat=c.cat;
+card.innerHTML=`
+<div class="cheat-header" onclick="toggleCard(this)">
+<div class="cheat-icon">${c.icon}</div>
+<h3>${c.title}</h3>
+<span class="tag">${c.tag}</span>
+<span class="expand-icon">&#9662;</span>
+</div>
+<div class="cheat-body">
+<button class="copy-btn" onclick="copyContent(this,event)">Copier</button>
+${c.content}
+</div>`;
+grid.appendChild(card);
+});
+
+function toggleCard(header){
+const card=header.parentElement;
+card.classList.toggle('open');
+}
+
+function copyContent(btn,e){
+e.stopPropagation();
+const body=btn.parentElement;
+const text=body.innerText.replace('Copier','').trim();
+navigator.clipboard.writeText(text).then(()=>{
+btn.textContent='Copie!';
+btn.classList.add('copied');
+setTimeout(()=>{btn.textContent='Copier';btn.classList.remove('copied')},2000);
+});
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+btn.addEventListener('click',()=>{
+document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+const cat=btn.dataset.cat;
+document.querySelectorAll('.cheat-card').forEach(c=>{
+c.style.display=(cat==='all'||c.dataset.cat===cat)?'':'none';
+});
+});
+});
+</script>
+</body>
+</html>

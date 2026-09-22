@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction au Deep Learning - CortexLLMs.io</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0d0f;--card:#1a1a2e;--acc:#3b82f6;--acc-l:rgba(59,130,246,.15);--t1:#f1f5f9;--t2:#94a3b8;--bdr:#1e293b;--wh:#fff;--r:12px;--mx:1200px;--success:#10b981;--warning:#f59e0b}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7}
+h1,h2,h3,h4{font-family:'Source Serif 4',serif;font-weight:700;line-height:1.3}
+a{color:var(--acc);text-decoration:none}
+.header{position:sticky;top:0;z-index:100;background:rgba(13,13,15,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:16px 0}
+.nav{max-width:var(--mx);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Source Serif 4',serif;font-size:1.3rem;font-weight:800}.logo span{color:var(--acc)}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{color:var(--t2);font-size:.9rem;font-weight:500;transition:color .2s}.nav-links a:hover,.nav-links a.active{color:var(--acc)}
+.container{max-width:var(--mx);margin:0 auto;padding:24px;display:grid;grid-template-columns:1fr 280px;gap:40px}
+.breadcrumb{color:var(--t2);font-size:.85rem;margin-bottom:8px}.breadcrumb a{color:var(--t2)}.breadcrumb a:hover{color:var(--acc)}
+.lesson-meta{display:flex;gap:16px;align-items:center;margin:16px 0 24px;flex-wrap:wrap}
+.badge{padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600}
+.badge-easy{background:rgba(16,185,129,.15);color:var(--success)}
+.badge-medium{background:rgba(245,158,11,.15);color:var(--warning)}
+.badge-hard{background:rgba(239,68,68,.15);color:#ef4444}
+.meta-item{color:var(--t2);font-size:.85rem}
+.content h2{margin:40px 0 16px;font-size:1.5rem;color:var(--wh);padding-top:20px;border-top:1px solid var(--bdr)}
+.content h3{margin:24px 0 12px;font-size:1.2rem;color:var(--wh)}
+.content p{margin-bottom:16px;color:var(--t2)}
+.content ul,.content ol{margin:12px 0 16px 24px;color:var(--t2)}
+.content li{margin-bottom:8px}
+pre{background:#111;border:1px solid var(--bdr);border-radius:var(--r);padding:20px;overflow-x:auto;margin:16px 0;font-size:.85rem;line-height:1.5}
+code{font-family:'JetBrains Mono',monospace;color:#a5f3fc}
+.callout{border-left:4px solid var(--acc);background:var(--acc-l);border-radius:0 var(--r) var(--r) 0;padding:16px 20px;margin:20px 0}
+.callout.warning{border-color:var(--warning);background:rgba(245,158,11,.1)}
+.callout strong{color:var(--wh)}
+.formula{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:20px;margin:16px 0;text-align:center;font-size:1.1rem;font-family:'Source Serif 4',serif;color:var(--wh)}
+.qa{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:20px;margin:16px 0}
+.qa h4{color:var(--acc);margin-bottom:8px;font-size:1rem}
+.qa p{margin:0}
+.sidebar{position:sticky;top:80px;align-self:start}
+.sidebar-box{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.sidebar-box h4{font-size:.9rem;margin-bottom:12px;color:var(--wh)}
+.toc a{display:block;padding:6px 0;color:var(--t2);font-size:.85rem;border-left:2px solid transparent;padding-left:12px;transition:all .2s}
+.toc a:hover,.toc a.active{color:var(--acc);border-color:var(--acc)}
+.nav-lesson{display:flex;justify-content:space-between;margin:40px 0;gap:16px}
+.nav-lesson a{flex:1;background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:16px 20px;transition:all .2s}
+.nav-lesson a:hover{border-color:var(--acc)}
+.nav-lesson a span{display:block;color:var(--t2);font-size:.8rem;margin-bottom:4px}
+.quiz-cta{background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:var(--r);padding:32px;text-align:center;margin:40px 0}
+.quiz-cta h3{color:var(--wh);margin-bottom:8px}
+.quiz-cta p{color:rgba(255,255,255,.8);margin-bottom:16px}
+.quiz-cta a{background:var(--wh);color:#3b82f6;padding:10px 24px;border-radius:8px;font-weight:600;display:inline-block}
+@media(max-width:900px){.container{grid-template-columns:1fr}.sidebar{display:none}}
+</style>
+</head>
+<body>
+<header class="header"><nav class="nav"><a href="/" class="logo">CortexLLMs<span>.io</span></a><div class="nav-links"><a href="/">Accueil</a><a href="/pages/ai-engineering.html" class="active">Ingenierie IA</a><a href="/pages/devops.html">DevOps</a><a href="/pages/system-design.html">System Design</a><a href="/pages/dsa.html">DSA</a><a href="/pages/entreprises.html">Entreprises</a></div></nav></header>
+
+<div class="container">
+<main>
+<div class="breadcrumb"><a href="/">Accueil</a> / <a href="/pages/ai-engineering.html">Ingenierie IA</a> / <a href="#">Deep Learning</a> / Introduction au Deep Learning</div>
+<h1>Introduction au Deep Learning</h1>
+<div class="lesson-meta">
+<span class="meta-item">Module : Deep Learning</span>
+<span class="meta-item">Lecon 1/10</span>
+<span class="meta-item">45 min</span>
+<span class="badge badge-medium">Intermediaire</span>
+</div>
+
+<div class="content">
+<h2 id="perceptron">Le Perceptron : aux origines du Deep Learning</h2>
+<p>L'histoire du deep learning commence bien avant l'ere du deep learning moderne. En 1943, les neurophysiologistes Warren McCulloch et Walter Pitts ont propose le premier modele mathematique d'un neurone biologique, appele le <strong>neurone de McCulloch-Pitts</strong>. Ce modele simplifie represente un neurone comme une unit-logique qui prend plusieurs entrees binaires, les combine avec des poids, et produit une sortie binaire si la somme ponderee depasse un certain seuil.</p>
+<p>Le modele de McCulloch-Pitts etait essentiellement une fonction logique : les entrees etaient des 0 ou des 1, les poids etaient des constantes fixes, et la sortie etait determinee par une comparaison avec un seuil. Bien que primitif, ce modele a demontre qu'un reseau de neurones simples pouvait effectuer des calculs logiques complexes, posant les bases de la computation neuronale.</p>
+<div class="formula">y = step(w<sub>1</sub>x<sub>1</sub> + w<sub>2</sub>x<sub>2</sub> + ... + w<sub>n</sub>x<sub>n</sub> - seuil)</div>
+<p>En 1958, Frank Rosenblatt a fait un bond en avant en introduisant le <strong>perceptron</strong>, un modele capable d'apprendre ses poids a partir de donnees. Contrairement au neurone de McCulloch-Pitts dont les poids etaient fixes, le perceptron de Rosenblatt utilisait une regle d'apprentissage simple pour ajuster les poids en fonction des erreurs de prediction. Il a construit le <strong>Mark I Perceptron</strong>, une machine physique avec 400 photocapteurs, des poids mecaniques reglables, et un systeme d'apprentissage electrique.</p>
+<p>La regle d'apprentissage du perceptron fonctionne ainsi : pour chaque exemple d'entrainement, si la prediction est incorrecte, les poids sont mis a jour proportionnellement a l'erreur. Le biais est egalement ajuste. Rosenblatt a prouve mathematiquement que si les donnees sont lineairement separables, le perceptron converge toujours vers une solution en un nombre fini d'etapes.</p>
+<pre><code># Regle d'apprentissage du perceptron
+# Pour chaque exemple (x, y) avec y{-1, 1}:
+if y * (w · x + b) <= 0:  # erreur de classification
+    w = w + y * x          # mise a jour des poids
+    b = b + y              # mise a jour du biais</code></pre>
+<p>Cependant, en 1969, Marvin Minsky et Seymour Papert ont publie le livre "Perceptrons" dans lequel ils ont demontre rigoureusement les limitations fondamentales du perceptron simple : il ne peut pas resoudre le probleme <strong>XOR</strong> (exclusif). Le XOR est une operation logique qui retourne 1 si et seulement si les deux entrees sont differentes. Aucune droite ne peut separer correctement les points (0,0), (0,1), (1,0) et (1,1) dans l'espace 2D pour implementer XOR.</p>
+<div class="callout warning">
+<strong>Le "AI Winter" :</strong> La demonstration de l'impossibilite du perceptron a provoque ce qu'on appelle le "AI Winter" - une periode de financement reduit et de scepticisme generalise envers les reseaux de neurones qui a dure presque 15 ans. Les chercheurs se sont tournes vers d'autres approches comme les systemes experts.
+</div>
+<p>La solution au probleme du XOR etait conceptuellement simple : empiler plusieurs perceptrons. Un reseau avec une couche cachee peut resoudre XOR en combinant des frontieres lineaires simples. C'est cette idee de <strong>reseau multicouche</strong> (MLP - Multi-Layer Perceptron) qui a ouvert la voie au deep learning moderne.</p>
+
+<h2 id="mlp">Reseaux de Neurones : MLP et Couches Caches</h2>
+<p>Un <strong>reseau de neurones artificiels</strong> (ANN) est compose de neurones organises en couches. Le <strong>Multi-Layer Perceptron</strong> (MLP) est l'architecture de base : une couche d'entree, une ou plusieurs couches cachees, et une couche de sortie. Chaque neurone d'une couche est connecte a tous les neurones de la couche suivante, d'ou le nom de <strong>reseau entierement connecte</strong> (fully connected) ou <strong>dense</strong>.</p>
+<p>La couche d'entree recoit les donnees brutes. Chaque neurone de la couche cachee calcule une combinaison lineaire des entrees (somme ponderee plus biais) et applique une <strong>fonction d'activation</strong> non-lineaire. C'est cette non-linearite qui donne aux reseaux de neurones leur pouvoir d'approximation. Sans fonction d'activation, un reseau multicouche equivaut a une simple transformation lineaire, quelle que soit sa profondeur.</p>
+<div class="formula">a<sup>(l)</sup> = f(W<sup>(l)</sup> · a<sup>(l-1)</sup> + b<sup>(l)</sup>)</div>
+<p>Ou <strong>a<sup>(l)</sup></strong> est le vecteur d'activation de la couche <em>l</em>, <strong>W<sup>(l)</sup></strong> la matrice de poids, <strong>b<sup>(l)</sup></strong> le vecteur de biais, et <strong>f</strong> la fonction d'activation. La profondeur d'un reseau correspond au nombre de couches cachees. Un reseau "profond" (deep) en a plusieurs.</p>
+
+<h3>Le Theoreme d'Universalite</h3>
+<p>Le <strong>theoreme d'universalite</strong> (Cybenko, 1989, et Hornik, 1991) stipule qu'un reseau de neurones avec une seule couche cachee contenant un nombre suffisant de neurones peut approximer n'importe quelle fonction continue avec une precision arbitraire, pour autant que la fonction d'activation soit non-lineaire (comme la sigmoide). Ce resultat fondamental signifie qu'un reseau "large" (beaucoup de neurones dans une couche) peut tout approximer.</p>
+<p>Cependant, le theoreme d'universalite ne dit rien sur le <strong>nombre de neurones necessaires</strong> ni sur la <strong>faculte d'apprentissage</strong> du reseau. Un reseau tres large peut etre extremement difficile a entrainer. C'est la que la <strong>profondeur</strong> intervient. Les reseaux profonds sont plus efficaces : ils peuvent representer des fonctions complexes avec beaucoup moins de parametres qu'un reseau large mais peu profond.</p>
+<p>Par exemple, pour approximer certaines fonctions, un reseau profond peut necessiter O(2<sup>d</sup>) neurones, tandis qu'un reseau a une seule couche cachee en necessiterait O(2<sup>n</sup>) ou <em>n</em> est la dimension d'entree. La profondeur permet de decomposer une fonction complexe en une serie de transformations simples composees les unes aux autres, comme un pipeline de traitement.</p>
+<div class="callout">
+<strong>Pourquoi les couches profondes ?</strong> Chaque couche apprend une representation de plus en plus abstraite des donnees. La premiere couche peut detecter des edges, la deuxieme des formes, la troisieme des parties d'objets, et ainsi de suite. Cette hierarchie de representations est particulierement puissante pour les donnees structurees comme les images, le texte, et l'audio.
+</div>
+
+<h2 id="activations">Fonctions d'Activation detaillees</h2>
+<p>Les fonctions d'activation sont le coeur des reseaux de neurones. Elles introduisent la non-linearite indispensable pour que le reseau puisse apprendre des representations complexes. Voici les principales fonctions d'activation utilisees en deep learning :</p>
+
+<h3>Sigmoide</h3>
+<div class="formula">sigma(x) = 1 / (1 + e<sup>-x</sup>)</div>
+<p>La sigmoide mappe n'importe quel nombre reel dans l'intervalle (0, 1). Elle est historiquement importante et utile pour les problemes de <strong>classification binaire</strong> dans la couche de sortie, car sa sortie peut etre interpretee comme une probabilite. Cependant, elle souffre du probleme du <strong>vanishing gradient</strong> : pour des valeurs tres grandes ou tres petites de x, la derivee est quasi-nulle, ce qui ralentit dramatiquement l'entrainement des couches profondes. De plus, ses sorties ne sont pas centrees autour de zero, ce qui peut ralentir la convergence.</p>
+
+<h3>Tanh (Tangente hyperbolique)</h3>
+<div class="formula">tanh(x) = (e<sup>x</sup> - e<sup>-x</sup>) / (e<sup>x</sup> + e<sup>-x</sup>) = 2 * sigma(2x) - 1</div>
+<p>Tanh mappe les valeurs dans (-1, 1), ce qui la rend <strong>centree en zero</strong>. C'est un avantage par rapport a la sigmoide car les activations moyennes sont proches de zero, ce qui facilite l'entrainement. Cependant, elle souffre toujours du vanishing gradient pour les valeurs extremes. En pratique, tanh est souvent preferee a la sigmoide dans les couches cachees, mais les deux sont largement remplacees par ReLU dans les architectures modernes.</p>
+
+<h3>ReLU (Rectified Linear Unit)</h3>
+<div class="formula">ReLU(x) = max(0, x)</div>
+<p>ReLU est la fonction d'activation la plus utilisee en deep learning moderne. Elle est simple, rapide a calculer, et resout efficacement le probleme du vanishing gradient pour les valeurs positives (la derivee est exactement 1 pour x > 0). Elle introduit aussi la <strong>sparseite</strong> dans les activations : environ la moitie des neurones sont desactives (valeurs nulles), ce qui peut ameliorer l'efficacite computationnelle et reduire le surapprentissage.</p>
+<p>Cependant, ReLU a le probleme du <strong>"dying ReLU"</strong> : si un neurone recoit toujours des valeurs negatives, sa sortie est toujours 0 et son gradient est toujours 0, donc il n'apprend plus jamais. Ce probleme peut etre mitigé avec un learning rate approprie ou en utilisant des variantes comme Leaky ReLU.</p>
+
+<h3>Leaky ReLU</h3>
+<div class="formula">LeakyReLU(x) = x si x > 0, alpha * x si x <= 0</div>
+<p>Ou <strong>alpha</strong> est une petite constante (typiquement 0.01). Leaky ReLU attribue une petite pente aux valeurs negatives au lieu de les annuler completement, ce qui evite le probleme du dying ReLU. Il existe aussi <strong>PReLU</strong> (Parametric ReLU) ou alpha est appris pendant l'entrainement, et <strong>ELU</strong> (Exponential Linear Unit) qui utilise une exponentielle pour les valeurs negatives.</p>
+
+<h3>ELU (Exponential Linear Unit)</h3>
+<div class="formula">ELU(x) = x si x > 0, alpha * (e<sup>x</sup> - 1) si x <= 0</div>
+<p>ELU combine les avantages de ReLU (pas de vanishing gradient pour x > 0) avec des sorties centrees en zero grace aux valeurs negatives exponentielles. Elle est plus robuste au dying ReLU mais le calcul de l'exponentielle est plus couteux que ReLU.</p>
+
+<h3>GELU (Gaussian Error Linear Unit)</h3>
+<div class="formula">GELU(x) = x * sigma(1.702 * x)</div>
+<p>GELU est utilisee dans les architectures Transformer (BERT, GPT). Elle pondere l'entree par la probabilité cumulative d'une distribution normale, offrant un lissage differentiable de la fonction indicatrice. En pratique, GELU est similaire a ReLU mais avec une transition plus douce autour de zero.</p>
+
+<h3>Softmax</h3>
+<div class="formula">softmax(x<sub>i</sub>) = e<sup>x<sub>i</sub></sup> / sum(e<sup>x<sub>j</sub></sup>)</div>
+<p>Softmax est utilisee dans la <strong>couche de sortie</strong> pour les problemes de <strong>classification multi-classes</strong>. Elle convertit un vecteur de scores (logits) en probabilites qui somment a 1. Chaque sortie represente la probabilite d'appartenance a une classe. Il est important de noter que softmax est sensible aux <strong>decalages de constante</strong> : ajouter une constante a tous les logits ne change pas le resultat, ce qui peut etre utilise pour stabiliser numeriquement le calcul.</p>
+
+<h2 id="forward">Forward Propagation</h2>
+<p>La <strong>propagation avant</strong> (forward propagation) est le processus par lequel les donnees traversent le reseau de la couche d'entree a la couche de sortie pour produire une prediction. C'est un calcul couche par couche, chaque couche effectuant une transformation lineaire suivie d'une activation non-lineaire.</p>
+<p>Considerons un reseau a trois couches (entree, deux couches cachees, sortie). Pour chaque exemple d'entree x :</p>
+<pre><code># Couche 1
+z1 = W1 @ x + b1      # transformation lineaire
+a1 = relu(z1)         # activation
+
+# Couche 2
+z2 = W2 @ a1 + b2     # transformation lineaire
+a2 = relu(z2)         # activation
+
+# Couche de sortie
+z3 = W3 @ a2 + b3     # transformation lineaire
+y_pred = softmax(z3)   # activation (classification multi-classes)</code></pre>
+<p>Voici un exemple numerique concret. Supposons un reseau avec 2 entrees, 3 neurones dans la couche cachee, et 2 sorties :</p>
+<pre><code># Donnees d'entree
+x = [0.5, 0.3]
+
+# Couche cachee (3 neurones)
+W1 = [[0.2, 0.8], [0.5, 0.1], [0.9, 0.4]]
+b1 = [0.1, 0.2, 0.3]
+
+z1 = [0.2*0.5+0.8*0.3+0.1, 0.5*0.5+0.1*0.3+0.2, 0.9*0.5+0.4*0.3+0.3]
+z1 = [0.44, 0.58, 0.87]
+a1 = relu(z1) = [0.44, 0.58, 0.87]  # tous positifs, pas de changement
+
+# Couche de sortie (2 neurones)
+W2 = [[0.3, 0.7, 0.2], [0.6, 0.1, 0.5]]
+b2 = [0.1, 0.2]
+
+z2 = [0.3*0.44+0.7*0.58+0.2*0.87+0.1, 0.6*0.44+0.1*0.58+0.5*0.87+0.2]
+z2 = [0.794, 0.891]
+y_pred = softmax(z2) = [0.476, 0.524]  # probabilites</code></pre>
+<p>Le cout (loss) est calcule en comparant y_pred a la vraie etiquette y. Par exemple, avec l'entropy croisee (cross-entropy) pour une classification binaire : <strong>L = -(y * log(y_pred) + (1-y) * log(1-y_pred))</strong>. Ce cout mesure a quel point les predictions sont eloignees des vraies valeurs.</p>
+
+<h2 id="backprop">Backpropagation : l'algorithme d'apprentissage</h2>
+<p>La <strong>retropropagation du gradient</strong> (backpropagation) est l'algorithme fondamental qui permet d'entrainer les reseaux de neurones. Inventee independamment par Rumelhart, Hinton et Williams (1986), elle calcule efficacement les gradients de la fonction de cout par rapport a chaque poids du reseau en utilisant la <strong>regle de chain</strong>.</p>
+<p>La regle de chain dit que la derivee d'une fonction composee est le produit des derivees des fonctions composantes. Pour un reseau profond, le gradient de la perte par rapport a un poids de la premiere couche se calcule en multipliant tous les gradients le long du chemin de la sortie vers ce poids :</p>
+<div class="formula">dL/dW<sub>1</sub> = dL/dy * dy/dz<sub>3</sub> * dz<sub>3</sub>/da<sub>2</sub> * da<sub>2</sub>/dz<sub>2</sub> * dz<sub>2</sub>/da<sub>1</sub> * da<sub>1</sub>/dz<sub>1</sub> * dz<sub>1</sub>/dW<sub>1</sub></div>
+<p>En pratique, on calcule les gradients couche par couche en partant de la sortie et en remontant :</p>
+<pre><code># Backpropagation - calcul des gradients
+
+# Couche de sortie
+dL_dz3 = y_pred - y           # gradient de la cross-entropy + softmax
+dL_dW3 = dL_dz3 @ a2.T        # gradient par rapport aux poids
+dL_db3 = dL_dz3                # gradient par rapport aux biais
+
+# Couche cachee 2
+dL_da2 = W3.T @ dL_dz3
+dL_dz2 = dL_da2 * relu_grad(z2)  # derivee de ReLU
+dL_dW2 = dL_dz2 @ a1.T
+dL_db2 = dL_dz2
+
+# Couche cachee 1
+dL_da1 = W2.T @ dL_dz2
+dL_dz1 = dL_da1 * relu_grad(z1)
+dL_dW1 = dL_dz1 @ x.T
+dL_db1 = dL_dz1
+
+# Mise a jour des poids (descente de gradient)
+lr = 0.01  # learning rate
+W1 = W1 - lr * dL_dW1
+b1 = b1 - lr * dL_db1
+W2 = W2 - lr * dL_dW2
+b2 = b2 - lr * dL_db2
+W3 = W3 - lr * dL_dW3
+b3 = b3 - lr * dL_db3</code></pre>
+<p>La backpropagation est remarquablement efficace : sa complexite est de l'ordre du nombre d'operations dans le reseau, soit O(n) ou n est le nombre de poids. Sans elle, il faudrait calculer chaque gradient individuellement, ce qui serait exponentiellement plus couteux. L'algorithme de backpropagation est au coeur de tout apprentissage profond moderne.</p>
+
+<h2 id="optimizers">Optimiseurs detailles</h2>
+<p>Les optimiseurs determinent la facon dont les poids du reseau sont mis a jour en fonction des gradients calcules. Le choix de l'optimiseur a un impact enorme sur la vitesse de convergence et la qualite de la solution trouvee.</p>
+
+<h3>SGD (Stochastic Gradient Descent)</h3>
+<p>SGD est l'optimiseur le plus simple : il met a jour les poids en soustrayant le gradient multiplie par le learning rate. La version stochastique utilise un mini-batch d'exemples (typiquement 32-256) au lieu de l'ensemble complet des donnees, ce qui ajoute un bruit beneficial qui peut aider a echapper aux minima locaux.</p>
+<div class="formula">w = w - lr * gradient</div>
+
+<h3>SGD + Momentum</h3>
+<p>L'ajout de momentum accelere la convergence en accumulant un vecteur de vitesse <strong>v</strong> qui preserve la direction des gradients precedents. Le parametre <strong>beta</strong> (typiquement 0.9) controle la memoire du momentum. Cela permet de traverser les regions de gradient plat et d'accelerer dans les directions de gradient constant.</p>
+<div class="formula">v = beta * v + gradient<br>w = w - lr * v</div>
+
+<h3>RMSprop</h3>
+<p>RMSprop adapte le learning rate pour chaque parametre individuellement en divisant par la racine carree de la moyenne mobile des gradients au carre. Cela donne des learning rates plus grands aux parametres avec des gradients petits et des learning rates plus petits aux parametres avec des gradients grands.</p>
+<div class="formula">s = beta * s + (1 - beta) * gradient²<br>w = w - lr * gradient / (sqrt(s) + epsilon)</div>
+
+<h3>Adam (Adaptive Moment Estimation)</h3>
+<p>Adam combine les avantages de momentum et RMSprop. Il maintient deux estimateurs : la moyenne des gradients (<strong>m</strong>, premier moment) et la moyenne des gradients carres (<strong>v</strong>, deuxieme moment). Adam inclut egalement une correction de biais qui compense l'initialisation a zero de m et v.</p>
+<div class="formula">m = beta1 * m + (1 - beta1) * gradient<br>v = beta2 * v + (1 - beta2) * gradient²<br>m_hat = m / (1 - beta1<sup>t</sup>)<br>v_hat = v / (1 - beta2<sup>t</sup>)<br>w = w - lr * m_hat / (sqrt(v_hat) + epsilon)</div>
+<p>Les hyperparametres par defaut sont beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8. Adam est l'optimiseur le plus populaire en deep learning car il fonctionne bien dans la plupart des cas sans necessiter beaucoup de parametrage.</p>
+
+<h3>AdamW (Adam decouplé)</h3>
+<p>AdamW corrige un biais dans Adam concernant la regularisation. Dans Adam standard, la regularisation L2 est integree dans le gradient, mais l'adaptation du learning rate affecte egalement le terme de regularisation. AdamW applique la regularisation apres l'adaptation, ce qui donne de meilleurs resultats en pratique, notamment pour l'entrainement de grands modeles comme les Transformers.</p>
+
+<h2 id="initialisation">Initialisation des poids</h2>
+<p>L'initialisation des poids est un aspect critique mais souvent sous-estime de l'entrainement des reseaux de neurones. Une mauvaise initialisation peut conduire a des problemes de vanishing ou exploding gradients, rendant l'entrainement impossible.</p>
+
+<h3>Pourquoi l'initialisation est cruciale</h3>
+<p>Si tous les poids sont initialises a la meme valeur (par exemple 0), tous les neurones d'une couche calculeront la meme sortie et recevront le meme gradient. Ils seront donc toujours identiques - c'est le probleme de <strong>symétrie</strong>. Les poids doivent etre initialises de maniere aleatoire et asymetrique pour que chaque neurone apprenne des representations differentes.</p>
+<p>De plus, si les poids sont trop grands, les activations et les gradients explosent a chaque couche (exploding gradient). Si ils sont trop petits, les activations et les gradients disparaissent (vanishing gradient). L'objectif est de maintenir la variance des activations et des gradients constante a travers les couches.</p>
+
+<h3>Xavier/Glorot Initialization</h3>
+<div class="formula">Var(w) = 2 / (fan_in + fan_out)</div>
+<p>Proposee par Xavier Glorot et Yoshua Bengio en 2010, cette initialisation est optimisee pour les fonctions d'activation <strong>lineaires</strong> ou <strong>sigmoidiques</strong>. Elle maintient la variance des activations stable a travers les couches. Les poids sont echantillonnes selon une distribution normale N(0, 2/(fan_in + fan_out)) ou uniforme U(-sqrt(6/(fan_in + fan_out)), sqrt(6/(fan_in + fan_out))).</p>
+
+<h3>He Initialization</h3>
+<div class="formula">Var(w) = 2 / fan_in</div>
+<p>Proposee par Kaiming He et al. en 2015, cette initialisation est specifiquement concue pour les fonctions d'activation <strong>ReLU</strong> et ses variantes. Comme ReLU met a zero environ la moitie des activations, la variance doit etre doublee par rapport a Xavier pour compenser cette perte. Les poids sont echantillonnes selon N(0, 2/fan_in).</p>
+<div class="callout">
+<strong>Regle pratique :</strong> Utilisez He (Kaiming) pour les reseaux avec ReLU/Leaky ReLU/ELU, et Xavier pour les reseaux avec tanh/sigmoide. En PyTorch, les couches nn.Linear utilisent deja une initialisation par defaut adaptee (Kaiming uniform pour les couches suivies de ReLU).
+</div>
+
+<h2 id="frameworks">Frameworks : PyTorch vs TensorFlow</h2>
+<p>Le choix du framework de deep learning est une decision importante pour tout projet. Les deux frameworks dominants sont <strong>PyTorch</strong> (developpe par Meta) et <strong>TensorFlow</strong> (developpe par Google). Chacun a ses forces et ses faiblesses.</p>
+
+<h3>PyTorch</h3>
+<p>PyTorch utilise un mode <strong>eager execution</strong> par defaut, ce qui signifie que les operations sont executees immediatement. Cela le rend plus intuitif pour le debug et le developpement interactif (notebooks). PyTorch est le framework prefere par la <strong>communaute de recherche</strong> - la plupart des nouveaux articles scientifiques en deep learning utilisent PyTorch. Son API est tres pythonique et flexible.</p>
+
+<h3>TensorFlow</h3>
+<p>TensorFlow propose un ecosysteme plus complet pour le <strong>deploiement en production</strong>. TensorFlow Lite pour les appareils mobiles, TensorFlow.js pour le navigateur, TensorFlow Serving pour les serveurs. Keras, integre dans TensorFlow, offre une API plus simple pour les debutants. TensorFlow est souvent prefere en entreprise pour sa robustesse et son ecosysteme de deploiement.</p>
+
+<h3>Ecosysteme moderne</h3>
+<ul>
+<li><strong>HuggingFace</strong> : bibliotheque de reference pour les Transformers et les LLMs, avec des milliers de modeles pre-entraines et des outils pour le fine-tuning et le deploiement.</li>
+<li><strong>JAX</strong> : developpe par Google, combine les performances de XLA avec l'expressivite de Python. Utilise pour des calculs de grande echelle comme PaLM et Gemini.</li>
+<li><strong>Lightning</strong> : couche d'abstraction au-dessus de PyTorch qui simplifie l'entrainement, le logging, et le deploiement.</li>
+<li><strong>ONNX</strong> : format d'echange de modeles permettant de convertir un modele d'un framework a un autre.</li>
+</ul>
+
+<h2 id="code">Code : Reseau simple avec PyTorch</h2>
+<pre><code>import torch
+import torch.nn as nn
+import torch.optim as optim
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+
+# Configuration
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+batch_size = 64
+learning_rate = 0.001
+num_epochs = 10
+
+# Chargement des donnees (MNIST)
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.1307,), (0.3081,))
+])
+
+train_dataset = datasets.MNIST(root='./data', train=True, download=True, transform=transform)
+test_dataset = datasets.MNIST(root='./data', train=False, transform=transform)
+
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=batch_size)
+
+# Definition du modele
+class SimpleNet(nn.Module):
+    def __init__(self):
+        super(SimpleNet, self).__init__()
+        self.flatten = nn.Flatten()
+        self.layers = nn.Sequential(
+            nn.Linear(28 * 28, 256),      # couche d'entree
+            nn.ReLU(),                      # activation
+            nn.Dropout(0.2),                # regularisation
+            nn.Linear(256, 128),            # couche cachee 1
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(128, 64),             # couche cachee 2
+            nn.ReLU(),
+            nn.Linear(64, 10)               # couche de sortie (10 classes)
+        )
+
+    def forward(self, x):
+        x = self.flatten(x)
+        return self.layers(x)
+
+# Initialisation du modele, de la loss et de l'optimiseur
+model = SimpleNet().to(device)
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+# Boucle d'entrainement
+for epoch in range(num_epochs):
+    model.train()
+    total_loss = 0
+    correct = 0
+    total = 0
+
+    for batch_idx, (data, target) in enumerate(train_loader):
+        data, target = data.to(device), target.to(device)
+
+        optimizer.zero_grad()       # reinitialiser les gradients
+        output = model(data)        # forward pass
+        loss = criterion(output, target)  # calcul de la loss
+        loss.backward()             # backpropagation
+        optimizer.step()            # mise a jour des poids
+
+        total_loss += loss.item()
+        _, predicted = output.max(1)
+        correct += predicted.eq(target).sum().item()
+        total += target.size(0)
+
+    # Evaluation
+    model.eval()
+    test_loss = 0
+    test_correct = 0
+    with torch.no_grad():
+        for data, target in test_loader:
+            data, target = data.to(device), target.to(device)
+            output = model(data)
+            test_loss += criterion(output, target).item()
+            _, predicted = output.max(1)
+            test_correct += predicted.eq(target).sum().item()
+
+    print(f"Epoch {epoch+1}/{num_epochs}")
+    print(f"  Train Loss: {total_loss/len(train_loader):.4f}, "
+          f"Accuracy: {100.*correct/total:.2f}%")
+    print(f"  Test Loss: {test_loss/len(test_loader):.4f}, "
+          f"Accuracy: {100.*test_correct/len(test_dataset):.2f}%")
+
+# Resume du modele
+print(f"\nParametres totaux: {sum(p.numel() for p in model.parameters()):,}")
+print(model)</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+
+<div class="qa">
+<h4>Q1 : Pourquoi les reseaux profonds sont-ils plus performants que les reseaux larges mais peu profonds ?</h4>
+<p>La profondeur permet de representer des fonctions complexes de maniere hierarchique et efficace. Chaque couche apprend une representation de plus en plus abstraite. Mathematiquement, un reseau profond avec O(d) neurones peut representer des fonctions qui necessiteraient O(2<sup>n</sup>) neurones dans un reseau a une seule couche. De plus, les reseaux profonds ont un meilleur <strong>ratio parametres/expressivite</strong> et generalisent souvent mieux.</p>
+</div>
+
+<div class="qa">
+<h4>Q2 : Qu'est-ce que le vanishing gradient et comment le resoudre ?</h4>
+<p>Le vanishing gradient se produit quand les gradients deviennent extremement petits en remontant a travers les couches profondes. Les couches proches de l'entree apprennent alors tres lentement ou pas du tout. Solutions : 1) Utiliser des fonctions d'activation comme ReLU qui n'ont pas de gradient nul pour les valeurs positives, 2) Initialisation He/Xavier, 3) Residual connections (ResNet), 4) Batch normalization, 5) Architectures modernes comme les Transformers.</p>
+</div>
+
+<div class="qa">
+<h4>Q3 : Adam ou SGD - lequel choisir ?</h4>
+<p><strong>Adam</strong> est un excellent point de depart - il fonctionne bien dans la plupart des cas et ne necessite pas beaucoup de tuning. <strong>SGD avec momentum</strong> peut parfois atteindre de meilleurs resultats finaux mais necessite plus de tuning du learning rate (scheduler). En general : Adam pour le prototype et le debut de l'entrainement, SGD+momentum pour l'optimisation fine en fin d'entrainement. AdamW est recommande pour les Transformers.</p>
+</div>
+
+<div class="qa">
+<h4>Q4 : Pourquoi utilise-t-on des mini-batches plutot que le batch complet ou un seul exemple ?</h4>
+<p>Le <strong>batch complet</strong> donne des gradients exacts mais est lent et necessite beaucoup de memoire. <strong>SGD pur</strong> (un seul exemple) est rapide mais tres bruité, ce qui peut aider a echapper des minima locaux mais rend la convergence instable. Les <strong>mini-batches</strong> offrent le meilleur compromis : ils sont efficaces computationnellement, permettent l'utilisation du GPU, et le bruit du gradient aide la generalisation.</p>
+</div>
+
+<div class="qa">
+<h4>Q5 : Comment diagnostiquer et resoudre un exploding gradient ?</h4>
+<p>Signes : les pertes deviennent <strong>NaN</strong> ou <strong>infinies</strong> pendant l'entrainement. Diagnostic : monitorer la norme des gradients a chaque couche. Solutions : 1) <strong>Gradient clipping</strong> : limiter la norme du gradient a un seuil (ex: 1.0), 2) Regularisation (L2), 3) Normalisation des entrees (batch norm), 4) Learning rate plus petit, 5) Initialisation des poids avec des variances plus petites.</p>
+</div>
+</div>
+
+<div class="quiz-cta">
+<h3>Testez vos connaissances</h3>
+<p>Quiz sur l'Introduction au Deep Learning</p>
+<a href="/pages/quizzes.html">Commencer le Quiz</a>
+</div>
+
+<div class="nav-lesson">
+<a href="/pages/ai/regression-lineaire.html"><span>← Lecon precedente</span>Regression Lineaire</a>
+<a href="/pages/ai/optimisation-dl.html"><span>Lecon suivante →</span>Optimisation Deep Learning</a>
+</div>
+</main>
+
+<aside class="sidebar">
+<div class="sidebar-box">
+<h4>Sommaire</h4>
+<div class="toc">
+<a href="#perceptron">Le Perceptron</a>
+<a href="#mlp">Reseaux de Neurones (MLP)</a>
+<a href="#activations">Fonctions d'activation</a>
+<a href="#forward">Forward Propagation</a>
+<a href="#backprop">Backpropagation</a>
+<a href="#optimizers">Optimiseurs</a>
+<a href="#initialisation">Initialisation</a>
+<a href="#frameworks">Frameworks</a>
+<a href="#code">Code PyTorch</a>
+<a href="#interview">Questions d'entretien</a>
+</div>
+</div>
+<div class="sidebar-box">
+<h4>Quiz Deep Learning</h4>
+<p style="color:var(--t2);font-size:.85rem;margin-bottom:12px">Testez sur l'Intro au Deep Learning</p>
+<a href="/pages/quizzes.html" style="display:block;text-align:center;background:var(--acc);color:var(--wh);padding:10px;border-radius:8px;font-weight:600">Commencer</a>
+</div>
+<div class="sidebar-box">
+<h4>Lecons du module</h4>
+<a href="#" style="display:block;padding:6px 0;color:var(--acc);font-size:.85rem;font-weight:600">1. Intro Deep Learning ←ici</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">2. Optimisation DL</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">3. CNN</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">4. RNN / LSTM</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">5. Transformers</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">6. Attention Mechanism</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">7. Generative Models</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">8. Transfer Learning</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">9. Regularisation avancee</a>
+<a href="#" style="display:block;padding:6px 0;color:var(--t2);font-size:.85rem">10. Production DL</a>
+</div>
+</aside>
+</div>
+
+<footer style="border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:var(--t2);font-size:.85rem">
+<p>CortexLLMs.io &copy; 2026 &mdash; Plateforme de preparation aux entretiens IA</p>
+</footer>
+
+<script>
+const toc=document.querySelectorAll('.toc a');
+const sections=document.querySelectorAll('h2[id]');
+window.addEventListener('scroll',()=>{
+  let current='';
+  sections.forEach(s=>{if(window.scrollY>=s.offsetTop-100)current=s.id});
+  toc.forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+current)});
+});
+</script>
+</body>
+</html>

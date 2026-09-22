@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz - CortexLLMs.io</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0d0f;--card:#1a1a2e;--acc:#3b82f6;--acc-l:rgba(59,130,246,.15);--t1:#f1f5f9;--t2:#94a3b8;--bdr:#1e293b;--wh:#fff;--r:12px;--mx:1200px;--success:#10b981;--warning:#f59e0b;--danger:#ef4444}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7}
+h1,h2,h3,h4{font-family:'Source Serif 4',serif;font-weight:700;line-height:1.3}
+a{color:var(--acc);text-decoration:none}
+.header{position:sticky;top:0;z-index:100;background:rgba(13,13,15,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:16px 0}
+.nav{max-width:var(--mx);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Source Serif 4',serif;font-size:1.3rem;font-weight:800}.logo span{color:var(--acc)}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{color:var(--t2);font-size:.9rem;font-weight:500;transition:color .2s}.nav-links a:hover,.nav-links a.active{color:var(--acc)}
+.hero{text-align:center;padding:60px 24px 40px}
+.hero h1{font-size:2.5rem;margin-bottom:12px;background:linear-gradient(135deg,var(--acc),#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--t2);font-size:1.15rem;max-width:600px;margin:0 auto}
+
+.quiz-container{max-width:720px;margin:0 auto;padding:0 24px 60px}
+
+/* Config Screen */
+.config-screen{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:32px}
+.config-section{margin-bottom:28px}
+.config-section h3{font-size:.85rem;text-transform:uppercase;letter-spacing:.8px;color:var(--acc);margin-bottom:12px;font-family:'Inter',sans-serif}
+.options-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.option-card{padding:14px;border:1px solid var(--bdr);border-radius:8px;cursor:pointer;text-align:center;transition:all .2s;font-size:.9rem}
+.option-card:hover{border-color:var(--acc);background:var(--acc-l)}
+.option-card.selected{border-color:var(--acc);background:var(--acc-l);color:var(--acc);font-weight:600}
+.option-card .icon{font-size:1.3rem;display:block;margin-bottom:6px}
+.start-btn{width:100%;padding:16px;border:none;border-radius:var(--r);background:linear-gradient(135deg,var(--acc),#8b5cf6);color:var(--wh);font-size:1.05rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;margin-top:8px}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,.3)}
+
+/* Quiz Screen */
+.quiz-screen{display:none}
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.quiz-info{display:flex;gap:16px;align-items:center}
+.quiz-info span{font-size:.85rem;color:var(--t2)}
+.quiz-info .current{color:var(--acc);font-weight:600}
+.timer-box{display:flex;align-items:center;gap:8px;font-size:.95rem;font-weight:600;font-variant-numeric:tabular-nums}
+.timer-box.warning{color:var(--warning)}
+.timer-box.danger{color:var(--danger);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.progress-bar{width:100%;height:6px;background:var(--bdr);border-radius:3px;margin-bottom:24px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--acc),#8b5cf6);border-radius:3px;transition:width .3s}
+.question-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:28px;margin-bottom:20px}
+.question-card .q-num{font-size:.75rem;color:var(--acc);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.question-card .q-text{font-size:1.1rem;font-weight:600;color:var(--wh);line-height:1.5}
+.answers{display:grid;gap:10px;margin-bottom:20px}
+.answer-btn{padding:16px 20px;border:1px solid var(--bdr);border-radius:8px;background:transparent;color:var(--t1);font-size:.95rem;text-align:left;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:12px}
+.answer-btn .letter{width:28px;height:28px;border-radius:50%;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:600;flex-shrink:0;transition:all .2s}
+.answer-btn:hover{border-color:var(--acc);background:var(--acc-l)}
+.answer-btn:hover .letter{border-color:var(--acc);color:var(--acc)}
+.answer-btn.correct{border-color:var(--success);background:rgba(16,185,129,.1);color:var(--success)}
+.answer-btn.correct .letter{border-color:var(--success);background:var(--success);color:var(--wh)}
+.answer-btn.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger)}
+.answer-btn.wrong .letter{border-color:var(--danger);background:var(--danger);color:var(--wh)}
+.answer-btn.disabled{pointer-events:none;opacity:.7}
+.explanation{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:16px;margin-top:16px;font-size:.9rem;color:var(--t2);display:none}
+.explanation strong{color:var(--acc)}
+.next-btn{width:100%;padding:14px;border:none;border-radius:8px;background:var(--acc);color:var(--wh);font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;display:none}
+.next-btn:hover{background:#2563eb}
+
+/* Results Screen */
+.results-screen{display:none;text-align:center}
+.results-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:40px;margin-bottom:20px}
+.results-card h2{font-size:1.6rem;margin-bottom:8px}
+.score-circle{width:160px;height:160px;border-radius:50%;margin:24px auto;position:relative;display:flex;align-items:center;justify-content:center}
+.score-circle svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
+.score-circle .score-text{font-size:2.2rem;font-weight:700}
+.score-circle .score-label{font-size:.8rem;color:var(--t2)}
+.pass{color:var(--success)}
+.fail{color:var(--danger)}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}
+.stat-item{text-align:center}
+.stat-item .val{font-size:1.5rem;font-weight:700;color:var(--wh)}
+.stat-item .lbl{font-size:.75rem;color:var(--t2)}
+.results-actions{display:grid;gap:10px;margin-top:24px}
+.btn{padding:14px;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;border:none}
+.btn-primary{background:var(--acc);color:var(--wh)}
+.btn-primary:hover{background:#2563eb}
+.btn-secondary{background:transparent;border:1px solid var(--bdr);color:var(--t1)}
+.btn-secondary:hover{border-color:var(--acc)}
+.review-list{text-align:left;margin-top:24px}
+.review-item{padding:16px;border:1px solid var(--bdr);border-radius:8px;margin-bottom:10px}
+.review-item.r-correct{border-color:rgba(16,185,129,.3)}
+.review-item.r-wrong{border-color:rgba(239,68,68,.3)}
+.review-item .rq{font-weight:600;font-size:.9rem;margin-bottom:6px}
+.review-item .ra{font-size:.85rem;color:var(--t2)}
+.review-item .ra span{font-weight:600}
+
+.high-scores{margin-top:24px}
+.high-scores h3{font-size:.85rem;text-transform:uppercase;letter-spacing:.8px;color:var(--acc);margin-bottom:12px;font-family:'Inter',sans-serif}
+.hs-list{list-style:none}
+.hs-list li{display:flex;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--bdr);font-size:.85rem}
+.hs-list li span:first-child{color:var(--t2)}
+.hs-list li span:last-child{font-weight:600}
+
+.footer{border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:var(--t2);font-size:.85rem}
+@media(max-width:600px){.stats-grid{grid-template-columns:1fr}.options-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header class="header"><nav class="nav"><a href="/" class="logo">CortexLLMs<span>.io</span></a><div class="nav-links"><a href="/">Accueil</a><a href="/pages/ai-engineering.html">Ingenierie IA</a><a href="/pages/devops.html">DevOps</a><a href="/pages/system-design.html">System Design</a><a href="/pages/dsa.html">DSA</a><a href="/pages/quiz.html" class="active">Quiz</a><a href="/pages/entreprises.html">Entreprises</a></div></nav></header>
+
+<div class="hero">
+<h1>Quiz</h1>
+<p>Testez vos connaissances en preparation aux entretiens techniques</p>
+</div>
+
+<div class="quiz-container">
+<!-- CONFIG -->
+<div class="config-screen" id="configScreen">
+<div class="config-section">
+<h3>Categorie</h3>
+<div class="options-grid" id="catOptions"></div>
+</div>
+<div class="config-section">
+<h3>Difficulte</h3>
+<div class="options-grid" id="diffOptions"></div>
+</div>
+<div class="config-section">
+<h3>Nombre de questions</h3>
+<div class="options-grid" id="countOptions"></div>
+</div>
+<div class="config-section">
+<h3>Timer (secondes par question)</h3>
+<div class="options-grid" id="timerOptions"></div>
+</div>
+<button class="start-btn" onclick="startQuiz()">Commencer le Quiz</button>
+</div>
+
+<!-- QUIZ -->
+<div class="quiz-screen" id="quizScreen">
+<div class="quiz-header">
+<div class="quiz-info">
+<span>Question <span class="current" id="qNum">1</span> / <span id="qTotal">10</span></span>
+<span id="catLabel" style="background:var(--acc-l);padding:3px 10px;border-radius:10px;font-size:.75rem;color:var(--acc)"></span>
+</div>
+<div class="timer-box" id="timerBox">30s</div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="question-card">
+<div class="q-num" id="qCat"></div>
+<div class="q-text" id="qText"></div>
+</div>
+<div class="answers" id="answers"></div>
+<div class="explanation" id="explanation"></div>
+<button class="next-btn" id="nextBtn" onclick="nextQuestion()">Question suivante</button>
+</div>
+
+<!-- RESULTS -->
+<div class="results-screen" id="resultsScreen">
+<div class="results-card">
+<h2 id="resultTitle"></h2>
+<div class="score-circle" id="scoreCircle"></div>
+<div class="stats-grid">
+<div class="stat-item"><div class="val" id="statCorrect">0</div><div class="lbl">Correctes</div></div>
+<div class="stat-item"><div class="val" id="statWrong">0</div><div class="lbl">Incorrectes</div></div>
+<div class="stat-item"><div class="val" id="statTime">0s</div><div class="lbl">Temps moyen</div></div>
+</div>
+<div class="results-actions">
+<button class="btn btn-primary" onclick="retryQuiz()">Reessayer</button>
+<button class="btn btn-secondary" onclick="showReview()">Voir les reponses</button>
+<button class="btn btn-secondary" onclick="shareResults()">Partager les resultats</button>
+<button class="btn btn-secondary" onclick="backToConfig()">Nouveau quiz</button>
+</div>
+</div>
+<div class="high-scores" id="highScores"></div>
+<div class="review-list" id="reviewList" style="display:none"></div>
+</div>
+</div>
+
+<footer class="footer">
+<p>CortexLLMs.io &copy; 2026 &mdash; Plateforme de preparation aux entretiens IA</p>
+</footer>
+
+<script>
+const QUESTIONS=[
+// ML (0-9)
+{cat:"ML",diff:"Facile",q:"Quelle metrique est la plus appropriee pour un modele de classification binaire desequilibre?",opts:["Accuracy","F1-score","MSE","R2"],"a":1,exp:"Le F1-score combine precision et rappel, ideal quand les classes sont desequilibrees. L'accuracy peut etre trompeuse avec des distributions desequilibrees."},
+{cat:"ML",diff:"Facile",q:"Qu'est-ce que le learning rate?",opts:["Le nombre de couches du modele","Le taux d'apprentissage du modele","La vitesse d'execution","Le ratio train/test"],"a":1,exp:"Le learning rate est un hyperparametre qui controle la taille des pas lors de l'optimisation des poids par descente de gradient."},
+{cat:"ML",diff:"Moyen",q:"Quand utiliser Random Forest vs XGBoost?",opts:["Toujours XGBoost","RF pour robustesse, XGBoost pour performance","RF est toujours meilleur","Ce sont les memes algorithmes"],"a":1,exp:"Random Forest est plus robuste au surapprentissage et necessite moins de tuning. XGBoost offre generalement de meilleures performances mais necessite un tuning plus fin."},
+{cat:"ML",diff:"Moyen",q:"Qu'est-ce que le data leakage?",opts:["Fuite de donnees vers des hackers","Utilisation de donnees futures dans l'entrainement","Perte de donnees pendant le pretraitement","Memoire insuffisante"],"a":1,exp:"Le data leakage survient quand des informations du jeu de test ou du futur sont utilisees pendant l'entrainement, gonflant artificiellement les metriques."},
+{cat:"ML",diff:"Facile",q:"Quelle est la difference entre underfitting et overfitting?",opts:["Underfit = trop de parametres, Overfit = trop peu","Underfit = model trop simple, Overfit = model trop complexe","Aucune difference","Underfit = train, Overfit = test"],"a":1,exp:"L'underfitting est quand le model est trop simple pour capturer les patterns. L'overfitting est quand il memorise le bruit des donnees d'entrainement."},
+{cat:"ML",diff:"Avance",q:"Quelle est la difference entre Bagging et Boosting?",opts:["Bagging = parallele, Boosting =sequentiel, Bagging reduit variance, Boosting reduit biais","Bagging est toujours meilleur","Pas de difference","Bagging = Boosting ensemble"],"a":0,exp:"Bagging entraine des modeles en parallele sur des sous-echantillons (reduit variance). Boosting entraine sequentiellement, chaque modele corrigeant les erreurs du precedent (reduit biais)."},
+{cat:"ML",diff:"Moyen",q:"Comment gerer les valeurs manquantes dans un dataset?",opts:["Toujours les supprimer","Remplacer par la moyenne uniquement","Depends: supprimer, imputer (mean/median/KNN), ou utiliser un modele qui les gere","Les remplacer par 0"],"a":2,exp:"La strategie depend du pourcentage de valeurs manquantes et du mecanisme (MCAR, MAR, MNAR). KNN imputer ou MICE sont souvent de bonnes options."},
+{cat:"ML",diff:"Facile",q:"Qu'est-ce que la regularisation L1 (Lasso)?",opts:["Ajoute la somme des poids absolus a la loss","Supprime des features","Ajoute la somme des poids au carré","Reduit le learning rate"],"a":0,exp:"L1 ajoute un terme de penalite proportionnel a la somme des valeurs absolues des poids, ce qui peut annuler certains poids (selection de features)."},
+{cat:"ML",diff:"Avance",q:"Quelle est la metrique AUC-ROC et que mesure-t-elle?",opts:["Accuracy totale du modele","Aire sous la courbe ROC, mesure la capacite a distinguer les classes","Nombre de vrais positifs","Taux d'erreur"],"a":1,exp:"AUC-ROC mesure la probabilite qu'un exemple positif soit classe au-dessus d'un exemple negatif. 0.5 = aleatoire, 1.0 = parfait."},
+{cat:"ML",diff:"Moyen",q:"Pourquoi standardiser les features avant certains algorithmes?",opts:["C'est toujours obligatoire","Pour que les features avec de grandes valeurs ne dominent pas","Pour reduire la memoire","Pour accelerer l'entrainement"],"a":1,exp:"Les algorithmes bases sur les distances (KNN, SVM, K-means) sont sensibles a l'echelle des features. La standardisation met toutes les features sur un pied d'egalite."},
+
+// Deep Learning (10-19)
+{cat:"Deep Learning",diff:"Facile",q:"Pourquoi utiliser ReLU plutot que Sigmoid?",opts:["ReLU est plus precis","ReLU evite le vanishing gradient","ReLU est plus simple a implementer","ReLU fonctionne mieux pour la classification"],"a":1,exp:"ReLU (max(0,x)) a un gradient de 0 ou 1, ce qui evite le vanishing gradient. Sigmoid a des gradients proches de 0 pour des valeurs extremes, ralentissant l'apprentissage."},
+{cat:"Deep Learning",diff:"Facile",q:"Qu'est-ce que Dropout?",opts:["Supprimer des donnees","Regularisation par desactivation aleatoire de neurones","Un type d'optimiseur","Une fonction d'activation"],"a":1,exp:"Dropout desactive aleatoirement des neurones pendant l'entrainement (typiquement 20-50%), forcant le reseau a ne pas dependre de neurones specifiques."},
+{cat:"Deep Learning",diff:"Moyen",q:"Qu'est-ce que Batch Normalization?",opts:["Normaliser les entrees du reseau","Normaliser les activations de chaque couche pour accelerer l'entrainement","Normaliser les poids","Normaliser les labels"],"a":1,exp:"Batch Normalization centre et reduit les activations de chaque couche, stabilisant l'entrainement et permettant des learning rates plus eleves."},
+{cat:"Deep Learning",diff:"Facile",q:"Quel est le role de la loss function?",opts:["Mesurer la performance du modele","Mesurer l'erreur entre prediction et reelle cible","Determiner le nombre de couches","Choisir l'optimiseur"],"a":1,exp:"La loss function quantifie l'ecart entre les predictions du modele et les valeurs reelles. L'objectif de l'entrainement est de minimiser cette loss."},
+{cat:"Deep Learning",diff:"Moyen",q:"Quelle est la difference entre CNN et RNN?",opts:["CNN pour texte, RNN pour images","CNN pour images (features spatiales), RNN pour sequences (features temporelles)","Pas de difference","CNN est toujours meilleur"],"a":1,exp:"CNN utilise des filtres convolutifs pour extraire des patterns spatiaux. RNN utilise des connexions recurrentes pour traiter des sequences temporelles."},
+{cat:"Deep Learning",diff:"Avance",q:"Qu'est-ce que le Vanishing Gradient Problem?",opts:["Les gradients deviennent trop grands","Les gradients se transmettent mal a travers les couches profondes car ils deviennent tres petits","Le model apprend trop lentement","Les donnees disparaissent"],"a":1,exp:"Dans les reseaux profonds, les gradients se multiplient a chaque couche. Avec des activations comme sigmoid, ils peuvent devenir tres petits, empechant l'apprentissage des premieres couches."},
+{cat:"Deep Learning",diff:"Moyen",q:"Quel optimiseur est le plus utilise aujourd'hui?",opts:["SGD","Adam","Adagrad","RMSProp"],"a":1,exp:"Adam combine les avantages de Momentum et RMSProp. Il s'adapte automatiquement le learning rate pour chaque parametre et fonctionne bien dans la plupart des cas."},
+{cat:"Deep Learning",diff:"Avance",q:"Qu'est-ce que Transfer Learning?",opts:["Transférer des donnees entre serveurs","Utiliser un model pre-entraine comme point de depart pour un nouveau task","Copier un model exactement","Deplacer des poids entre couches"],"a":1,exp:"Transfer Learning utilise les poids d'un model entraine sur une grande tache (ex: ImageNet) comme initialization pour une tache similaire avec moins de donnees."},
+{cat:"Deep Learning",diff:"Facile",q:"Que fait une couche de Max Pooling?",opts:["Ajoute des neurones","Reduit la taille spatiale en prenant le maximum de chaque region","Normalise les activations","Ajoute du bruit"],"a":1,exp:"Max Pooling reduit la dimension en prenant la valeur maximale dans chaque fenetre, gardant les features les plus importantes tout en reduisant le cout de calcul."},
+{cat:"Deep Learning",diff:"Avance",q:"Qu'est-ce que l'attention dans les Transformers?",opts:["Fonction d'activation speciale","Mecanisme calculant la pertinence de chaque token par rapport aux autres","Type de couche convolutive","Methode de regularisation"],"a":1,exp:"Le mecanisme d'attention calcule des poids de pertinence entre chaque paire de tokens, permettant au model de se concentrer sur les parties les plus importantes de l'entree."},
+
+// System Design (20-29)
+{cat:"System Design",diff:"Facile",q:"SQL vs NoSQL?",opts:["SQL toujours meilleur","SQL: ACID, relations. NoSQL: scalabilite, flexibilite","NoSQL toujours meilleur","Ce sont les memes choses"],"a":1,exp:"SQL est ideal pour les donnees structurees avec relations complexes (ACID). NoSQL est preferable pour la scalabilite horizontale et les schemas flexibles."},
+{cat:"System Design",diff:"Facile",q:"Qu'est-ce que consistent hashing?",opts:["Hasher les mots de passe","Distribution minimisant les re-mappings quand des noeuds sont ajoutes/supprimes","Un algorithme de tri","Un type de hash simple"],"a":1,exp:"Consistent hashing place les noeuds et les cles sur un anneau virtuel. Quand un noeud est ajoute/supprime, seules les cles adjacentes sont re-mapees."},
+{cat:"System Design",diff:"Moyen",q:"Qu'est-ce qu'un CDN?",opts:["Un type de base de donnees","Content Delivery Network - reseau de serveurs distribues geographiquement","Un protocole de securite","Un langage de programmation"],"a":1,exp:"Un CDN cache le contenu statique sur des serveurs proches des utilisateurs, reduisant la latence et la charge sur le serveur principal."},
+{cat:"System Design",diff:"Moyen",q:"Quelle est la difference entre horizontal et vertical scaling?",opts:["Horizontal = ajouter plus de RAM, Vertical = ajouter des CPUs","Horizontal = ajouter plus de machines, Vertical = augmenter la puissance d'une machine","Pas de difference","Horizontal = monter, Vertical = coter"],"a":1,exp:"Vertical scaling (scale up) augmente les ressources d'un serveur. Horizontal scaling (scale out) ajoute plus de serveurs. L'horizontal est plus scalable mais plus complexe."},
+{cat:"System Design",diff:"Facile",q:"Qu'est-ce qu'un load balancer?",opts:["Un type de firewall","Repartit le trafic entrant sur plusieurs serveurs","Un systeme de cache","Un proxy sortant"],"a":1,exp:"Un load balancer recoit les requetes et les distribue sur un pool de serveurs, ameliorant la disponibilite et la scalabilite."},
+{cat:"System Design",diff:"Avance",q:"Comment concevoir un systeme de chat en temps reel?",opts:["Polling HTTP simple","WebSockets + message queue (Kafka/RabbitMQ) + serveur de presence","REST API avec interval","Email uniquement"],"a":1,exp:"Les WebSockets maintiennent une connexion bidirectionnelle. Kafka gere le messagerie. Le serveur de presence track les utilisateurs connectes."},
+{cat:"System Design",diff:"Moyen",q:"Qu'est-ce que la faillure Byzantine?",opts:["Un type d'attaque DDoS","Quand des composants donnent des informations contradictoires ou erronnees","Un bug dans le code","Une panne de courant"],"a":1,exp:"Dans les systemes distribues, la faillie byzantine decrit des comportements arbitraires (mensonge, incoherence). Les algorithmes Byzantine Fault Tolerance (BFT) en tiennent compte."},
+{cat:"System Design",diff:"Facile",q:"Qu'est-ce qu'un microservice?",opts:["Un tres petit service","Architecture decoupant une application en services independants deployables separemment","Un type d'API","Un framework frontend"],"a":1,exp:"Les microservices decomposent une application en petits services autonomes, communiquant par API, deployables et scalables independamment."},
+{cat:"System Design",diff:"Avance",q:"Comment assurer la haute disponibilite d'un systeme?",opts:["Un seul gros serveur","Redondance, failover automatique, health checks, multi-region","Supprimer tous les backups","Ne pas jour le code"],"a":1,exp:"HA implique: redondance (n+1), failover automatique, monitoring avec health checks, deploiement multi-AZ/region, et circuits breakers."},
+{cat:"System Design",diff:"Moyen",q:"Qu'est-ce qu'un API Gateway?",opts:["Un routeur physique","Point d'entree unique gerant routage, authentification, rate limiting","Un type de base de donnees","Un client HTTP"],"a":1,exp:"L'API Gateway centralise les appels API, gere l'auth, le rate limiting, le routage vers les microservices, et offre une facade unifiee."},
+
+// DevOps (30-39)
+{cat:"DevOps",diff:"Facile",q:"Difference entre Docker et une VM?",opts:["Pas de difference","Docker: noyau partage, VM: OS complet","VM est plus rapide","Docker est payant"],"a":1,exp:"Les containers Docker partagent le noyau de l'hote, les VMs incluent un OS complet. Docker est plus leger, demarre plus vite, et utilise moins de ressources."},
+{cat:"DevOps",diff:"Facile",q:"Qu'est-ce qu'un Kubernetes Pod?",opts:["Un conteneur Docker","Unite minimale de deploiement, peut contenir un ou plusieurs containers","Un type de service","Un namespace"],"a":1,exp:"Un Pod est l'unité de deploiement Kubernetes. Il groupe un ou plusieurs containers partageant le meme reseau et stockage."},
+{cat:"DevOps",diff:"Moyen",q:"Quelle est la difference entre CI et CD?",opts:["CI = test, CD = deploiement continu ou livraison continue","CI = coder, CD = designer","Pas de difference","CI est un outil, CD est un language"],"a":0,exp:"CI (Continuous Integration) automatise la construction et les tests. CD peut signifier Continuous Delivery (deploiement automatique jusqu'en staging) ou Continuous Deployment (jusqu'en production)."},
+{cat:"DevOps",diff:"Moyen",q:"Qu'est-ce qu'un Dockerfile?",opts:["Un fichier de config reseau","Script de build decrivant les etapes pour construire une image Docker","Un fichier de log","Un backup"],"a":1,exp:"Le Dockerfile contient les instructions (FROM, RUN, COPY, etc.) pour construire une image Docker de maniere reproductible."},
+{cat:"DevOps",diff:"Facile",q:"Quel est le but de Git?",opts:["Gerer des bases de donnees","Controle de version distribue pour gerer l'historique du code","Un editeur de code","Un navigateur web"],"a":1,exp:"Git est un systeme de controle de version distribue permettant de suivre les modifications, collaborer, et revenir en arriere."},
+{cat:"DevOps",diff:"Avance",q:"Qu'est-ce que le Infrastructure as Code (IaC)?",opts:["Ecrire du code dans le cloud","Gerer l'infrastructure via du code versionne (Terraform, Ansible)","Programmer en Python","Configurer manuellement les serveurs"],"a":1,exp:"L'IaC permet de declarer et provisionner l'infrastructure via du code, la rendant versionnable, testable et reproductible."},
+{cat:"DevOps",diff:"Moyen",q:"Qu'est-ce que le blue-green deployment?",opts:["Deployer en bleu puis en vert","Deux environnements identiques, switch instantane entre ancien et nouveau","Un type de load balancer","Une strategie de backup"],"a":1,exp:"Blue-green garde deux copies de l'environnement. Le trafic bascule instantanement de l'ancien (blue) vers le nouveau (green), permettant un rollback rapide."},
+{cat:"DevOps",diff:"Facile",q:"A quoi sert un .gitignore?",opts:["Ignorer les erreurs Git","Exclure des fichiers/dossiers du suivi de version","Supprimer des fichiers","Cacher le code source"],"a":1,exp:"Le .gitignore liste les fichiers que Git ne doit pas suivre (dependencies, logs, fichiers sensibles, etc.)."},
+{cat:"DevOps",diff:"Avance",q:"Qu'est-ce que le observability dans DevOps?",opts:["Voir les serveurs","Capacite a comprendre l'etat interne d'un systeme par ses sorties externes","Monitorer le cout","Surveiller les employes"],"a":1,exp:"L'observabilite repose sur 3 piliers: logs, metriques et traces. Elle permet de diagnostiquer les problemes sans modifier le code."},
+{cat:"DevOps",diff:"Moyen",q:"Qu'est-ce qu'un health check?",opts:["Verifier le disque dur","Verification periodique qu'un service est operationnel","Scanner les virus","Tester la connexion internet"],"a":1,exp:"Un health check verifie periodiquement qu'un service repond correctement. Kubernetes utilise des health checks pour redemarrer ou retirer des pods defaillants."},
+
+// DSA (40-49)
+{cat:"DSA",diff:"Facile",q:"Quelle est la complexite de quicksort?",opts:["O(n)","O(n log n) en moyenne, O(n²) au pire cas","O(n²) toujours","O(log n)"],"a":1,exp:"Quicksort a une complexite moyenne de O(n log n) grace a la division. Le pire cas O(n²) arrive quand le pivot est toujours l'element min ou max."},
+{cat:"DSA",diff:"Facile",q:"Quand utiliser BFS vs DFS?",opts:["BFS toujours meilleur","BFS: plus court chemin. DFS: cycles/connectivite","DFS toujours meilleur","Pas de difference"],"a":1,exp:"BFS explore couche par couche (ideal pour le plus court chemin non pese). DFS explore en profondeur (ideal pour detecter les cycles ou la connectivite)."},
+{cat:"DSA",diff:"Moyen",q:"Qu'est-ce qu'un arbre AVL?",opts:["Un type de graphe","Arbre binaire de recherche auto-equilibre","Un arbre non ordonne","Un type de liste"],"a":1,exp:"Un arbre AVL maintient un equilibre (hauteur gauche = hauteur droite +/-1) via des rotations, garantissant O(log n) pour les operations."},
+{cat:"DSA",diff:"Moyen",q:"Quelle est la difference entre Stack et Queue?",opts:["Stack = FIFO, Queue = LIFO","Stack = LIFO, Queue = FIFO","Pas de difference","Stack = priorite, Queue = aleatoire"],"a":1,exp:"Stack (pile) suit LIFO: dernier entre, premier sorti. Queue (file) suit FIFO: premier entre, premier sorti."},
+{cat:"DSA",diff:"Facile",q:"Qu'est-ce que la complexite amortie?",opts:["Le pire cas","Le cout moyen d'une operation sur plusieurs operations","Le meilleur cas","Le cas typique"],"a":1,exp:"La complexite amortie calcule le cout moyen d'une operation sur une sequence, meme si certaines operations sont couteuses individuellement."},
+{cat:"DSA",diff:"Avance",q:"Quel algorithme pour le plus court chemin dans un graphe pese sans poids negatifs?",opts:["DFS","Dijkstra","BFS","Bellman-Ford"],"a":1,exp:"Dijkstra resout le plus court chemin en O((V+E) log V) avec une priority queue. Bellman-Fard gere les poids negatifs mais est plus lent O(V*E)."},
+{cat:"DSA",diff:"Moyen",q:"Qu'est-ce qu'un graphe acyclique oriente (DAG)?",opts:["Un graphe complet","Un graphe oriente sans cycles","Un graphe non oriente","Un graphe avec poids negatifs"],"a":1,exp:"Un DAG est un graphe oriente sans cycles. Il permet un ordonnancement topologique, utile pour les pipelines de deploiement ou les systemes de dependances."},
+{cat:"DSA",diff:"Avance",q:"Quelle structure pour gerer efficacement les operations min/max et insertion?",opts:["Array trie","Heap (tas)","LinkedList","HashMap"],"a":1,exp:"Un heap permet insertion O(log n), get min/max O(1), et suppression min/max O(log n). Parfait pour les files de priorite."},
+{cat:"DSA",diff:"Facile",q:"Qu'est-ce que la recursion?",opts:["Une boucle infinie","Une fonction qui s'appelle elle-meme","Un type de variable","Un algorithme de tri"],"a":1,exp:"La recursion resout un probleme en l'appellant pour des sous-problemes plus petits. Chaque appel doit avoir un cas de base pour eviter l'infini."},
+{cat:"DSA",diff:"Avance",q:"Quel algorithme pour detecter un cycle dans un linked list?",opts:["Binary search","Algorithme du tortue et du lievre (Floyd)","BFS","Tri topologique"],"a":1,exp:"L'algorithme de Floyd utilise deux pointeurs: un avance de 1 pas, l'autre de 2 pas. S'ils se rencontrent, il y a un cycle. O(n) temps, O(1) espace."}
+];
+
+const CATS=[...new Set(QUESTIONS.map(q=>q.cat))];
+const DIFFS=["Facile","Moyen","Avance"];
+const COUNTS=[5,10,15,20];
+const TIMERS=[15,30,45,60];
+
+let config={cat:"Tous",diff:"Toutes",count:10,timer:30};
+let currentQuestions=[];
+let currentIdx=0;
+let score=0;
+let answers=[];
+let timerInterval=null;
+let timeLeft=0;
+let totalTime=0;
+
+function initConfig(){
+const catEl=document.getElementById('catOptions');
+catEl.innerHTML=`<div class="option-card selected" data-v="Tous" onclick="selectOpt(this,'cat')"><span class="icon">&#x1F3AF;</span>Tous</div>`+
+CATS.map(c=>`<div class="option-card" data-v="${c}" onclick="selectOpt(this,'cat')"><span class="icon">${c==='ML'?'&#x1F916;':c==='Deep Learning'?'&#x1F9E0;':c==='System Design'?'&#x1F3D7;':c==='DevOps'?'&#x2699;':'&#x1F4A0;'}</span>${c}</div>`).join('');
+
+document.getElementById('diffOptions').innerHTML=`<div class="option-card selected" data-v="Toutes" onclick="selectOpt(this,'diff')">Toutes</div>`+
+DIFFS.map(d=>`<div class="option-card" data-v="${d}" onclick="selectOpt(this,'diff')">${d}</div>`).join('');
+
+document.getElementById('countOptions').innerHTML=COUNTS.map((c,i)=>`<div class="option-card${i===1?' selected':''}" data-v="${c}" onclick="selectOpt(this,'count')">${c}</div>`).join('');
+
+document.getElementById('timerOptions').innerHTML=TIMERS.map((t,i)=>`<div class="option-card${i===1?' selected':''}" data-v="${t}" onclick="selectOpt(this,'timer')">${t}s</div>`).join('');
+}
+
+function selectOpt(el,key){
+el.parentElement.querySelectorAll('.option-card').forEach(c=>c.classList.remove('selected'));
+el.classList.add('selected');
+const v=el.dataset.v;
+config[key]=key==='count'||key==='timer'?parseInt(v):v;
+}
+
+function selectQuestions(){
+let pool=[...QUESTIONS];
+if(config.cat!=='Tous')pool=pool.filter(q=>q.cat===config.cat);
+if(config.diff!=='Toutes')pool=pool.filter(q=>q.diff===config.diff);
+for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+return pool.slice(0,config.count);
+}
+
+function startQuiz(){
+currentQuestions=selectQuestions();
+if(currentQuestions.length===0){alert('Aucune question disponible pour ce filtre.');return;}
+currentIdx=0;score=0;answers=[];totalTime=0;
+document.getElementById('configScreen').style.display='none';
+document.getElementById('quizScreen').style.display='block';
+document.getElementById('resultsScreen').style.display='none';
+document.getElementById('qTotal').textContent=currentQuestions.length;
+document.getElementById('catLabel').textContent=config.cat==='Tous'?'Toutes categories':config.cat;
+showQuestion();
+}
+
+function showQuestion(){
+if(currentIdx>=currentQuestions.length){return showResults();}
+const q=currentQuestions[currentIdx];
+document.getElementById('qNum').textContent=currentIdx+1;
+document.getElementById('qCat').textContent=q.cat+' - '+q.diff;
+document.getElementById('qText').textContent=q.q;
+document.getElementById('progressFill').style.width=((currentIdx)/currentQuestions.length*100)+'%';
+const letters=['A','B','C','D'];
+document.getElementById('answers').innerHTML=q.opts.map((o,i)=>
+`<button class="answer-btn" onclick="selectAnswer(${i})"><span class="letter">${letters[i]}</span><span>${o}</span></button>`
+).join('');
+document.getElementById('explanation').style.display='none';
+document.getElementById('nextBtn').style.display='none';
+startTimer();
+}
+
+function startTimer(){
+clearInterval(timerInterval);
+timeLeft=config.timer;
+updateTimerDisplay();
+timerInterval=setInterval(()=>{
+timeLeft--;
+updateTimerDisplay();
+if(timeLeft<=0){clearInterval(timerInterval);autoFail();}
+},1000);
+}
+
+function updateTimerDisplay(){
+const el=document.getElementById('timerBox');
+el.textContent=timeLeft+'s';
+el.className='timer-box'+(timeLeft<=5?' danger':timeLeft<=10?' warning':'');
+}
+
+function autoFail(){
+const q=currentQuestions[currentIdx];
+answers.push({q:currentIdx,chosen:-1,correct:q.a,ok:false,time:config.timer});
+totalTime+=config.timer;
+showFeedback(-1,q.a,false);
+}
+
+function selectAnswer(idx){
+clearInterval(timerInterval);
+const q=currentQuestions[currentIdx];
+const ok=idx===q.a;
+if(ok)score++;
+const elapsed=config.timer-timeLeft;
+totalTime+=elapsed;
+answers.push({q:currentIdx,chosen:idx,correct:q.a,ok,time:elapsed});
+showFeedback(idx,q.a,ok);
+}
+
+function showFeedback(chosen,correct,ok){
+const btns=document.querySelectorAll('.answer-btn');
+btns.forEach((b,i)=>{
+b.classList.add('disabled');
+if(i===correct)b.classList.add('correct');
+if(i===chosen&&!ok)b.classList.add('wrong');
+});
+const exp=document.getElementById('explanation');
+exp.innerHTML=`<strong>${ok?'Correct!':'Incorrect.'}</strong> ${currentQuestions[currentIdx].exp}`;
+exp.style.display='block';
+document.getElementById('nextBtn').style.display='block';
+document.getElementById('nextBtn').textContent=currentIdx===currentQuestions.length-1?'Voir les resultats':'Question suivante';
+}
+
+function nextQuestion(){
+currentIdx++;
+if(currentIdx>=currentQuestions.length)showResults();
+else showQuestion();
+}
+
+function showResults(){
+clearInterval(timerInterval);
+document.getElementById('quizScreen').style.display='none';
+document.getElementById('resultsScreen').style.display='block';
+document.getElementById('reviewList').style.display='none';
+const pct=Math.round(score/currentQuestions.length*100);
+const passed=pct>=60;
+const avgTime=Math.round(totalTime/currentQuestions.length);
+document.getElementById('resultTitle').innerHTML=passed?'&#x1F389; Felicitations!':'&#x1F614; Continuez a reviser';
+const circle=document.getElementById('scoreCircle');
+const r=70,c=2*Math.PI*r;
+circle.innerHTML=`
+<svg width="160" height="160"><circle cx="80" cy="80" r="${r}" fill="none" stroke="var(--bdr)" stroke-width="10"/>
+<circle cx="80" cy="80" r="${r}" fill="none" stroke="${passed?'var(--success)':'var(--danger)'}" stroke-width="10" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pct/100)}" stroke-linecap="round"/></svg>
+<div style="text-align:center"><div class="score-text ${passed?'pass':'fail'}">${pct}%</div><div class="score-label">${score}/${currentQuestions.length}</div></div>`;
+document.getElementById('statCorrect').textContent=score;
+document.getElementById('statWrong').textContent=currentQuestions.length-score;
+document.getElementById('statTime').textContent=avgTime+'s';
+saveHighScore(pct);
+renderHighScores();
+}
+
+function showReview(){
+const el=document.getElementById('reviewList');
+el.style.display='block';
+const letters=['A','B','C','D'];
+el.innerHTML='<h3 style="margin-bottom:16px;color:var(--wh)">Revision des reponses</h3>'+
+answers.map(a=>{
+const q=currentQuestions[a.q];
+return`<div class="review-item ${a.ok?'r-correct':'r-wrong'}">
+<div class="rq">${a.ok?'&#x2705;':'&#x274C;'} ${q.q}</div>
+<div class="ra">${a.chosen>=0?'Votre reponse: <span>'+letters[a.chosen]+'. '+q.opts[a.chosen]+'</span>':'<span>Temps ecoule</span>'}
+<br>Reponse correcte: <span style="color:var(--success)">${letters[a.correct]}. ${q.opts[a.correct]}</span></div></div>`;
+}).join('');
+el.scrollIntoView({behavior:'smooth'});
+}
+
+function retryQuiz(){
+document.getElementById('resultsScreen').style.display='none';
+document.getElementById('quizScreen').style.display='block';
+currentIdx=0;score=0;answers=[];totalTime=0;
+document.getElementById('qTotal').textContent=currentQuestions.length;
+showQuestion();
+}
+
+function backToConfig(){
+document.getElementById('resultsScreen').style.display='none';
+document.getElementById('quizScreen').style.display='none';
+document.getElementById('configScreen').style.display='block';
+}
+
+function shareResults(){
+const pct=Math.round(score/currentQuestions.length*100);
+const text=`Quiz CortexLLMs.io - ${config.cat==='Tous'?'Toutes categories':config.cat} (${config.diff==='Toutes'?'Toutes difficultes':config.diff})\nScore: ${score}/${currentQuestions.length} (${pct}%)\n${pct>=60?'&#x2705; Reussi!':'&#x274C; A revoir'}`;
+if(navigator.share){navigator.share({title:'Quiz CortexLLMs.io',text});}
+else{navigator.clipboard.writeText(text).then(()=>alert('Resultats copiees dans le presse-papier!'));}
+}
+
+function saveHighScore(pct){
+const key='cortexllm_quiz_hs';
+let hs=JSON.parse(localStorage.getItem(key)||'[]');
+hs.push({cat:config.cat,diff:config.diff,score:pct,date:new Date().toLocaleDateString('fr-FR')});
+hs.sort((a,b)=>b.score-a.score);
+hs=hs.slice(0,10);
+localStorage.setItem(key,JSON.stringify(hs));
+}
+
+function renderHighScores(){
+const key='cortexllm_quiz_hs';
+const hs=JSON.parse(localStorage.getItem(key)||'[]');
+const el=document.getElementById('highScores');
+if(!hs.length){el.innerHTML='';return;}
+el.innerHTML=`<h3>Meilleurs scores</h3><ul class="hs-list">`+
+hs.map(h=>`<li><span>${h.cat} - ${h.diff} (${h.date})</span><span>${h.score}%</span></li>`).join('')+'</ul>';
+}
+
+initConfig();
+</script>
+</body>
+</html>
