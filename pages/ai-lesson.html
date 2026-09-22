@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -66,7 +66,7 @@ p code,li code{background:rgba(59,130,246,.1);padding:2px 6px;border-radius:4px;
 </style>
 </head>
 <body>
-<header class="header"><nav class="nav"><a href="/" class="logo">CortexLLMs<span>.io</span></a><div class="nav-links"><a href="/">Accueil</a><a href="/pages/ai-engineering.html" class="active">Ingenierie IA</a><a href="/pages/devops.html">DevOps</a><a href="/pages/system-design.html">System Design</a><a href="/pages/dsa.html">DSA</a><a href="/pages/entreprises.html">Entreprises</a></div></nav></header>
+<header class="header"><nav class="nav"><a href="/" class="logo">CortexLLMs<span>.io</span></a><div class="nav-links"><a href="/">Accueil</a><a href="pages/ai-engineering.html" class="active">Ingenierie IA</a><a href="pages/devops.html">DevOps</a><a href="pages/system-design.html">System Design</a><a href="pages/dsa.html">DSA</a><a href="pages/entreprises.html">Entreprises</a></div></nav></header>
 
 <div class="container">
 <main id="main-content">
@@ -86,7 +86,7 @@ p code,li code{background:rgba(59,130,246,.1);padding:2px 6px;border-radius:4px;
 <div class="sidebar-box">
 <h4 id="sidebar-quiz-title">Quiz</h4>
 <p id="sidebar-quiz-desc" style="color:var(--t2);font-size:.85rem;margin-bottom:12px"></p>
-<a href="/pages/quizzes.html" id="sidebar-quiz-link" style="display:block;text-align:center;background:var(--acc);color:var(--wh);padding:10px;border-radius:8px;font-weight:600">Commencer</a>
+<a href="pages/quizzes.html" id="sidebar-quiz-link" style="display:block;text-align:center;background:var(--acc);color:var(--wh);padding:10px;border-radius:8px;font-weight:600">Commencer</a>
 </div>
 <div class="sidebar-box">
 <h4>Lecons du module</h4>
@@ -190,7 +190,7 @@ function renderLesson(lesson, id) {
   document.title = lesson.title + ' - CortexLLMs.io';
 
   // Breadcrumb + Meta
-  let metaHTML = '<div class="breadcrumb"><a href="/">Accueil</a> / <a href="/pages/ai-engineering.html">Ingenierie IA</a> / ' + lesson.title + '</div>';
+  let metaHTML = '<div class="breadcrumb"><a href="/">Accueil</a> / <a href="pages/ai-engineering.html">Ingenierie IA</a> / ' + lesson.title + '</div>';
   metaHTML += '<h1>' + lesson.title + '</h1>';
   metaHTML += '<div class="lesson-meta">';
   metaHTML += '<span class="meta-item">Module ' + lesson.module + ' : ' + lesson.moduleName + '</span>';
@@ -225,7 +225,7 @@ function renderLesson(lesson, id) {
   contentHTML += '</div>';
 
   // Quiz CTA
-  contentHTML += '<div class="quiz-cta"><h3>Testez vos connaissances</h3><p>Quiz sur ' + lesson.moduleName + '</p><a href="/pages/quizzes.html">Commencer le Quiz</a></div>';
+  contentHTML += '<div class="quiz-cta"><h3>Testez vos connaissances</h3><p>Quiz sur ' + lesson.moduleName + '</p><a href="pages/quizzes.html">Commencer le Quiz</a></div>';
 
   // Prev/Next
   var prevId = null, nextId = null;
