@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecon DevOps - CortexLLMs.io</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0d0f;--card:#1a1a2e;--acc:#3b82f6;--acc-l:rgba(59,130,246,.15);--t1:#f1f5f9;--t2:#94a3b8;--bdr:#1e293b;--wh:#fff;--r:12px;--mx:1200px;--success:#10b981;--warning:#f59e0b}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7}
+h1,h2,h3,h4{font-family:'Source Serif 4',serif;font-weight:700;line-height:1.3}
+a{color:var(--acc);text-decoration:none}
+.header{position:sticky;top:0;z-index:100;background:rgba(13,13,15,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:16px 0}
+.nav{max-width:var(--mx);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Source Serif 4',serif;font-size:1.3rem;font-weight:800}.logo span{color:var(--acc)}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{color:var(--t2);font-size:.9rem;font-weight:500;transition:color .2s}.nav-links a:hover,.nav-links a.active{color:var(--acc)}
+.container{max-width:var(--mx);margin:0 auto;padding:24px;display:grid;grid-template-columns:1fr 280px;gap:40px}
+.breadcrumb{color:var(--t2);font-size:.85rem;margin-bottom:8px}.breadcrumb a{color:var(--t2)}.breadcrumb a:hover{color:var(--acc)}
+.lesson-meta{display:flex;gap:16px;align-items:center;margin:16px 0 24px;flex-wrap:wrap}
+.badge{padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600}
+.badge-easy{background:rgba(16,185,129,.15);color:var(--success)}
+.badge-medium{background:rgba(245,158,11,.15);color:var(--warning)}
+.badge-hard{background:rgba(239,68,68,.15);color:#ef4444}
+.meta-item{color:var(--t2);font-size:.85rem}
+.content h2{margin:40px 0 16px;font-size:1.5rem;color:var(--wh);padding-top:20px;border-top:1px solid var(--bdr)}
+.content h3{margin:24px 0 12px;font-size:1.2rem;color:var(--wh)}
+.content p{margin-bottom:16px;color:var(--t2)}
+.content ul,.content ol{margin:12px 0 16px 24px;color:var(--t2)}
+.content li{margin-bottom:8px}
+pre{background:#111;border:1px solid var(--bdr);border-radius:var(--r);padding:20px;overflow-x:auto;margin:16px 0;font-size:.85rem;line-height:1.5}
+code{font-family:'JetBrains Mono',monospace;color:#a5f3fc}
+.callout{border-left:4px solid var(--acc);background:var(--acc-l);border-radius:0 var(--r) var(--r) 0;padding:16px 20px;margin:20px 0}
+.callout.warning{border-color:var(--warning);background:rgba(245,158,11,.1)}
+.callout strong{color:var(--wh)}
+.formula{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:20px;margin:16px 0;text-align:center;font-size:1.1rem;font-family:'Source Serif 4',serif;color:var(--wh)}
+.qa{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:20px;margin:16px 0}
+.qa h4{color:var(--acc);margin-bottom:8px;font-size:1rem}
+.qa p{margin:0}
+.sidebar{position:sticky;top:80px;align-self:start}
+.sidebar-box{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.sidebar-box h4{font-size:.9rem;margin-bottom:12px;color:var(--wh)}
+.toc a{display:block;padding:6px 0;color:var(--t2);font-size:.85rem;border-left:2px solid transparent;padding-left:12px;transition:all .2s}
+.toc a:hover,.toc a.active{color:var(--acc);border-color:var(--acc)}
+.nav-lesson{display:flex;justify-content:space-between;margin:40px 0;gap:16px}
+.nav-lesson a{flex:1;background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:16px 20px;transition:all .2s}
+.nav-lesson a:hover{border-color:var(--acc)}
+.nav-lesson a span{display:block;color:var(--t2);font-size:.8rem;margin-bottom:4px}
+.quiz-cta{background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:var(--r);padding:32px;text-align:center;margin:40px 0}
+.quiz-cta h3{color:var(--wh);margin-bottom:8px}
+.quiz-cta p{color:rgba(255,255,255,.8);margin-bottom:16px}
+.quiz-cta a{background:var(--wh);color:#3b82f6;padding:10px 24px;border-radius:8px;font-weight:600;display:inline-block}
+.module-header{font-size:.8rem;text-transform:uppercase;letter-spacing:1px;color:var(--acc);margin-bottom:4px;font-weight:600}
+.progress-bar{height:6px;background:var(--bdr);border-radius:3px;margin:8px 0;overflow:hidden}
+.progress-fill{height:100%;background:var(--acc);border-radius:3px;transition:width .3s}
+.progress-text{font-size:.75rem;color:var(--t2)}
+.lesson-link{display:flex;align-items:center;gap:8px;padding:6px 0;color:var(--t2);font-size:.85rem;border-left:2px solid transparent;padding-left:12px;transition:all .2s;cursor:pointer}
+.lesson-link:hover{color:var(--t1);border-color:var(--acc)}
+.lesson-link.active{color:var(--acc);border-color:var(--acc);font-weight:600}
+.lesson-link.completed{color:var(--success)}
+.lesson-link .check{display:none;font-size:.7rem}
+.lesson-link.completed .check{display:inline}
+.module-toggle{cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center}
+.module-toggle::after{content:'▾';transition:transform .2s}
+.module-toggle.collapsed::after{transform:rotate(-90deg)}
+.module-lessons{overflow:hidden;transition:max-height .3s}
+.module-lessons.collapsed{max-height:0!important}
+@media(max-width:900px){.container{grid-template-columns:1fr}.sidebar{display:none}}
+</style>
+</head>
+<body>
+<header class="header"><nav class="nav"><a href="/" class="logo">CortexLLMs<span>.io</span></a><div class="nav-links"><a href="/">Accueil</a><a href="/pages/ai-engineering.html">Ingenierie IA</a><a href="/pages/devops.html" class="active">DevOps</a><a href="/pages/system-design.html">System Design</a><a href="/pages/dsa.html">DSA</a><a href="/pages/entreprises.html">Entreprises</a></div></nav></header>
+
+<div class="container">
+<main>
+<div class="breadcrumb" id="breadcrumb"></div>
+<h1 id="lesson-title"></h1>
+<div class="lesson-meta" id="lesson-meta"></div>
+<div class="content" id="lesson-content"></div>
+<div class="nav-lesson" id="nav-lesson"></div>
+</main>
+<aside class="sidebar" id="sidebar"></aside>
+</div>
+
+<footer style="border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:var(--t2);font-size:.85rem">
+<p>CortexLLMs.io &copy; 2026 &mdash; Plateforme de preparation aux entretiens DevOps</p>
+</footer>
+
+<script>
+const MODULES=[
+{id:1,name:"CI/CD et Pipelines",lessons:[1,2,3,4,5,6,7,8,9,10]},
+{id:2,name:"Conteneurs et Orchestration",lessons:[11,12,13,14,15,16,17,18,19,20]},
+{id:3,name:"IaC et Cloud",lessons:[21,22,23,24,25,26,27,28,29,30]}
+];
+
+const LESSONS=[
+{id:1,title:"Integration Continue (CI)",module:1,difficulty:"facile",duration:"20 min",
+content:`
+<h2 id="definition">Qu'est-ce que l'Integration Continue?</h2>
+<p>L'Integration Continue (CI) est une pratiques DevOps ou les developpeurs fusionnent leurs modifications dans un depot partage frequentement, typiquement plusieurs fois par jour. Chaque fusion est verifiee par un pipeline automatique qui construit l'application et execute les tests.</p>
+<div class="callout"><strong>Objectif :</strong> Detecter les problemes le plus tot possible dans le cycle de developpement, reduisant le cout de correction.</div>
+
+<h2 id="gitflow">Branchement GitFlow</h2>
+<p>GitFlow est une strategie de branching qui structure le developpement :</p>
+<ul>
+<li><strong>main</strong> : code stable en production, jamais modifie directement</li>
+<li><strong>develop</strong> : branche d'integration, toutes les features sont merges ici</li>
+<li><strong>feature/*</strong> : branche creee depuis develop pour chaque feature</li>
+<li><strong>release/*</strong> : preparation d'une release, stabilisation</li>
+<li><strong>hotfix/*</strong> : correction urgente depuis main</li>
+</ul>
+<pre><code># Creer une feature
+git checkout develop
+git checkout -b feature/auth-system
+
+# Travailler et commiter
+git add .
+git commit -m "feat: ajout systeme d'authentification"
+
+# Fusionner dans develop
+git checkout develop
+git merge --no-ff feature/auth-system
+git branch -d feature/auth-system</code></pre>
+
+<h2 id="triggers">Triggers et Automatisation</h2>
+<p>Les triggers definent quand le pipeline se declenche :</p>
+<ul>
+<li><strong>Push/Commit</strong> : a chaque push sur une branche specifique</li>
+<li><strong>Pull Request</strong> : a l'ouverture ou mise a jour d'une PR</li>
+<li><strong>Schedule (Cron)</strong> : execution periodique (ex: nuit pour les tests de charge)</li>
+<li><strong>Manual</strong> : declenchement manuel pour les deploiements</li>
+<li><strong>Tag</strong> : quand un tag est cree (ex: v1.0.0)</li>
+<li><strong>Webhook</strong> : evenement externe (depot upstream, notification)</li>
+</ul>
+
+<h2 id="pipeline">Elements d'un Pipeline CI</h2>
+<p>Un pipeline CI typique suit ces etapes :</p>
+<ol>
+<li><strong>Checkout</strong> : recuperation du code source</li>
+<li><strong>Setup</strong> : installation des dependances (npm install, pip install)</li>
+<li><strong>Build</strong> : compilation, transpilation (tsc, webpack)</li>
+<li><strong>Lint</strong> : verification du style de code (ESLint, Prettier)</li>
+<li><strong>Unit Tests</strong> : tests unitaires rapides</li>
+<li><strong>Integration Tests</strong> : tests d'integration avec bases de donnees</li>
+<li><strong>Security Scan</strong : analyse de vulnerabilites (Snyk, Trivy)</li>
+<li><strong>Coverage</strong> : verification du taux de couverture de code</li>
+</ol>
+<pre><code># Exemple pipeline GitLab CI
+stages:
+  - build
+  - test
+  - security
+  - deploy
+
+build:
+  stage: build
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+
+test:
+  stage: test
+  script:
+    - npm run test:unit
+    - npm run test:integration
+  coverage: '/Lines\s*:\s*(\d+\.?\d*)%/'
+  artifacts:
+    reports:
+      junit: test-results.xml</code></pre>
+
+<h2 id="jenkins-github">Jenkins vs GitHub Actions</h2>
+<p>Les deux outils sont populaires mais ont des differences cles :</p>
+<table style="width:100%;border-collapse:collapse;margin:16px 0">
+<tr style="border-bottom:1px solid var(--bdr)"><th style="text-align:left;padding:8px;color:var(--wh)">Critere</th><th style="text-align:left;padding:8px;color:var(--wh)">Jenkins</th><th style="text-align:left;padding:8px;color:var(--wh)">GitHub Actions</th></tr>
+<tr style="border-bottom:1px solid var(--bdr)"><td style="padding:8px;color:var(--t2)">Hebergement</td><td style="padding:8px;color:var(--t2)">Self-hosted</td><td style="padding:8px;color:var(--t2)">Cloud (GitHub)</td></tr>
+<tr style="border-bottom:1px solid var(--bdr)"><td style="padding:8px;color:var(--t2)">Configuration</td><td style="padding:8px;color:var(--t2)">Jenkinsfile (Groovy)</td><td style="padding:8px;color:var(--t2)">YAML workflows</td></tr>
+<tr style="border-bottom:1px solid var(--bdr)"><td style="padding:8px;color:var(--t2)">Plugins</td><td style="padding:8px;color:var(--t2)">1800+ plugins</td><td style="padding:8px;color:var(--t2)">Marketplace Actions</td></tr>
+<tr><td style="padding:8px;color:var(--t2)">Maintenance</td><td style="padding:8px;color:var(--t2)">Elevee</td><td style="padding:8px;color:var(--t2)">Faible (managed)</td></tr>
+</table>
+
+<h2 id="best-practices">Bonnes Pratiques</h2>
+<ul>
+<li><strong>Builds rapides</strong> : garder le pipeline sous 10 minutes, paraleliser quand possible</li>
+<li><strong>Tests isoles</strong> : chaque test doit pouvoir tourner independamment</li>
+<li><strong>Feedback rapide</strong> : notifier immediatement en cas d'echec (Slack, email)</li>
+<li><strong>Infrastructure as Code</strong> : versionner le pipeline avec le code</li>
+<li><strong>Cache intelligent</strong> : cacher les dependances pour accelerer les builds</li>
+<li><strong>Pipelines en cascade</strong> : un echec arrete tout, pas de propagation d'erreurs</li>
+</ul>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Quelle est la difference entre CI et CD ?</h4><p>CI (Integration Continue) automatise la construction et les tests a chaque fusion. CD peut signifier <strong>Delivery</strong> (automatisation jusqu'a un artefact deployable) ou <strong>Deployment</strong> (automatisation jusqu'a la production). Le CD complet inclut la CI.</p></div>
+<div class="qa"><h4>Q2 : Comment gerez-vous les echecs de build flaky ?</h4><p>1) Isoler et corriger le test flaky. 2) Ajouter un mecanisme de retry avec limite. 3) Mettre de cote le test temporairement. 4) Tracker les tests flaky avec un dashboard. 5) Fixer la cause racine (race conditions, dependances externes).</p></div>
+<div class="qa"><h4>Q3 : Comment optimiser un pipeline CI lent ?</h4><p>1) Paraleliser les jobs independants. 2) Cacher les dependances (node_modules, docker layers). 3) Utiliser des containers pre-build. 4) Executer les tests les plus rapides en premier (fail fast). 5) Splitter les tests unitaires et d'integration dans des pipelines separes.</p></div>
+<div class="qa"><h4>Q4 : Qu'est-ce qu'un build artifact et comment le gerer ?</h4><p>Un artifact est le produit compile du build (JAR, Docker image, bundle JS). Bonnes pratiques : 1) Versionner avec le commit SHA. 2) Storer dans un registre centralise (Nexus, Artifactory, GHCR). 3) Retention automatique (garder les 10 derniers). 4) Signer pour la securite.</p></div>
+`},
+
+{id:2,title:"Deploiement Continu (CD)",module:1,difficulty:"moyen",duration:"25 min",
+content:`
+<h2 id="definition">Deploiement Continu vs Continu</h2>
+<p><strong>Continuous Delivery</strong> automatise le processus jusqu'a ce que le code soit pret pour la production, mais le deploiement final reste manuel. <strong>Continuous Deployment</strong> pousse plus loin : chaque changement passe est automatiquement deploie en production.</p>
+<div class="callout"><strong>Principe :</strong> En CD complet, si le pipeline est vert, le code est en production. Aucune intervention humaine n'est necessaire.</div>
+
+<h2 id="canary">Deploiement Canary</h2>
+<p>Le deploiement canary deploie la nouvelle version progressivement a un petit sous-ensemble d'utilisateurs :</p>
+<ul>
+<li><strong>Etape 1</strong> : Deploiement a 5% du trafic</li>
+<li><strong>Etape 2</strong> : Monitoring des metriques (erreurs, latence)</li>
+<li><strong>Etape 3</strong> : Si OK, augmentation a 25%, 50%, 100%</li>
+<li><strong>Etape 4</strong> : Si problemes, rollback immediat</li>
+</ul>
+<pre><code># Configuration Istio pour canary (VirtualService)
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+spec:
+  hosts:
+    - api.example.com
+  http:
+    - route:
+        - destination:
+            host: api-stable
+            port: { number: 80 }
+          weight: 90
+        - destination:
+            host: api-canary
+            port: { number: 80 }
+          weight: 10</code></pre>
+
+<h2 id="blue-green">Blue-Green Deployment</h2>
+<p>Blue-Green maintient deux environnements identiques : <strong>blue</strong> (production actuelle) et <strong>green</strong> (nouvelle version).</p>
+<ol>
+<li>Deployer la nouvelle version sur <strong>green</strong></li>
+<li>Tester green avec un sous-ensemble de trafic</li>
+<li>Basculer le load balancer de blue vers green</li>
+<li>Blue devient le nouveau backup</li>
+</ol>
+<div class="callout warning"><strong>Attention :</strong> Blue-Green necessite le double de ressources. Problematique pour les bases de donnees avec migrations.</div>
+
+<h2 id="rolling">Rolling Updates</h2>
+<p>Les mises a jour progressives remplacent les instances une par une :</p>
+<pre><code># Kubernetes Rolling Update
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%      # Max 25% d'instances supplementaires
+      maxUnavailable: 0  # Aucune interruption
+  template:
+    spec:
+      containers:
+        - name: app
+          image: app:v2.0</code></pre>
+<p>Parametres cles : <strong>maxSurge</strong> (instances supplementaires autorisees) et <strong>maxUnavailable</strong> (instances hors service tolerées).</p>
+
+<h2 id="staging">Environnement Staging</h2>
+<p>Le staging est une copie de production pour validation finale :</p>
+<ul>
+<li><strong>Meme infrastructure</strong> que production (ou similaire)</li>
+<li><strong>Donnees de test</strong> representatives (pas de donnees reelles)</li>
+<li><strong>Tests E2E</strong> complets avant promotion</li>
+<li><strong>Load testing</strong> pour valider les performances</li>
+<li><strong>Security scanning</strong> final</li>
+</ul>
+
+<h2 id="promotion">Promotion Automatique</h2>
+<p>La promotion automatique chainee :</p>
+<pre><code># Pipeline de promotion
+stages:
+  - test
+  - staging
+  - canary
+  - production
+
+promote-staging:
+  stage: staging
+  script:
+    - deploy-to-staging
+    - run-e2e-tests
+    - run-security-scan
+  only:
+    - develop
+
+promote-production:
+  stage: production
+  script:
+    - deploy-canary --weight=5
+    - wait-for-metrics --duration=10m
+    - if metrics_ok: increase-weight --to=100
+    - else: rollback
+  when: manual</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Quand utiliser Blue-Green vs Canary ?</h4><p><strong>Blue-Green</strong> : quand vous voulez un basculement instantane et un rollback immediat (applications sans etat). <strong>Canary</strong> : quand vous voulez valider progressivement avec du vrai trafic (reduit le risque). Canary est plus econome en ressources.</p></div>
+<div class="qa"><h4>Q2 : Comment gerez-vous les rollback en production ?</h4><p>1) Kubernetes : <code>kubectl rollout undo deployment/app</code>. 2) Blue-Green : basculer le load balancer. 3) Feature flags : desactiver la feature. 4) Database : migrations backward-compatible. 5) Tjours garder les N-1 versions d'images Docker.</p></div>
+<div class="qa"><h4>Q3 : Qu'est-ce que le drift detection en deploiement ?</h4><p>Le drift detection identifie les ecarts entre l'etat desire (code) et l'etat reel (infrastructure). Outils : Terraform drift detection, Kubernetes audit logs, AWS Config. Correction : re-appliquer la configuration ou arreger manuellement.</p></div>
+`},
+
+{id:3,title:"Pipelines GitLab CI",module:1,difficulty:"moyen",duration:"25 min",
+content:`
+<h2 id="structure">Structure d'un .gitlab-ci.yml</h2>
+<p>Le fichier .gitlab-ci.yml definit le pipeline CI/CD pour GitLab. Sa structure de base :</p>
+<pre><code>stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  APP_VERSION: "1.0"
+
+build-job:
+  stage: build
+  script:
+    - echo "Building..."
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 hour</code></pre>
+
+<h2 id="stages-jobs">Stages et Jobs</h2>
+<p><strong>Stages</strong> definissent l'ordre d'execution. Les jobs d'un meme stage tournent en parallele :</p>
+<ul>
+<li><strong>build</strong> : compilation, empaquetage</li>
+<li><strong>test</strong> : tests unitaires, integration, linting</li>
+<li><strong>security</strong> : scan de vulnerabilites</li>
+<li><strong>deploy</strong> : mise en production</li>
+</ul>
+<p>Un job peut dependre d'un autre avec <code>needs</code> pour creer un DAG :</p>
+<pre><code>test-unit:
+  stage: test
+  needs: ["build"]
+
+test-integration:
+  stage: test
+  needs: ["build", "test-unit"]</code></pre>
+
+<h2 id="cache-artifacts">Cache et Artifacts</h2>
+<p><strong>Cache</strong> : stocke des fichiers entre les pipelines (dependances). <strong>Artifacts</strong> : stocke les produits d'un job pour les jobs suivants :</p>
+<pre><code># Cache les node_modules
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - node_modules/
+
+# Artifacts pour jobs suivants
+artifacts:
+  paths:
+    - dist/
+    - coverage/
+  reports:
+    junit: report.xml
+    coverage_report:
+      coverage_format: cobertura
+      path: coverage/cobertura.xml</code></pre>
+<div class="callout warning"><strong>Attention :</strong> Le cache n'est PAS fiable a 100% (peut etre purge). Les artifacts le sont. Utilisez le cache pour les dependances, les artifacts pour les resultats.</div>
+
+<h2 id="variables">Variables</h2>
+<p>Les variables se definissent a differents niveaux :</p>
+<pre><code># Variables globales
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+
+# Variables par job
+build:
+  variables:
+    NODE_ENV: "production"
+
+# Variables d'environnement (Settings > CI/CD)
+# accesibles via $VARIABLE_NAME
+
+# Variables protegees (seulement sur branches protegees)
+# Variables маски (masquees dans les logs)</code></pre>
+
+<h2 id="rules">Rules et Conditions</h2>
+<p>Les rules remplacent <code>only/except</code> pour un controle fin :</p>
+<pre><code>deploy-prod:
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: always
+    - when: never</code></pre>
+
+<h2 id="docker-integration">Integration Docker</h2>
+<pre><code>build-image:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Comment structurer un pipeline GitLab CI pour une microservice architecture ?</h4><p>Utiliser <strong>include</strong> pour inclure un pipeline template par service. Chaque service a son propre .gitlab-ci.yml avec des stages communs. Utiliser <code>rules:changes</code> pour ne builder que les services modifies. Ex: <code>changes: [services/api/**]</code>.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer les secrets dans GitLab CI ?</h4><p>1) Variables CI/CD protegees et masquees. 2) Vault integration avec <code>hashicorp-vault</code>. 3) <code>dotenv</code> artifacts pour les secrets dynamiques. 4) Jamais en dur dans le .gitlab-ci.yml. 5) Rotation reguliere des tokens.</p></div>
+`},
+
+{id:4,title:"GitHub Actions",module:1,difficulty:"moyen",duration:"25 min",
+content:`
+<h2 id="workflows">Workflows YAML</h2>
+<p>Les GitHub Actions se definissent dans <code>.github/workflows/</code> :</p>
+<pre><code>name: CI Pipeline
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test</code></pre>
+
+<h2 id="matrices">Matrices de Build</h2>
+<p>Les matrices permettent de tester sur plusieurs configurations :</p>
+<pre><code>test:
+  runs-on: ubuntu-latest
+  strategy:
+    matrix:
+      node-version: [18, 20, 22]
+      os: [ubuntu-latest, windows-latest]
+    fail-fast: false
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci && npm test</code></pre>
+
+<h2 id="secrets">Gestion des Secrets</h2>
+<p>Les secrets se configurent dans Settings > Secrets :</p>
+<pre><code>steps:
+  - name: Deploy
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    run: |
+      aws s3 sync dist/ s3://my-bucket/</code></pre>
+<div class="callout warning"><strong>Important :</strong> Les secrets ne sont jamais logs. Pour les PRs de forks, les secrets ne sont pas accesibles par defaut (protection).</div>
+
+<h2 id="reusable">Reusable Workflows</h2>
+<p>Factoriser le pipeline avec des workflows reutilisables :</p>
+<pre><code># .github/workflows/reusable-ci.yml
+name: Reusable CI
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: false
+        default: '20'
+    secrets:
+      NPM_TOKEN:
+        required: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+      - run: npm ci && npm test
+
+# Appel depuis un autre workflow
+jobs:
+  ci:
+    uses: ./.github/workflows/reusable-ci.yml
+    with:
+      node-version: '22'
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}</code></pre>
+
+<h2 id="self-hosted">Self-Hosted Runners</h2>
+<p>Les runners self-hosted permettent de controler l'infrastructure :</p>
+<pre><code># Installer le runner
+./config.sh --url https://github.com/org/repo --token XXXXX
+
+# Utiliser dans le workflow
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - run: echo "Running on my server"</code></pre>
+<ul>
+<li><strong>Avantages</strong> : cout moindre, hardware specialise, reseau prive</li>
+<li><strong>Inconvenients</strong> : maintenance, securite, isolation</li>
+</ul>
+
+<h2 id="caching">Cache et Performance</h2>
+<pre><code>- uses: actions/cache@v4
+  with:
+    path: ~/.npm
+    key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+    restore-keys: |
+      npm-${{ runner.os }}-</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Comment securiser les GitHub Actions ?</h4><p>1) Pin les actions par SHA (pas par tag). 2) Utiliser <code>permissions</code> minimales. 3) Secrets dans le repo, pas en dur. 4) Valider les inputs des workflows reutilisables. 5) Audit les actions tierces. 6) Branch protection rules.</p></div>
+<div class="qa"><h4>Q2 : Comment gérer les conflits de merge dans les workflows ?</h4><p>1) Separer les workflows par domaine (CI, deploy, release). 2) Utiliser des paths ignores. 3) Conventions de nommage <code>workflow-name-feature.yml</code>. 4) Codeowners pour review des workflows. 5) Tests des workflows dans des PR dediees.</p></div>
+`},
+
+{id:5,title:"Jenkins",module:1,difficulty:"moyen",duration:"20 min",
+content:`
+<h2 id="jenkinsfile">Pipelines DSL (Jenkinsfile)</h2>
+<p>Jenkins utilise le DSL Pipeline (Groovy) dans un Jenkinsfile :</p>
+<pre><code>pipeline {
+    agent any
+    
+    environment {
+        APP_NAME = 'mon-app'
+        DOCKER_REGISTRY = 'registry.example.com'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'npm ci'
+                sh 'npm run build'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'npm test'
+            }
+            post {
+                always {
+                    junit 'test-results/*.xml'
+                }
+            }
+        }
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                sh 'docker build -t $DOCKER_REGISTRY/$APP_NAME:$BUILD_NUMBER .'
+                sh 'docker push $DOCKER_REGISTRY/$APP_NAME:$BUILD_NUMBER'
+            }
+        }
+    }
+    post {
+        failure {
+            slackSend channel: '#ci-alerts', message: "Build echoue: ${env.JOB_NAME}"
+        }
+    }
+}</code></pre>
+
+<h2 id="plugins">Plugins Essentiels</h2>
+<ul>
+<li><strong>Pipeline</strong> : support DSL Pipeline</li>
+<li><strong>Blue Ocean</strong> : interface moderne</li>
+<li><strong>Docker Pipeline</strong> : builds Docker natifs</li>
+<li><strong>Credentials Binding</strong> : gestion des secrets</li>
+<li><strong>GitHub Integration</strong> : webhooks et PR status</li>
+<li><strong>SonarQube Scanner</strong> : analyse de qualite</li>
+<li><strong>Kubernetes</strong> : agents dynamiques</li>
+</ul>
+
+<h2 id="multibranch">Multibranch Pipeline</h2>
+<p>Le multibranch detecte automatiquement les branches et PR :</p>
+<ol>
+<li>Creer un Multibranch Pipeline</li>
+<li>Configurer le source (GitHub, GitLab)</li>
+<li>Jenkins scanne les branches et detecte les Jenkinsfile</li>
+<li>Chaque branche a son propre pipeline</li>
+</ol>
+
+<h2 id="shared-libraries">Shared Libraries</h2>
+<p>Factoriser le code pipeline commune :</p>
+<pre><code>// vars/standardPipeline.groovy
+def call(Map config = [:]) {
+    pipeline {
+        agent any
+        stages {
+            stage('Build') {
+                steps {
+                    sh config.buildCommand ?: 'npm run build'
+                }
+            }
+            stage('Test') {
+                steps {
+                    sh config.testCommand ?: 'npm test'
+                }
+            }
+        }
+    }
+}
+
+// Utilisation dans un Jenkinsfile
+@Library('ma-bibliotheque') _
+standardPipeline buildCommand: 'mvn package', testCommand: 'mvn test'</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Jenkins vs GitHub Actions - lequel choisir ?</h4><p><strong>Jenkins</strong> : quand vous avez besoin de controle total, infrastructure self-hosted, plugins specialises, ou pipeline tres complexes. <strong>GitHub Actions</strong> : quand votre code est sur GitHub, vous voulez peu de maintenance, et des pipelines standardises. Jenkins est plus flexible mais plus lourd.</p></div>
+<div class="qa"><h4>Q2 : Comment scaler Jenkins pour 500+ projets ?</h4><p>1) Kubernetes agents dynamiques (spin up/down). 2) Pipeline Shared Libraries pour standardiser. 3) CasC (Configuration as Code) pour gerer la config. 4) Master securise (pas de builds dessus). 5) Monitoring avec Prometheus/Grafana. 6) Backup automatique de JENKINS_HOME.</p></div>
+`},
+
+{id:6,title:"Qualite du Code",module:1,difficulty:"moyen",duration:"20 min",
+content:`
+<h2 id="sonarqube">SonarQube</h2>
+<p>SonarQube est l'outil de reference pour l'analyse de qualite de code. Il detecte les bugs, vulnerabilities et code smells :</p>
+<pre><code># Integation dans un pipeline GitLab CI
+sonarqube-check:
+  stage: quality
+  image: sonarsource/sonar-scanner-cli
+  variables:
+    SONAR_HOST_URL: "https://sonarqube.example.com"
+    SONAR_TOKEN: $SONAR_TOKEN
+  script:
+    - sonar-scanner
+      -Dsonar.projectKey=my-project
+      -Dsonar.sources=src/
+      -Dsonar.tests=tests/
+      -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+  allow_failure: true</code></pre>
+<p>Metriques SonarQube cles :</p>
+<ul>
+<li><strong>Bugs</strong> : problemes logiques dans le code</li>
+<li><strong>Vulnerabilites</strong> : failles de securite potentielles</li>
+<li><strong>Code Smells</def> : code maintenable (complexite, duplication)</li>
+<li><strong>Coverage</strong> : taux de couverture des tests</li>
+<li><strong>Duplications</strong> : code duplique detecte</li>
+</ul>
+
+<h2 id="linting">ESLint et Linting</h2>
+<pre><code>// .eslintrc.json
+{
+  "extends": ["eslint:recommended", "typescript-eslint/recommended"],
+  "rules": {
+    "no-unused-vars": "error",
+    "no-console": "warn",
+    "prefer-const": "error",
+    "no-var": "error"
+  },
+  "env": {
+    "node": true,
+    "jest": true
+  }
+}</code></pre>
+
+<h2 id="quality-gates">Quality Gates</h2>
+<p>Les quality gates bloquent le pipeline si les criteres ne sont pas remplis :</p>
+<ul>
+<li>Couverture de code > 80%</li>
+<li>0 bugs critiques</li>
+<li>0 vulnerabilites haute</li>
+<li>Duplication < 3%</li>
+<li>Complexite cyclomatique < 20</li>
+</ul>
+<div class="callout"><strong>Regle d'or :</strong> La qualite ne peut que s'ameliorer ou rester stable, jamais se degrader. C'est le principe du quality gate.</div>
+
+<h2 id="coverage">Code Coverage</h2>
+<pre><code># Rapport de couverture
+coverage:
+  /Lines\s*:\s*(\d+\.?\d*)%/
+
+# Exemple de test avec couverture
+# Jest
+npx jest --coverage --coverageReporters=text --coverageReporters=cobertura
+
+# Python
+pytest --cov=src --cov-report=xml</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Comment imposer la qualite de code sans ralentir le developpement ?</h4><p>1) Quality gates automatiques (pas de deploiement sans pass). 2) Linting en pre-commit (husky, lint-staged). 3) Feedback rapide dans les PR. 4) Standards documentes et partages. 5) Code review systematique. 6) Ne pas etre trop strict au debut, monter progressivement.</p></div>
+<div class="qa"><h4>Q2 : 100% de couverture est-il necessaire ?</h4><p>Non. 100% ne garantit pas l'absence de bugs. visez 80%+ pour le code metier, 100% pour les chemins critiques (securite, paiement). Focus sur la <strong>couverture de branches</strong> (branch coverage) plutot que la couverture de lignes. Les tests d'integration sont souvent plus utiles que les tests unitaires excessifs.</p></div>
+`},
+
+{id:7,title:"Gestion des Secrets",module:1,difficulty:"difficile",duration:"25 min",
+content:`
+<h2 id="vault">HashiCorp Vault</h2>
+<p>Vault est le standard pour la gestion des secrets en entreprise :</p>
+<pre><code># Recuperer un secret depuis Vault
+curl -H "X-Vault-Token: $VAULT_TOKEN" \
+  $VAULT_ADDR/v1/secret/data/mon-app/database
+
+# Utilisation dans un pipeline
+steps:
+  - name: Get DB credentials
+    run: |
+      export DB_PASS=$(vault kv get -field=password secret/mon-app/db)
+      echo "Connecting with retrieved secret..."</code></pre>
+<p>Fonctionnalites cles de Vault :</p>
+<ul>
+<li><strong>Dynamic secrets</strong> : credentials temporaires generees a la demande</li>
+<li><strong>Lease</strong> : duree de vie limitee, rotation automatique</li>
+<li><strong>Audit log</strong> : traçabilité complete de tous les accès</li>
+<li><strong>Polices</strong> : controle d'acces fin (RBAC)</li>
+</ul>
+
+<h2 id="env-vars">Variables d'Environnement</h2>
+<div class="callout warning"><strong>Ne jamais :</strong> hardcoder les secrets dans le code, les commiter dans Git, les logger, ou les inclure dans les messages de commit.</div>
+<pre><code># .env (jamais commiter)
+DATABASE_URL=postgres://user:pass@localhost:5432/db
+API_KEY=sk_live_xxxxx
+
+# .env.example (commiter)
+DATABASE_URL=postgres://user:password@localhost:5432/dbname
+API_KEY=your_api_key_here</code></pre>
+
+<h2 id="oidc">OIDC pour l'Authentification</h2>
+<p>OpenID Connect permet l'authentification sans credentials statiques :</p>
+<pre><code># GitHub Actions + AWS OIDC
+permissions:
+  id-token: write
+  contents: read
+
+steps:
+  - uses: aws-actions/configure-aws-credentials@v4
+    with:
+      role-to-assume: arn:aws:iam::123456789:role/github-actions
+      aws-region: eu-west-1
+  # Plus besoin d'AWS_ACCESS_KEY_ID</code></pre>
+
+<h2 id="rotation">Rotation des Secrets</h2>
+<p>La rotation reguliere reduit la fenetre d'exploitation :</p>
+<ul>
+<li><strong>Automatique</strong> : Vault genere de nouveaux credentials periodiquement</li>
+<li><strong>Semi-auto</strong> : script de rotation + notification</li>
+<li><strong>Zero downtime</strong> : double credentiel pendant la transition</li>
+</ul>
+
+<h2 id="zero-trust">Zero Trust</h2>
+<p>Le modele Zero Trust ne fait confiance a rien, meme pas au reseau interne :</p>
+<ul>
+<li><strong>Verification permanente</strong> de chaque requete</li>
+<li><strong>Moindre privilege</strong> : chaque service n'accede qu'a ce dont il a besoin</li>
+<li><strong>Micro-segmentation</strong> : isolation au niveau des services</li>
+<li><strong>Mutual TLS</strong> : chiffrement et authentification mutuelle</li>
+</ul>
+
+<h2 id="interview">Questions d'entretien frequentes</2>
+<div class="qa"><h4>Q1 : Que faire si un secret est expose publiquement ?</h4><p>1) <strong>Rotation immediate</strong> du secret expose. 2) Revoquer tous les tokens associes. 3) Analyser les logs d'acces. 4) Scanner le code (git-secrets, truffleHog). 5) Ajouter des pre-commit hooks. 6) Enseigner aux equipes. 7) Automatiser la detection (GitHub secret scanning).</p></div>
+<div class="qa"><h4>Q2 : Comment gerer les secrets dans Kubernetes ?</h4><p>1) Kubernetes Secrets (base64, pas chiffre par defaut). 2) Sealed Secrets (chiffrement GitOps). 3) External Secrets Operator (Vault/AWS SM). 4) CSI Secret Store Driver. 5) Jamais monter en volume si possible (prefer env vars). 6) RBAC strict sur les secrets.</p></div>
+`},
+
+{id:8,title:"Feature Flags",module:1,difficulty:"facile",duration:"15 min",
+content:`
+<h2 id="definition">Qu'est-ce qu'un Feature Flag ?</h2>
+<p>Un feature flag (ou toggle) est un mecanisme qui permet d'activer/desactiver des fonctionnalites sans deploiement :</p>
+<pre><code>// Cote application
+if (featureFlag.isEnabled('new-checkout-flow')) {
+  return renderNewCheckout();
+} else {
+  return renderLegacyCheckout();
+}</code></pre>
+
+<h2 id="types">Types de Feature Flags</h2>
+<ul>
+<li><strong>Release flags</strong> : controls le deploiement progressif (court terme)</li>
+<li><strong>Experiment flags</strong> : A/B testing (medium terme)</li>
+<li><strong>Ops flags</strong> : controls le comportement en production (long terme)</li>
+<li><strong>Permission flags</strong> : controle d'acces (permanent)</li>
+</ul>
+
+<h2 id="launchdarkly">LaunchDarkly</h2>
+<pre><code>// Initialisation
+import * as ld from 'launchdarkly-node-server-sdk';
+
+const client = ld.init('sdk-key-xxxxx');
+
+// Evaluation
+const showNewUI = await client.variation('new-ui-flag', user, false);
+
+// Listener de changement
+client.on('update:new-ui-flag', (newVal, oldVal) => {
+  console.log('Flag changed:', oldVal, '->', newVal);
+});</code></pre>
+
+<h2 id="ab-testing">A/B Testing</h2>
+<p>Les feature flags permettent d'experimenter avec de vrais utilisateurs :</p>
+<pre><code>// Configuration d'un test A/B
+const experiment = {
+  key: 'checkout-button-color',
+  variations: {
+    'control': { color: 'blue' },
+    'variant-a': { color: 'green' },
+    'variant-b': { color: 'orange' }
+  },
+  targeting: {
+    'control': 34,
+    'variant-a': 33,
+    'variant-b': 33
+  }
+};</code></pre>
+
+<h2 id="progressive">Progressive Rollout</h2>
+<p>Deploiement progressif par pourcentage :</p>
+<pre><code>// Deploiement progressif
+const rollout = {
+  'new-feature': {
+    rules: [
+      { percentage: 5, variation: 'enabled' },    // Semaine 1
+      { percentage: 25, variation: 'enabled' },   // Semaine 2
+      { percentage: 50, variation: 'enabled' },   // Semaine 3
+      { percentage: 100, variation: 'enabled' }   // Semaine 4
+    ]
+  }
+};</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Quand utiliser des feature flags vs branches ?</h4><p><strong>Feature flags</strong> : deploiement progressif, A/B testing, rollback instantane, experimentation. <strong>Branches</strong> : developpement parallele, code review, isolation de grosse feature. Utilisez les deux : branches pour le developpement, flags pour le deploiement.</p></div>
+<div class="qa"><h4>Q2 : Comment eviter la dette technique des feature flags ?</h4><p>1) Nettoyer apres activation (supprimer le flag et le code mort). 2) Datation : chaque flag a une date d'expiration. 3) Limite : max 10-15 flags actifs par service. 4) Audit regulier des flags. 5) Automation du cleanup.</p></div>
+`},
+
+{id:9,title:"GitOps",module:1,difficulty:"difficile",duration:"25 min",
+content:`
+<h2 id="definition">Principes du GitOps</h2>
+<p>GitOps est un paradigme ou Git est la source de verite pour l'infrastructure et les deploiements :</p>
+<ul>
+<li><strong>Declaratif</strong> : l'etat desired est declare dans Git</li>
+<li><strong>Versionne</strong> : tout historique est dans Git</li>
+<li><strong>Automatique</strong> : les reconcileurs appliquent les changements</li>
+<li><strong>Observateur</strong> : le systeme converge vers l'etat desire</li>
+</ul>
+<div class="callout"><strong>Reaction :</strong> "Pull, don't push" - le systeme pull les changements depuis Git au lieu de push depuis le pipeline.</div>
+
+<h2 id="flux">FluxCD</h2>
+<pre><code># Flux - Source Controller
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: mon-app
+  namespace: flux-system
+spec:
+  interval: 1m
+  url: https://github.com/org/mon-app
+  ref:
+    branch: main
+
+---
+# Flux - Kustomization
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: mon-app
+spec:
+  interval: 5m
+  sourceRef:
+    kind: GitRepository
+    name: mon-app
+  path: ./k8s
+  prune: true</code></pre>
+
+<h2 id="argocd">ArgoCD</h2>
+<pre><code># Application ArgoCD
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mon-app
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/org/mon-app
+    targetRevision: main
+    path: k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: production
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true</code></pre>
+
+<h2 id="reconciliation">Reconciliation</h2>
+<p>Le processus de reconciliation compare l'etat desire (Git) avec l'etat reel (cluster) :</p>
+<ol>
+<li><strong>Poll</strong> : le controller interroge Git periodiquement</li>
+<li><strong>Diff</strong> : calcul des differences (desired vs live)</li>
+<li><strong>Apply</strong> : application des changements necessaires</li>
+<li><strong>Verify</strong> : validation que l'etat converge</li>
+</ol>
+
+<h2 id="drift">Drift Detection</h2>
+<p>Le drift est quand l'etat reel s'eloigne de l'etat desire :</p>
+<ul>
+<li><strong>Auto-heal</strong> : ArgoCD corrige automatiquement le drift</li>
+<li><strong>Alerting</strong> : notification quand un drift est detecte</li>
+<li><strong>Prevention</strong> : RBAC pour empecher les modifications manuelles</li>
+</ul>
+
+<h2 id="helm">Integration Helm</h2>
+<pre><code># ArgoCD avec Helm
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+spec:
+  source:
+    repoURL: https://github.com/org/charts
+    path: charts/mon-app
+    helm:
+      valueFiles:
+        - values-production.yaml
+      parameters:
+        - name: replicaCount
+          value: "3"</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : GitOps vs CI/CD traditionnel ?</h4><p><strong>CI/CD trad</strong> : pipeline push les changements (侵入的). <strong>GitOps</strong> : reconciliateur pull depuis Git (declaratif). GitOps offre : audit trail (Git), rollback facile (git revert), securite (pas de credentials dans le pipeline), drift detection.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer les secrets dans un workflow GitOps ?</h4><p>1) Sealed Secrets (chiffre dans Git). 2) SOPS (Mozilla) pour chiffrer les fichiers YAML. 3) External Secrets Operator (lecture depuis Vault/AWS SM). 4) Vault Agent Injector (sidecar). 5) Jamais de secrets en clair dans Git.</p></div>
+`},
+
+{id:10,title:"Release Management",module:1,difficulty:"moyen",duration:"20 min",
+content:`
+<h2 id="semver">Semantic Versioning</h2>
+<p>SemVer structure les versions en <strong>MAJOR.MINOR.PATCH</strong> :</p>
+<ul>
+<li><strong>MAJOR</strong> : changements incompatibles (breaking changes)</li>
+<li><strong>MINOR</strong> : nouvelles fonctionnalites (backward-compatible)</li>
+<li><strong>PATCH</strong> : corrections de bugs (backward-compatible)</li>
+</ul>
+<div class="formula">1.2.3 -> MAJOR.MINOR.PATCH</div>
+<p>Pre-release et build metadata :</p>
+<pre><code># Exemples
+1.0.0-alpha.1    # Pre-release alpha
+1.0.0-beta.2     # Pre-release beta
+1.0.0-rc.1       # Release candidate
+1.0.0+build.123  # Build metadata</code></pre>
+
+<h2 id="changelog">Changelogs</h2>
+<p>Un bon changelog suit le format "Keep a Changelog" :</p>
+<pre><code># Changelog
+
+## [1.2.0] - 2024-01-15
+
+### Added
+- Nouveau systeme de notification
+- API v2 avec GraphQL
+
+### Changed
+- Migration vers Node.js 20
+- Performance amelioree de 40%
+
+### Fixed
+- Bug de connexionWebSocket
+- Memory leak dans le worker
+
+### Security
+- Mise a jour OpenSSL 3.2.0</code></pre>
+
+<h2 id="release-notes">Release Notes</h2>
+<p>Les release notes sont destinees aux utilisateurs, pas aux developpeurs :</p>
+<ul>
+<li><strong>Resume</strong> : que contient cette release en 2-3 lignes</li>
+<li><strong>Nouveautes</strong> : fonctionnalites majeures avec captures</li>
+<li><strong>Corrections</strong> : bugs corriges importants</li>
+<li><strong>Migrations</strong> : etapes de migration si necessaires</li>
+<li><strong>Breaking changes</strong> : ce qui change pour les utilisateurs</li>
+</ul>
+
+<h2 id="hotfix">Hotfix Process</h2>
+<pre><code># Processus de hotfix
+1. Creer une branche hotfix depuis main
+   git checkout -b hotfix/critical-bug main
+
+2. Corriger le bug + ajouter test
+   git commit -m "fix: correction bug critique #123"
+
+3. Bumper la version PATCH
+   npm version patch
+
+4. Merge dans main ET develop
+   git checkout main && git merge hotfix/critical-bug
+   git checkout develop && git merge hotfix/critical-bug
+
+5. Tag et deploy
+   git tag v1.2.4
+   git push --tags</code></pre>
+<div class="callout warning"><strong>Critique :</strong> Un hotfix doit toujours etre merge dans develop pour eviter de re-introduire le bug.</div>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Comment gerer les releases dans un mono-repo ?</h4><p>1) Tools : Lerna, Turborepo, Nx, Changesets. 2) Versionnement independant ou lockstep. 3) Conventional commits pour automatiser les versions. 4) Release branches (release/v1.x). 5) Tagging specifique par package.</p></div>
+<div class="qa"><h4>Q2 : Comment decider entre release branch et trunk-based ?</h4><p><strong>Release branches</strong> : cycle long, releases planifiees, maintenance de versions multiples. <strong>Trunk-based</strong> : deploiement continu, feature flags, cycle court. Trunk-based est recommande pour les equipes matures avec une bonne culture CI/CD.</p></div>
+`},
+
+{id:11,title:"Docker Fundamentaux",module:2,difficulty:"facile",duration:"25 min",
+content:`
+<h2 id="definition">Qu'est-ce que Docker ?</h2>
+<p>Docker est une plateforme de conteneurisation qui permet de packager une application avec toutes ses dependances dans un environnement standardise et portable.</p>
+<div class="callout"><strong>Conteneur vs VM :</strong> Un conteneur partage le noyau hote (plus leger, demarrage en secondes). Une VM a son propre OS (plus isole, demarrage en minutes).</div>
+
+<h2 id="dockerfile">Dockerfile</h2>
+<pre><code># Dockerfile optimise pour Node.js
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+RUN addgroup --system nodejs && adduser --system --ingroup nodejs nodejs
+COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+COPY --from=builder --chowner=nodejs:nodejs /app/node_modules ./node_modules
+USER nodejs
+EXPOSE 3000
+CMD ["node", "dist/main.js"]</code></pre>
+
+<h2 id="couches">Couches Docker</h2>
+<p>Chaque instruction dans un Dockerfile cree une couche (layer). Les couches sont cachees :</p>
+<ul>
+<li><strong>Couche 1</strong> : FROM (image de base)</li>
+<li><strong>Couche 2</strong> : COPY package.json (dependances)</li>
+<li><strong>Couche 3</strong> : RUN npm install (installation)</li>
+<li><strong>Couche 4</strong> : COPY . (code source)</li>
+</ul>
+<div class="callout warning"><strong>Optimisation :</strong> Placez les instructions qui changent le moins en premier. Le cache Docker est invalide a partir de la premiere couche modifiee.</div>
+
+<h2 id="multi-stage">Multi-stage Build</h2>
+<p>Les multi-stage builds reduisent la taille de l'image finale :</p>
+<pre><code># Etape 1 : Build
+FROM golang:1.21 AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 go build -o server .
+
+# Etape 2 : Runtime (image minimale)
+FROM alpine:3.19
+RUN apk --no-cache add ca-certificates
+COPY --from=builder /app/server /server
+EXPOSE 8080
+CMD ["/server"]</code></pre>
+
+<h2 id="dockerignore">.dockerignore</h2>
+<pre><code># .dockerignore
+node_modules
+.git
+.env
+*.md
+dist
+coverage
+.github</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Comment reduire la taille d'une image Docker ?</h4><p>1) Utiliser des images alpine. 2) Multi-stage builds. 3) Combiner les RUN. 4) Utiliser .dockerignore. 5) Nettoyer le cache (<code>rm -rf /var/cache/apk/*</code>). 6) Executer en tant que user non-root. 7) Distinguer les dependances de dev et prod.</p></div>
+<div class="qa"><h4>Q2 : Quelle difference entre COPY et ADD ?</h4><p><code>COPY</code> : copie simplement les fichiers. <code>ADD</code> : copie + peut decompresser les archives + supporter les URLs. Utilisez COPY sauf si vous avez besoin de la decompression automatique. ADD rend le comportement moins previsible.</p></div>
+`},
+
+{id:12,title:"Docker Compose",module:2,difficulty:"moyen",duration:"20 min",
+content:`
+<h2 id="definition">Docker Compose</h2>
+<p>Docker Compose definit et gere les applications multi-conteneurs avec un fichier YAML :</p>
+<pre><code># docker-compose.yml
+version: '3.8'
+services:
+  api:
+    build: ./api
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgres://db:5432/mydb
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - backend
+
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: secret
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - backend
+
+volumes:
+  pgdata:
+
+networks:
+  backend:</code></pre>
+
+<h2 id="services">Services</h2>
+<p>Chaque service represente un conteneur. Cles de configuration :</p>
+<ul>
+<li><strong>build</strong> : contexte de build (Dockerfile)</li>
+<li><strong>image</strong> : image pre-buildee</li>
+<li><strong>ports</strong> : mapping host:container</li>
+<li><strong>volumes</strong> : persistance de donnees</li>
+<li><strong>environment</strong> : variables d'environnement</li>
+<li><strong>depends_on</strong> : dependances entre services</li>
+</ul>
+
+<h2 id="reseau">Reseaux</h2>
+<p>Compose cree automatiquement un reseau. Les services se communiquent par nom de service :</p>
+<pre><code># Communication inter-services
+# "db" resout vers le service db
+DATABASE_URL=postgres://user:pass@db:5432/mydb</code></pre>
+
+<h2 id="volumes">Volumes</h2>
+<pre><code># Volume nomme (persiste)
+volumes:
+  - pgdata:/var/lib/postgresql/data
+
+# Bind mount (lie au systeme hote)
+volumes:
+  - ./src:/app/src
+
+# Volume anonyme
+volumes:
+  - /app/node_modules</code></pre>
+
+<h2 id="healthcheck">Healthchecks</h2>
+<pre><code>healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 40s</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Docker Compose en production ?</h4><p>Docker Compose est concu pour le developpement. En production, utilisez Kubernetes ou Docker Swarm. Cependant, compose peut etre utilise pour de petits deploiments avec des outils comme Docker Compose on a Server (dockge, yacht).</p></div>
+<div class="qa"><h4>Q2 : Comment gerer les environnements multiples ?</h4><p>1) Fichiers <code>docker-compose.override.yml</code>. 2) <code>docker-compose -f compose.prod.yml</code>. 3) Variables d'environnement dans <code>.env</code>. 4) Profiles pour des services optionnels. 5) Merge des fichiers avec <code>docker compose config</code>.</p></div>
+`},
+
+{id:13,title:"Docker Networking",module:2,difficulty:"moyen",duration:"20 min",
+content:`
+<h2 id="bridge">Bridge Network</h2>
+<p>Le reseau bridge est le mode par defaut. Les conteneurs communiquent via une interface virtuelle :</p>
+<pre><code># Creer un reseau bridge
+docker network create --driver bridge mon-reseau
+
+# Lancer un conteneur sur ce reseau
+docker run --network mon-reseau --name api nginx
+
+# Les conteneurs se comuniquent par nom
+docker run --network mon-reseau --name db postgres</code></pre>
+
+<h2 id="host">Host Network</h2>
+<p>Le conteneur partage le reseau de l'hote (pas d'isolation reseau) :</p>
+<pre><code># Performances maximales, pas de port mapping
+docker run --network host nginx
+# Nginx ecoute directement sur le port 80 de l'hote</code></pre>
+
+<h2 id="overlay">Overlay Network</h2>
+<p>Pour la communication entre conteneurs sur differents hosts (Swarm) :</p>
+<pre><code># Docker Swarm
+docker swarm init
+docker network create --driver overlay mon-overlay</code></pre>
+
+<h2 id="dns">DNS et Resolution</h2>
+<p>Docker fournit un DNS interne pour la resolution de noms :</p>
+<pre><code># Resolution de nom automatique
+docker run alpine ping api   # resout vers le service "api"
+
+# DNS personnalise
+docker run --dns 8.8.8.8 alpine nslookup google.com</code></pre>
+
+<h2 id="ports">Port Mapping</h2>
+<pre><code># Mapping de ports
+docker run -p 8080:80 nginx        # Host 8080 -> Container 80
+docker run -p 127.0.0.1:8080:80 nginx  # Localhost uniquement
+docker run -P nginx                # Expose toutes les ports declares</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Quand utiliser host vs bridge ?</h4><p><strong>Host</strong> : quand la performance reseau est critique (bases de donnees haute performance). <strong>Bridge</strong> : par defaut, offre l'isolation et le port mapping. Bridge est recommande pour la plupart des cas d'usage.</p></div>
+<div class="qa"><h4>Q2 : Comment debugger les problemes reseau Docker ?</h4><p>1) <code>docker network inspect</code>. 2) <code>docker exec -it container ping</code>. 3) <code>nsenter</code> pour entrer dans le namespace reseau. 4) Logs avec <code>docker logs</code>. 5) Outils : tcpdump, netshoot.</p></div>
+`},
+
+{id:14,title:"Docker Volumes",module:2,difficulty:"facile",duration:"15 min",
+content:`
+<h2 id="named">Named Volumes</h2>
+<p>Les volumes nommes sont geres par Docker et persistent apres l'arret des conteneurs :</p>
+<pre><code># Creer un volume
+docker volume create ma-donnee
+
+# Utiliser le volume
+docker run -v ma-donnee:/var/lib/postgresql/data postgres
+
+# Lister les volumes
+docker volume ls</code></pre>
+
+<h2 id="bind">Bind Mounts</h2>
+<p>Les bind mounts lient un repertoire hote au conteneur :</p>
+<pre><code># Monter le code source pour le developpement
+docker run -v $(pwd)/src:/app/src -w /app node npm run dev
+
+# En Docker Compose
+volumes:
+  - ./src:/app/src
+  - /app/node_modules  # Exclure node_modules</code></pre>
+
+<h2 id="tmpfs">tmpfs Mounts</h2>
+<p>Les tmpfs sont stockes en memoire RAM (pas persistants) :</p>
+<pre><code>docker run --tmpfs /tmp:rw,size=100m node node server.js</code></pre>
+
+<h2 id="backup">Strategies de Backup</h2>
+<ul>
+<li><strong>Volume COPY</strong> : <code>docker cp container:/data ./backup</code></li>
+<li><strong>TAR</strong> : <code>docker run --rm -v ma-donnee:/data alpine tar czf /backup.tar.gz /data</code></li>
+<li><strong>pg_dump</strong> : dump SQL regulier</li>
+<li><strong>Volumes BTRFS/ZFS</strong> : snapshots filesystem</li>
+</ul>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Volume vs Bind mount - lequel utiliser ?</h4><p><strong>Volume</strong> : donnees persistantes (bases de donnees). Gere par Docker, portable. <strong>Bind mount</strong> : developpement local (monter le code). Dependant de l'hote, moins portable. En production, utilisez les volumes.</p></div>
+`},
+
+{id:15,title:"Kubernetes Pods",module:2,difficulty:"moyen",duration:"25 min",
+content:`
+<h2 id="definition">Qu'est-ce qu'un Pod ?</h2>
+<p>Un Pod est l'unite de deploiement minimale de Kubernetes. Il encapsule un ou plusieurs conteneurs partageant le meme reseau et le meme stockage.</p>
+<pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: mon-pod
+  labels:
+    app: mon-app
+spec:
+  containers:
+    - name: api
+      image: nginx:alpine
+      ports:
+        - containerPort: 80
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "250m"
+        limits:
+          memory: "128Mi"
+          cpu: "500m"</code></pre>
+
+<h2 id="lifecycle">Lifecycle</h2>
+<p>Les phases d'un Pod :</p>
+<ul>
+<li><strong>Pending</strong> : en attente de scheduling</li>
+<li><strong>Running</strong> : au moins un conteneur actif</li>
+<li><strong>Succeeded</strong> : tous les conteneurs ont termine avec succes</li>
+<li><strong>Failed</strong> : au moins un conteneur a echoue</li>
+<li><strong>Unknown</strong> : etat inconnu (probleme avec le node)</li>
+</ul>
+
+<h2 id="init">Init Containers</h2>
+<pre><code>spec:
+  initContainers:
+    - name: wait-for-db
+      image: busybox
+      command: ['sh', '-c', 'until nc -z db-service 5432; do echo waiting; sleep 2; done']
+  containers:
+    - name: app
+      image: my-app:latest</code></pre>
+
+<h2 id="labels">Labels et Selectors</h2>
+<pre><code>metadata:
+  labels:
+    app: frontend
+    tier: web
+    version: v2
+
+# Selectionner les pods
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+      tier: web</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Pod vs Deployment ?</h4><p>Un <strong>Pod</strong> est l'unite physique (un conteneur). Un <strong>Deployment</strong> est une ressource abstraite qui gere les Pods (replicas, rolling updates, rollback). En production, ne creez jamais de Pods directement, utilisez des Deployments.</p></div>
+<div class="qa"><h4>Q2 : Comment Kubernetes choisit le node pour un Pod ?</h4><p>Le scheduler considere : 1) Ressources demandees vs disponibles. 2) Node selectors/affinity. 3) Taints and tolerations. 4) Pod topology spread. 5) Local storage. L'algorithme combine ces facteurs avec un score.</p></div>
+`},
+
+{id:16,title:"Kubernetes Deployments",module:2,difficulty:"moyen",duration:"25 min",
+content:`
+<h2 id="definition">ReplicaSets et Deployments</h2>
+<p>Un Deployment gere un ReplicaSet qui maintient le nombre de replicas desire :</p>
+<pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mon-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mon-app
+  template:
+    metadata:
+      labels:
+        app: mon-app
+    spec:
+      containers:
+        - name: app
+          image: mon-app:v1
+          ports:
+            - containerPort: 8080</code></pre>
+
+<h2 id="rolling">Rolling Update</h2>
+<pre><code>spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0</code></pre>
+<p><strong>maxSurge</strong> : combien de pods supplementaires pendant la mise a jour. <strong>maxUnavailable</strong> : combien de pods peuvent etre indisponibles.</p>
+
+<h2 id="rollback">Rollback</h2>
+<pre><code># Voir l'historique
+kubectl rollout history deployment/mon-app
+
+# Rollback a la version precedente
+kubectl rollout undo deployment/mon-app
+
+# Rollback a une version specifique
+kubectl rollout undo deployment/mon-app --to-revision=2</code></pre>
+
+<h2 id="strategy">Strategies</h2>
+<ul>
+<li><strong>RollingUpdate</strong> : remplacement progressif (defaut)</li>
+<li><strong>Recreate</strong> : arrete tout, puis relance (pour changements incompatibles)</li>
+</ul>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Comment effectuer un zero-downtime deployment ?</h4><p>1) Rolling update avec maxUnavailable=0. 2) Readiness probes (le nouveau pod est pret avant de recevoir du trafic). 3) Pre-stop hooks (graceful shutdown). 4) Grace period. 5) PodDisruptionBudget.</p></div>
+<div class="qa"><h4>Q2 : Que faire si un pod reste en CrashLoopBackOff ?</h4><p>1) <code>kubectl logs pod-name --previous</code>. 2) Verifier les resource limits. 3) Verifier les healthchecks. 4) Exec dans le container pour debugger. 5) Verifier les dependances (init containers, secrets, configmaps).</p></div>
+`},
+
+{id:17,title:"Kubernetes Services",module:2,difficulty:"moyen",duration:"20 min",
+content:`
+<h2 id="clusterip">ClusterIP</h2>
+<p>ClusterIP expose le service sur une IP interne (defaut) :</p>
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+spec:
+  type: ClusterIP
+  selector:
+    app: api
+  ports:
+    - port: 80
+      targetPort: 8080</code></pre>
+
+<h2 id="nodeport">NodePort</h2>
+<p>NodePort expose le service sur un port de chaque node :</p>
+<pre><code>spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 8080
+      nodePort: 30080  # Port 30000-32767</code></pre>
+
+<h2 id="loadbalancer">LoadBalancer</h2>
+<p>LoadBalancer provisionne un load balancer externe (cloud provider) :</p>
+<pre><code>spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 8080</code></pre>
+
+<h2 id="externalname">ExternalName</h2>
+<p>ExternalName mappe un service vers un DNS externe :</p>
+<pre><code>spec:
+  type: ExternalName
+  externalName: api.externale.com</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Quand utiliser chaque type de Service ?</h4><p><strong>ClusterIP</strong> : communication inter-services (defaut). <strong>NodePort</strong> : developpement/test, accès direct au node. <strong>LoadBalancer</strong> : services web en production (cloud). <strong>ExternalName</strong> : accès a des services externes.</p></div>
+<div class="qa"><h4>Q2 : Comment fonctionne le load balancing dans Kubernetes ?</h4><p>Kubernetes utilise iptables ou IPVS pour le load balancing Layer 4 (TCP/UDP). Les connexions sont distribuees aux pods selectionnes par le service. Pas de health check au niveau service (utilisez les readiness probes). Pour L7, utilisez un Ingress.</p></div>
+`},
+
+{id:18,title:"Kubernetes Ingress",module:2,difficulty:"difficile",duration:"25 min",
+content:`
+<h2 id="definition">Qu'est-ce qu'un Ingress ?</h2>
+<p>Un Ingress gere l'acces HTTP/HTTPS externe vers les services du cluster :</p>
+<pre><code>apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mon-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - app.example.com
+      secretName: app-tls
+  rules:
+    - host: app.example.com
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80</code></pre>
+
+<h2 id="nginx">Nginx Ingress Controller</h2>
+<pre><code># Installation
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+
+# Verifier
+kubectl get pods -n ingress-nginx</code></pre>
+
+<h2 id="tls">TLS et Certificats</h2>
+<pre><code># Cert-Manager pour TLS automatique
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: app-cert
+spec:
+  secretName: app-tls
+  issuerRef:
+    name: letsencrypt-prod
+  dnsNames:
+    - app.example.com</code></pre>
+
+<h2 id="annotations">Annotations Utiles</h2>
+<ul>
+<li><code>nginx.ingress.kubernetes.io/rewrite-target</code> : reecriture d'URL</li>
+<li><code>nginx.ingress.kubernetes.io/rate-limit</code> : limitation de debit</li>
+<li><code>nginx.ingress.kubernetes.io/cors-allow-origin</code> : CORS</li>
+<li><code>nginx.ingress.kubernetes.io/proxy-body-size</code> : taille max upload</li>
+</ul>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Ingress vs LoadBalancer ?</h4><p><strong>LoadBalancer</strong> : 1 service = 1 load balancer (cout eleve). <strong>Ingress</strong> : 1 load balancer pour tous les services HTTP (routing L7, TLS centralise, rules). En production avec HTTP, utilisez Ingress.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer le trafic WebSocket dans un Ingress ?</h4><p>Ajoutez les annotations : <code>nginx.ingress.kubernetes.io/proxy-read-timeout: 3600</code> et <code>nginx.ingress.kubernetes.io/proxy-send-timeout: 3600</code>. Aussi <code>nginx.ingress.kubernetes.io/websocket-services: mon-service</code>.</p></div>
+`},
+
+{id:19,title:"Kubernetes Config/Secrets",module:2,difficulty:"moyen",duration:"20 min",
+content:`
+<h2 id="configmap">ConfigMap</h2>
+<p>ConfigMap stocke la configuration non sensible :</p>
+<pre><code>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  DATABASE_HOST: "db-service"
+  DATABASE_PORT: "5432"
+  config.json: |
+    {
+      "debug": false,
+      "logLevel": "info"
+    }
+
+# Utilisation dans un Pod
+spec:
+  containers:
+    - name: app
+      envFrom:
+        - configMapRef:
+            name: app-config</code></pre>
+
+<h2 id="secret">Secret</h2>
+<pre><code>apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+type: Opaque
+data:
+  DATABASE_PASSWORD: c2VjcmV0  # base64 encode
+  API_KEY: c2tpX2V4YW1wbGU=
+
+# Utilisation
+spec:
+  containers:
+    - name: app
+      env:
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: DATABASE_PASSWORD</code></pre>
+
+<h2 id="mount-vs-env">Mounted vs Env</h2>
+<ul>
+<li><strong>Env vars</strong> : passees au demarrage, pas de mise a jour sans restart</li>
+<li><strong>Mounted volume</strong> : mises a jour automatiques (reload periodic)</li>
+</ul>
+<pre><code># Montage en volume
+volumes:
+  - name: config
+    configMap:
+      name: app-config
+containers:
+  - name: app
+    volumeMounts:
+      - name: config
+        mountPath: /etc/config</code></pre>
+
+<h2 id="rotation">Rotation des Secrets</h2>
+<p>Rotation sans downtime :</p>
+<ol>
+<li>Mettre a jour le Secret</li>
+<li>Kubernetes met a jour le volume monte</li>
+<li>L'application doit recharger la configuration (SIGHUP, polling)</li>
+</ol>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : ConfigMap vs Secret ?</h4><p><strong>ConfigMap</strong> : configuration non sensible (URLs, parametres). <strong>Secret</strong> : donnees sensibles (mots de passe, cles API). Les secrets sont base64 encode (pas chiffre par defaut). Pour le vrai chiffrement, utilisez Sealed Secrets ou External Secrets.</p></div>
+`},
+
+{id:20,title:"Kubernetes Monitoring",module:2,difficulty:"difficile",duration:"25 min",
+content:`
+<h2 id="prometheus">Prometheus</h2>
+<p>Prometheus est le standard pour les metriques Kubernetes :</p>
+<pre><code># ServiceMonitor pour Prometheus Operator
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mon-app
+spec:
+  selector:
+    matchLabels:
+      app: mon-app
+  endpoints:
+    - port: metrics
+      interval: 30s</code></pre>
+
+<h2 id="grafana">Grafana</h2>
+<p>Grafana visualise les metriques Prometheus :</p>
+<ul>
+<li><strong>Dashboards</strong> : tableaux de bord personnalises</li>
+<li><strong>Alertes</strong> : notifications sur seuils</li>
+<li><strong>Annotations</strong> : markers d'evenements</li>
+<li><strong>Variables</strong> : filtrage dynamique</li>
+</ul>
+
+<h2 id="alerts">Alerting</h2>
+<pre><code># PrometheusRule
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mon-app-alerts
+spec:
+  groups:
+    - name: mon-app
+      rules:
+        - alert: HighErrorRate
+          expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Taux d'erreur eleve"</code></pre>
+
+<h2 id="efk">Stack EFK (Elasticsearch, Fluentd, Kibana)</h2>
+<p>Pour le logging centralise :</p>
+<ul>
+<li><strong>Elasticsearch</strong> : stockage et indexation des logs</li>
+<li><strong>Fluentd</strong> : collecte et transport des logs</li>
+<li><strong>Kibana</strong> : visualisation et recherche</li>
+</ul>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Prometheus vs Datadog ?</h4><p><strong>Prometheus</strong> : open source, self-hosted, excellent pour Kubernetes. <strong>Datadog</strong> : SaaS, plus complet (APM, logs, metriques), cout eleve. Prometheus est le standard Kubernetes. Datadog est plus facile a demarrer.</p></div>
+<div class="qa"><h4>Q2 : Comment monitorer une application sans metrics exposes ?</h4><p>1) Sidecar container qui expose les metriques. 2) Exporter Prometheus (mysqld_exporter, etc). 3) Adapter l'application pour exposer /metrics. 4) Utiliser des metriques derivees (latence, erreurs). 5) Service mesh pour les metriques reseau.</p></div>
+`},
+
+{id:21,title:"Terraform Fundamentaux",module:3,difficulty:"moyen",duration:"25 min",
+content:`
+<h2 id="definition">Qu'est-ce que Terraform ?</h2>
+<p>Terraform est un outil d'Infrastructure as Code (IaC) qui permet de decrire et de provisionner l'infrastructure de maniere declarative.</p>
+<div class="callout"><strong>Principe :</strong> Decrivez l'etat desired dans du code, Terraform determine et applique les changements necessaires.</div>
+
+<h2 id="providers">Providers</h2>
+<pre><code># main.tf
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+  backend "s3" {
+    bucket = "mon-terraform-state"
+    key    = "prod/terraform.tfstate"
+    region = "eu-west-1"
+  }
+}
+
+provider "aws" {
+  region = "eu-west-1"
+}</code></pre>
+
+<h2 id="resources">Resources</h2>
+<pre><code># Instance EC2
+resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t3.micro"
+  
+  tags = {
+    Name = "mon-serveur"
+    Env  = "production"
+  }
+}
+
+# Bucket S3
+resource "aws_s3_bucket" "data" {
+  bucket = "mon-bucket-donnees"
+  
+  tags = {
+    Environment = "production"
+  }
+}</code></pre>
+
+<h2 id="state">State Management</h2>
+<p>Le state tracking les ressources gerees par Terraform :</p>
+<pre><code># State file (jamais commiter)
+terraform.tfstate
+
+# Remote state (recommande)
+terraform {
+  backend "s3" {
+    bucket = "terraform-state"
+    key    = "infra/terraform.tfstate"
+    region = "eu-west-1"
+    encrypt = true
+    dynamodb_table = "terraform-locks"
+  }
+}</code></pre>
+
+<h2 id="plan-apply">Plan et Apply</h2>
+<pre><code># Visualiser les changements
+terraform plan
+
+# Appliquer les changements
+terraform apply
+
+# Detruire l'infrastructure
+terraform destroy
+
+# Formater le code
+terraform fmt
+
+# Valider la configuration
+terraform validate</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Terraform vs Ansible ?</h4><p><strong>Terraform</strong> : declaratif, IaC, best pour le provisioning (AWS, GCP). <strong>Ansible</strong> : imperatif, configuration management, best pour configurer les serveurs. Utilisez les deux : Terraform cree l'infrastructure, Ansible la configure.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer le state en equipe ?</h4><p>1) Backend distant (S3 + DynamoDB, Terraform Cloud). 2) State locking (evite les conflits). 3) Workspaces pour les environnements. 4) Code review des changements d'infra. 5) Plan avant apply.</p></div>
+`},
+
+{id:22,title:"Terraform Avance",module:3,difficulty:"difficile",duration:"30 min",
+content:`
+<h2 id="modules">Modules</h2>
+<p>Les modules reusablent la configuration Terraform :</p>
+<pre><code># modules/ec2/main.tf
+variable "instance_type" { default = "t3.micro" }
+variable "ami" { }
+variable "name" { }
+
+resource "aws_instance" "this" {
+  ami           = var.ami
+  instance_type = var.instance_type
+  tags = { Name = var.name }
+}
+
+output "instance_id" { value = aws_instance.this.id }
+
+# Utilisation
+module "web_server" {
+  source = "./modules/ec2"
+  ami = "ami-xxxxx"
+  instance_type = "t3.micro"
+  name = "web-server"
+}</code></pre>
+
+<h2 id="workspaces">Workspaces</h2>
+<pre><code># Creer un workspace
+terraform workspace new staging
+terraform workspace select production
+
+# Variables par workspace
+variable "environment" {
+  default = {
+    default     = "dev"
+    staging     = "staging"
+    production  = "production"
+  }
+}</code></pre>
+
+<h2 id="import">Import</h2>
+<pre><code># Importer une resource existante
+terraform import aws_instance.existing i-1234567890abcdef0</code></pre>
+
+<h2 id="best-practices">Bonnes Pratiques</h2>
+<ul>
+<li><strong>State locking</strong> : DynamoDB table pour S3</li>
+<li><strong>Module versioning</strong> : tag les versions des modules</li>
+<li><strong>Drift detection</strong> : <code>terraform plan</code> periodique</li>
+<li><strong>Secrets</strong> : jamais en dur, utiliser Vault ou variables sensibles</li>
+<li><strong>Tagging</strong> : tags standardises sur toutes les ressources</li>
+</ul>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Comment migrer le state vers un backend distant ?</h4><p>1) Configurer le backend dans le code. 2) <code>terraform init -migrate-state</code>. 3) Terraform detecte l'ancien state et propose la migration. 4) Confirmer. 5) Verifier avec <code>terraform state list</code>. 6) Backup l'ancien state.</p></div>
+<div class="qa"><h4>Q2 : Comment gerez-vous les secrets dans Terraform ?</h4><p>1) Variables d'environnement (<code>TF_VAR_</code>). 2) <code>terraform.tfvars</code> (jamais commiter). 3) Vault provider. 4) SSM Parameter Store / Secrets Manager. 5) <code>sensitive = true</code> sur les outputs. 6) Backend encrypté.</p></div>
+`},
+
+{id:23,title:"Ansible",module:3,difficulty:"moyen",duration:"25 min",
+content:`
+<h2 id="definition">Qu'est-ce qu'Ansible ?</h2>
+<p>Ansible est un outil de configuration management sans agent (agentless). Il se connecte via SSH et execute des playbooks YAML.</p>
+<div class="callout"><strong>Avantage :</strong> Pas d'agent a installer sur les serveurs cibles. Communication via SSH. Configuration declarative avec YAML.</div>
+
+<h2 id="playbooks">Playbooks</h2>
+<pre><code># playbook.yml
+---
+- name: Configuration du serveur web
+  hosts: webservers
+  become: yes
+  vars:
+    http_port: 80
+    max_clients: 200
+  
+  tasks:
+    - name: Installer Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+    
+    - name: Copier la configuration
+      template:
+        src: templates/nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      notify: Restart Nginx
+    
+    - name: Demarrer Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+  
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted</code></pre>
+
+<h2 id="roles">Roles</h2>
+<p>Les roles structurent le code en composants reutilisables :</p>
+<pre><code># Structure d'un role
+roles/
+  nginx/
+    tasks/main.yml
+    handlers/main.yml
+    templates/nginx.conf.j2
+    files/
+    vars/main.yml
+    defaults/main.yml
+    meta/main.yml</code></pre>
+
+<h2 id="inventory">Inventaire</h2>
+<pre><code># inventory.ini
+[webservers]
+web1 ansible_host=192.168.1.10
+web2 ansible_host=192.168.1.11
+
+[dbservers]
+db1 ansible_host=192.168.1.20
+
+[production:children]
+webservers
+dbservers</code></pre>
+
+<h2 id="jinja2">Templates Jinja2</h2>
+<pre><code># templates/nginx.conf.j2
+server {
+    listen {{ http_port }};
+    server_name {{ ansible_hostname }};
+    
+    location / {
+        proxy_pass http://localhost:{{ app_port }};
+    }
+}</code></pre>
+
+<h2 id="galaxy">Ansible Galaxy</h2>
+<pre><code># Installer un role depuis Galaxy
+ansible-galaxy install geerlingguy.docker
+ansible-galaxy install -r requirements.yml</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Ansible vs Terraform ?</h4><p><strong>Terraform</strong> : IaC declaratif, provisioning d'infra (creer des VMs, reseaux). <strong>Ansible</strong> : configuration management imperatif (configurer les serveurs). Terraform gere l'infra, Ansible configure le dessus. Complementaires.</p></div>
+<div class="qa"><h4>Q2 : Comment tester Ansible ?</h4><p>1) <code>--check</code> (dry run). 2) <code>--diff</code> pour voir les changements. 3) Molecule pour les tests de roles. 4) <code>ansible-lint</code> pour la validation. 5) <code>--limit</code> pour tester sur un seul host. 6) Vagrant pour tester localement.</p></div>
+`},
+
+{id:24,title:"Cloud AWS",module:3,difficulty:"moyen",duration:"30 min",
+content:`
+<h2 id="ec2">EC2 (Elastic Compute Cloud)</h2>
+<p>EC2 fournit des instances virtualisees :</p>
+<ul>
+<li><strong>Instance types</strong> : t3 (general), c5 (compute), r5 (memory), g4 (GPU)</li>
+<li><strong>Placement groups</strong> : cluster, spread, partition</li>
+<li><strong>User data</strong> : script de demarrage automatique</li>
+<li><strong>AMI</strong> : images preconfigurees</li>
+</ul>
+<pre><code># Launch template
+resource "aws_launch_template" "web" {
+  image_id      = "ami-0c55b159cbfafe1f0"
+  instance_type = "t3.micro"
+  
+  user_data = base64encode(<<-EOF
+    #!/bin/bash
+    yum update -y
+    yum install -y httpd
+    systemctl start httpd
+  EOF
+  )
+}</code></pre>
+
+<h2 id="s3">S3 (Simple Storage Service)</h2>
+<pre><code>resource "aws_s3_bucket" "data" {
+  bucket = "mon-bucket-unique"
+}
+
+resource "aws_s3_bucket_versioning" "data" {
+  bucket = aws_s3_bucket.data.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
+  bucket = aws_s3_bucket.data.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}</code></pre>
+
+<h2 id="rds">RDS (Relational Database Service)</h2>
+<pre><code>resource "aws_db_instance" "main" {
+  identifier     = "mon-app-db"
+  engine         = "postgres"
+  engine_version = "16"
+  instance_class = "db.t3.micro"
+  
+  allocated_storage     = 20
+  max_allocated_storage = 100
+  storage_encrypted     = true
+  
+  db_name  = "monapp"
+  username = "admin"
+  password = var.db_password
+  
+  multi_az = true
+  backup_retention_period = 7
+}</code></pre>
+
+<h2 id="lambda">Lambda</h2>
+<pre><code>resource "aws_lambda_function" "handler" {
+  filename      = "lambda.zip"
+  function_name = "mon-handler"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "index.handler"
+  runtime       = "nodejs20.x"
+  timeout       = 30
+  
+  environment {
+    variables = {
+      TABLE_NAME = aws_dynamodb_table.main.name
+    }
+  }
+}</code></pre>
+
+<h2 id="iam">IAM et Securite</h2>
+<ul>
+<li><strong>Principe du moindre privilege</strong></li>
+<li><strong>Roles IAM</strong> : pas de credentials statiques</li>
+<li><strong>Security Groups</strong> : pare-feu stateful</li>
+<li><strong>NACLs</strong> : pare-feu stateless au niveau subnet</li>
+</ul>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Comment concevoir une architecture HA sur AWS ?</h4><p>1) Multi-AZ pour les bases (RDS Multi-AZ). 2) Auto Scaling Groups. 3) Load Balancer (ALB/NLB). 4) S3 pour le stockage. 5) CloudFront pour le CDN. 6) Route 53 pour le DNS. 7) Secrets Manager pour les credentials.</p></div>
+<div class="qa"><h4>Q2 : Comment optimiser les couts AWS ?</h4><p>1) Reserved Instances / Savings Plans. 2) Spot Instances pour les workloads tolerants. 3) Right-sizing avec Compute Optimizer. 4) S3 Intelligent-Tiering. 5) Lambda pour les charges irregulieres. 6) Tags de cout. 7) Budgets et alertes.</p></div>
+`},
+
+{id:25,title:"Cloud GCP",module:3,difficulty:"moyen",duration:"25 min",
+content:`
+<h2 id="compute">Compute Engine</h2>
+<p>Les VMs GCP avec des options avancees :</p>
+<ul>
+<li><strong>Preemptible/Spot</strong> : VMs a cout reduit (interruption possible)</li>
+<li><strong>Shielded VM</strong> : securite renforcee (TPM, Secure Boot)</li>
+<li><strong>Confidential VM</strong> : chiffrement en memoire</li>
+<li><strong>Committed Use</strong> : rabais pour engagement 1-3 ans</li>
+</ul>
+
+<h2 id="cloud-storage">Cloud Storage</h2>
+<pre><code># Storage classes
+# Standard    : frequent access
+# Nearline    : accès mensuel
+# Coldline    : accès trimestriel
+# Archive     : archivage long terme
+
+# Lifecycle rule
+resource "google_storage_bucket" "data" {
+  name     = "mon-bucket"
+  location = "EU"
+  
+  lifecycle_rule {
+    condition {
+      age = 90
+    }
+    action {
+      type = "SetStorageClass"
+      storage_class = "COLDLINE"
+    }
+  }
+}</code></pre>
+
+<h2 id="cloud-sql">Cloud SQL</h2>
+<pre><code>resource "google_sql_database_instance" "main" {
+  name             = "mon-app-db"
+  database_version = "POSTGRES_16"
+  region           = "europe-west1"
+  
+  settings {
+    tier = "db-f1-micro"
+    availability_type = "REGIONAL"
+    
+    backup_configuration {
+      enabled = true
+      start_time = "03:00"
+    }
+  }
+}</code></pre>
+
+<h2 id="gke">GKE (Google Kubernetes Engine)</h2>
+<pre><code>resource "google_container_cluster" "primary" {
+  name     = "mon-cluster"
+  location = "europe-west1-b"
+  
+  initial_node_count = 3
+  
+  node_config {
+    machine_type = "e2-standard-4"
+    disk_size_gb = 100
+    
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+  }
+}</code></pre>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : GCP vs AWS - principales differences ?</h4><p><strong>GCP</strong> : meilleur pour Kubernetes (GKE), data/analytics (BigQuery), IA/ML (Vertex AI). <strong>AWS</strong> : plus de services, plus de regions, plus de maturite enterprise. GCP souvent plus simple et moins cher pour les cas d'usage specifiques.</p></div>
+`},
+
+{id:26,title:"Cloud Azure",module:3,difficulty:"moyen",duration:"25 min",
+content:`
+<h2 id="vms">Azure Virtual Machines</h2>
+<p>Azure VMs avec integration Microsoft :</p>
+<ul>
+<li><strong>Series</strong> : B (burstable), D (general), E (memory), F (compute)</li>
+<li><strong>Availability Sets</strong> : HA dans une region</li>
+<li><strong>Scale Sets</strong> : auto-scaling de VMs identiques</li>
+<li><strong>Spot VMs</strong> : cout reduit avec interruption</li>
+</ul>
+
+<h2 id="blob">Blob Storage</h2>
+<pre><code>resource "azurerm_storage_account" "main" {
+  name                     = "monstorage"
+  resource_group_name      = azurerm_resource_group.main.name
+  location                 = "West Europe"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  
+  blob_properties {
+    versioning_enabled = true
+    delete_retention_policy {
+      days = 30
+    }
+  }
+}</code></pre>
+
+<h2 id="azure-sql">Azure SQL Database</h2>
+<pre><code>resource "azurerm_mssql_database" "main" {
+  name      = "mon-app-db"
+  server_id = azurerm_mssql_server.main.id
+  
+  sku_name = "S0"
+  
+  short_term_retention_policy {
+    retention_days = 7
+  }
+}</code></pre>
+
+<h2 id="aks">AKS (Azure Kubernetes Service)</h2>
+<pre><code>resource "azurerm_kubernetes_cluster" "main" {
+  name                = "mon-cluster"
+  location            = "West Europe"
+  resource_group_name = azurerm_resource_group.main.name
+  dns_prefix          = "mon-app"
+  
+  default_node_pool {
+    name       = "default"
+    node_count = 3
+    vm_size    = "Standard_D2_v2"
+  }
+  
+  identity {
+    type = "SystemAssigned"
+  }
+}</code></pre>
+
+<h2 id="rbac">RBAC Azure</h2>
+<ul>
+<li><strong>Owner</strong> : controle total</li>
+<li><strong>Contributor</strong> : tout sauf gestion des acces</li>
+<li><strong>Reader</strong> : lecture seule</li>
+<li><strong>Custom roles</strong> : permissions specifiques</li>
+</ul>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Azure vs AWS pour une entreprise Microsoft ?</h4><p>Azure s'integre nativement avec : Active Directory, Office 365, .NET, Visual Studio, DevOps. Pour les entreprises Microsoft, Azure est souvent le choix naturel. AWS est plus polyvalent et a plus de services.</p></div>
+`},
+
+{id:27,title:"Architecture Serverless",module:3,difficulty:"difficile",duration:"25 min",
+content:`
+<h2 id="definition">Serverless Computing</h2>
+<p>Le serverless delegue la gestion de l'infrastructure au provider. Vous payez uniquement pour l'execution :</p>
+<div class="callout"><strong>Principe :</strong> Pas de serveurs a gerer, auto-scaling automatique, paiement a l'usage. Lambda (AWS), Cloud Functions (GCP), Functions (Azure).</div>
+
+<h2 id="lambda">Lambda / Cloud Functions</h2>
+<pre><code>// AWS Lambda - Node.js
+exports.handler = async (event) => {
+  const body = JSON.parse(event.body);
+  
+  const result = await dynamodb.put({
+    TableName: process.env.TABLE_NAME,
+    Item: {
+      id: uuid(),
+      ...body,
+      createdAt: new Date().toISOString()
+    }
+  }).promise();
+  
+  return {
+    statusCode: 201,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(result)
+  };
+};</code></pre>
+
+<h2 id="api-gateway">API Gateway</h2>
+<pre><code># AWS API Gateway + Lambda
+resource "aws_apigatewayv2_api" "main" {
+  name = "mon-api"
+  protocol_type = "HTTP"
+}
+
+resource "aws_apigatewayv2_integration" "lambda" {
+  api_id                 = aws_apigatewayv2_api.main.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = aws_lambda_function.main.invoke_arn
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_route" "post" {
+  api_id    = aws_apigatewayv2_api.main.id
+  route_key = "POST /items"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+}</code></pre>
+
+<h2 id="event-driven">Event-Driven Architecture</h2>
+<p>Le serverless excelle dans les architectures event-driven :</p>
+<ul>
+<li><strong>SNS/SQS</strong> : messaging asynchrone</li>
+<li><strong>EventBridge</strong> : routage d'evenements</li>
+<li><strong>S3 events</strong> : declenchement sur upload</li>
+<li><strong>DynamoDB Streams</strong> : changements de donnees</li>
+<li><strong>Kinesis</strong> : streaming de donnees</li>
+</ul>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Quand utiliser serverless vs containers ?</h4><p><strong>Serverless</strong> : charges irregulieres, APIs, evenements, prototypage rapide. <strong>Containers</strong> : charges constantes, workloads longues, microservices complexes, controle total. Serverless est plus simple mais peut devenir cher a haute echelle.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer le cold start ?</h4><p>1) Provisioned concurrency (AWS). 2) Min instances (GCP). 3) Keep-warm avec CloudWatch Events. 4) Reduire la taille du package. 5) Languages plus rapides (Go, Rust). 6) Architecture async pour tolerer la latence.</p></div>
+`},
+
+{id:28,title:"Service Mesh",module:3,difficulty:"difficile",duration:"25 min",
+content:`
+<h2 id="definition">Qu'est-ce qu'un Service Mesh ?</h2>
+<p>Un service mesh est une couche d'infrastructure qui gere la communication entre microservices de maniere transparente :</p>
+<div class="callout"><strong>Probleme resolu :</strong> Quand vous avez des dizaines de microservices, gerer le load balancing, la securite, l'observabilite et le routage devient complexe. Le service mesh externalise ces preoccupations.</div>
+
+<h2 id="istio">Istio</h2>
+<pre><code># Istio - VirtualService pour routage
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: mon-app
+spec:
+  hosts:
+    - mon-app
+  http:
+    - match:
+        - headers:
+            x-version:
+              exact: "v2"
+      route:
+        - destination:
+            host: mon-app
+            subset: v2
+    - route:
+        - destination:
+            host: mon-app
+            subset: v1
+          weight: 90
+        - destination:
+            host: mon-app
+            subset: v2
+          weight: 10</code></pre>
+
+<h2 id="envoy">Envoy Proxy</h2>
+<p>Envoy est le sidecar proxy utilise par Istio :</p>
+<ul>
+<li><strong>Load balancing</strong> : round robin, least request, random</li>
+<li><strong>Circuit breaking</strong> : protection contre les cascades d'echecs</li>
+<li><strong>Retries</strong> : tentatives automatiques</li>
+<li><strong>Timeout</strong> : delais configurables</li>
+<li><strong>MTLS</strong> : chiffrement mutuel</li>
+</ul>
+
+<h2 id="sidecar">Sidecar Pattern</h2>
+<pre><code># Injection automatique Istio
+kubectl label namespace default istio-injection=enabled
+
+# Le sidecar est ajoute automatiquement a chaque pod
+# Le traffic passe par Envoy avant d'atteindre le conteneur</code></pre>
+
+<h2 id="traffic">Traffic Management</h2>
+<ul>
+<li><strong>Canary</strong> : deploiement progressif par weight</li>
+<li><strong>A/B testing</strong> : routage par headers</li>
+<li><strong>Fault injection</strong> : simulation de pannes</li>
+<li><strong>Rate limiting</strong> : protection contre le abuse</li>
+</ul>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Quand utiliser un service mesh ?</h4><p>Quand vous avez : 10+ microservices, besoin de mTLS, observabilite fine, traffic management avance, politiques de securite. Pour de petits systemes, c'est de la surcomplexite. Commencez sans, ajoutez quand le besoin se presente.</p></div>
+<div class="qa"><h4>Q2 : Istio vs Linkerd ?</h4><p><strong>Istio</strong> : plus complet, plus complexe, plus de resources. <strong>Linkerd</strong> : plus simple, plus leger, plus facile a demarrer. Istio est le standard enterprise. Linkerd est excellent pour les petites equipes.</p></div>
+`},
+
+{id:29,title:"Observabilite",module:3,difficulty:"difficile",duration:"25 min",
+content:`
+<h2 id="definition">Les 3 Piliers</h2>
+<p>L'observabilite repose sur 3 piliers :</p>
+<ul>
+<li><strong>Logs</strong> : evenements ponctuels (quoi s'est passe)</li>
+<li><strong>Metrics</strong> : mesures numeriques (combien, a quelle vitesse)</li>
+<li><strong>Traces</strong> : parcours d'une requete (ou, quand, sequence)</li>
+</ul>
+
+<h2 id="logs">Logs et ELK Stack</h2>
+<p>ELK = Elasticsearch + Logstash + Kibana :</p>
+<pre><code># Fluentd configuration
+<source>
+  @type tail
+  path /var/log/app/*.log
+  pos_file /var/log/fluentd/app.log.pos
+  tag app.logs
+  <parse>
+    @type json
+  </parse>
+</source>
+
+<match app.logs>
+  @type elasticsearch
+  host elasticsearch
+  port 9200
+  index_name app-logs
+</match></code></pre>
+
+<h2 id="traces">Distributed Tracing</h2>
+<p>Jaeger et OpenTelemetry pour le tracing distribue :</p>
+<pre><code>// OpenTelemetry - Node.js
+const { NodeTracerProvider } = require('@opentelemetry/sdk-trace-node');
+const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
+
+const provider = new NodeTracerProvider();
+const exporter = new JaegerExporter({
+  endpoint: 'http://jaeger:14268/api/traces'
+});
+
+provider.addSpanProcessor(new BatchSpanProcessor(exporter));</code></pre>
+
+<h2 id="opentelemetry">OpenTelemetry</h2>
+<p>OpenTelemetry standardise la collecte de telemetrie :</p>
+<ul>
+<li><strong>Auto-instrumentation</strong> : sans modifier le code</li>
+<li><strong>SDK</strong> : pour une instrumentation personnalisee</li>
+<li><strong>Collector</strong> : pipeline de traitement</li>
+<li><strong>Export</strong> : vers Jaeger, Prometheus, Datadog, etc.</li>
+</ul>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Comment implementer l'observabilite dans une microservice architecture ?</h4><p>1) OpenTelemetry pour standardiser. 2) Structured logging (JSON). 3) Metrics avec Prometheus. 4) Tracing avec Jaeger. 5) Dashboards Grafana. 6) Alerting avec Prometheus/AlertManager. 7) Correlation ID pour relier logs/metrics/traces.</p></div>
+<div class="qa"><h4>Q2 : Logs structurés vs logs en texte brut ?</h4><p><strong>JSON structuré</strong> : recherche facettee, parsing automatique, compatible ELK. <strong>Texte brut</strong> : lisible humainement, mais difficile a analyser. Toujours utiliser le JSON en production avec des champs standardises (timestamp, level, message, traceId).</p></div>
+`},
+
+{id:30,title:"Securite Cloud",module:3,difficulty:"difficile",duration:"25 min",
+content:`
+<h2 id="iam-policies">IAM Policies</h2>
+<p>Les politiques IAM definissent les permissions :</p>
+<pre><code># AWS IAM Policy - Moindre privilege
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Resource": "arn:aws:s3:::mon-bucket/*"
+    },
+    {
+      "Effect": "Deny",
+      "Action": "s3:DeleteBucket",
+      "Resource": "arn:aws:s3:::mon-bucket"
+    }
+  ]
+}</code></pre>
+
+<h2 id="rbac-cloud">RBAC</h2>
+<ul>
+<li><strong>AWS</strong> : IAM Roles, Policies, Service Control Policies</li>
+<li><strong>GCP</strong> : IAM Roles, Organization Policies</li>
+<li><strong>Azure</strong> : RBAC, Management Groups, Policy</li>
+</ul>
+
+<h2 id="network-policies">Network Policies</h2>
+<pre><code># Kubernetes NetworkPolicy
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: frontend
+      ports:
+        - port: 8080</code></pre>
+
+<h2 id="encryption">Chiffrement</h2>
+<ul>
+<li><strong>Au repos (at rest)</strong> : EBS, S3 SSE, RDS encryption</li>
+<li><strong>En transit</strong> : TLS 1.3, mTLS, VPN</li>
+<li><strong>En memoire</strong> : Confidential Computing (AWS Nitro, GCP Shielded)</li>
+<li><strong>Gestion des cles</strong> : KMS, Cloud KMS, Key Vault</li>
+</ul>
+
+<h2 id="best-practices">Bonnes Pratiques</h2>
+<ul>
+<li><strong>Zero Trust</strong> : ne jamais faire confiance au reseau</li>
+<li><strong>Defense en profondeur</strong> : multiples couches de securite</li>
+<li><strong>Security by Design</strong> : securite des la conception</li>
+<li><strong>Audit logging</strong> : CloudTrail, Audit Logs</li>
+<li><strong>Vulnerability scanning</strong> : ECR scanning, Trivy</li>
+<li><strong>Incident response</strong> : plan et procedures</li>
+</ul>
+
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Comment securiser une architecture cloud ?</h4><p>1) IAM strict (moindre privilege). 2) Chiffrement partout. 3) Network segmentation. 4) Monitoring et alerting. 5) Patch management. 6) Security reviews regulieres. 7) Backup et disaster recovery. 8) Training des equipes.</p></div>
+<div class="qa"><h4>Q2 : Que faire face a une compromission en production ?</h4><p>1) <strong>Containment</strong> : isoler le systeme compromise. 2) <strong>Eradication</strong> : supprimer l'acces malveillant. 3) <strong>Recovery</strong> : restaurer depuis backup propre. 4) <strong>Post-mortem</strong> : analyser et ameliorer. 5) <strong>Notification</strong> : informer les parties concernees. 6) <strong>Rotation</strong> : tous les credentials potentiellement exposes.</p></div>
+`}
+];
+
+function getProgress(){return JSON.parse(localStorage.getItem('devops_progress')||'{}')}
+function setProgress(id,val){const p=getProgress();p[id]=val;localStorage.setItem('devops_progress',JSON.stringify(p))}
+
+function getLesson(id){return LESSONS.find(l=>l.id===id)}
+function getModuleForLesson(id){return MODULES.find(m=>m.lessons.includes(id))}
+function getLessonIndex(id){return LESSONS.findIndex(l=>l.id===id)}
+
+function renderSidebar(currentId){
+  const progress=getProgress();
+  const completed=Object.values(progress).filter(v=>v).length;
+  const total=LESSONS.length;
+  let html=`
+  <div class="sidebar-box">
+    <h4>Progression</h4>
+    <div class="progress-bar"><div class="progress-fill" style="width:${(completed/total)*100}%"></div></div>
+    <p class="progress-text">${completed}/${total} lecons completees</p>
+  </div>`;
+  
+  MODULES.forEach(mod=>{
+    const isOpen=getModuleForLesson(currentId)?.id===mod.id;
+    html+=`<div class="sidebar-box">
+      <h4 class="module-toggle ${isOpen?'':'collapsed'}" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('collapsed')">Module ${mod.id}: ${mod.name}</h4>
+      <div class="module-lessons ${isOpen?'':'collapsed'}" style="max-height:${mod.lessons.length*40}px">`;
+    mod.lessons.forEach(lid=>{
+      const lesson=getLesson(lid);
+      const isCurrent=lid===currentId;
+      const isCompleted=progress[lid];
+      html+=`<a class="lesson-link ${isCurrent?'active':''} ${isCompleted?'completed':''}" href="?id=${lid}">
+        <span class="check">&#10003;</span> ${lid}. ${lesson.title}
+      </a>`;
+    });
+    html+=`</div></div>`;
+  });
+  return html;
+}
+
+function renderNav(currentId){
+  const idx=getLessonIndex(currentId);
+  let html='';
+  if(idx>0){
+    const prev=LESSONS[idx-1];
+    html+=`<a href="?id=${prev.id}"><span>&#8592; Lecon precedente</span>${prev.title}</a>`;
+  }else{html+=`<div></div>`}
+  if(idx<LESSONS.length-1){
+    const next=LESSONS[idx+1];
+    html+=`<a href="?id=${next.id}" style="text-align:right"><span>Lecon suivante &#8594;</span>${next.title}</a>`;
+  }
+  return html;
+}
+
+function init(){
+  const params=new URLSearchParams(window.location.search);
+  const id=parseInt(params.get('id'))||1;
+  const lesson=getLesson(id);
+  if(!lesson){document.getElementById('lesson-content').innerHTML='<p>Lecon non trouvee.</p>';return}
+  const mod=getModuleForLesson(id);
+  
+  document.getElementById('breadcrumb').innerHTML=`<a href="/">Accueil</a> / <a href="/pages/devops.html">DevOps</a> / Module ${mod.id} / ${lesson.title}`;
+  document.getElementById('lesson-title').textContent=lesson.title;
+  document.getElementById('lesson-meta').innerHTML=`
+    <span class="meta-item">Module ${mod.id} : ${mod.name}</span>
+    <span class="meta-item">Lecon ${id}/${LESSONS.length}</span>
+    <span class="meta-item">${lesson.duration}</span>
+    <span class="badge badge-${lesson.difficulty}">${lesson.difficulty.charAt(0).toUpperCase()+lesson.difficulty.slice(1)}</span>`;
+  document.getElementById('lesson-content').innerHTML=lesson.content;
+  document.getElementById('nav-lesson').innerHTML=renderNav(id);
+  document.getElementById('sidebar').innerHTML=renderSidebar(id);
+  
+  setProgress(id,true);
+  renderSidebar(id);
+  
+  const toc=document.querySelectorAll('.toc a');
+  const sections=document.querySelectorAll('h2[id]');
+  window.addEventListener('scroll',()=>{
+    let current='';
+    sections.forEach(s=>{if(window.scrollY>=s.offsetTop-100)current=s.id});
+    toc.forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+current)});
+  });
+}
+init();
+</script>
+</body>
+</html>

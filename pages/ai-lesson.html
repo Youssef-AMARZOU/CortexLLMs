@@ -1,0 +1,307 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecon - CortexLLMs.io</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0d0f;--card:#1a1a2e;--acc:#3b82f6;--acc-l:rgba(59,130,246,.15);--t1:#f1f5f9;--t2:#94a3b8;--bdr:#1e293b;--wh:#fff;--r:12px;--mx:1200px;--success:#10b981;--warning:#f59e0b;--err:#ef4444;--purple:#8b5cf6}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7}
+h1,h2,h3,h4{font-family:'Source Serif 4',serif;font-weight:700;line-height:1.3}
+a{color:var(--acc);text-decoration:none}
+.header{position:sticky;top:0;z-index:100;background:rgba(13,13,15,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:16px 0}
+.nav{max-width:var(--mx);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Source Serif 4',serif;font-size:1.3rem;font-weight:800}.logo span{color:var(--acc)}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{color:var(--t2);font-size:.9rem;font-weight:500;transition:color .2s}.nav-links a:hover,.nav-links a.active{color:var(--acc)}
+.container{max-width:var(--mx);margin:0 auto;padding:24px;display:grid;grid-template-columns:1fr 280px;gap:40px}
+.breadcrumb{color:var(--t2);font-size:.85rem;margin-bottom:8px}.breadcrumb a{color:var(--t2)}.breadcrumb a:hover{color:var(--acc)}
+.lesson-meta{display:flex;gap:16px;align-items:center;margin:16px 0 24px;flex-wrap:wrap}
+.badge{padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600}
+.badge-easy{background:rgba(16,185,129,.15);color:var(--success)}
+.badge-medium{background:rgba(245,158,11,.15);color:var(--warning)}
+.badge-hard{background:rgba(239,68,68,.15);color:var(--err)}
+.meta-item{color:var(--t2);font-size:.85rem}
+.content h2{margin:40px 0 16px;font-size:1.5rem;color:var(--wh);padding-top:20px;border-top:1px solid var(--bdr)}
+.content h2:first-child{border-top:none;padding-top:0;margin-top:0}
+.content h3{margin:24px 0 12px;font-size:1.2rem;color:var(--wh)}
+.content p{margin-bottom:16px;color:var(--t2)}
+.content ul,.content ol{margin:12px 0 16px 24px;color:var(--t2)}
+.content li{margin-bottom:8px}
+.content strong{color:var(--wh)}
+pre{background:#111;border:1px solid var(--bdr);border-radius:var(--r);padding:20px;overflow-x:auto;margin:16px 0;font-size:.85rem;line-height:1.5}
+code{font-family:'JetBrains Mono',monospace;color:#a5f3fc}
+p code,li code{background:rgba(59,130,246,.1);padding:2px 6px;border-radius:4px;font-size:.85em}
+.callout{border-left:4px solid var(--acc);background:var(--acc-l);border-radius:0 var(--r) var(--r) 0;padding:16px 20px;margin:20px 0}
+.callout.warning{border-color:var(--warning);background:rgba(245,158,11,.1)}
+.callout.success{border-color:var(--success);background:rgba(16,185,129,.1)}
+.callout strong{color:var(--wh)}
+.formula{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:20px;margin:16px 0;text-align:center;font-size:1.1rem;font-family:'Source Serif 4',serif;color:var(--wh)}
+.qa{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:20px;margin:16px 0}
+.qa h4{color:var(--acc);margin-bottom:8px;font-size:1rem}
+.qa p{margin:0}
+.sidebar{position:sticky;top:80px;align-self:start}
+.sidebar-box{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.sidebar-box h4{font-size:.9rem;margin-bottom:12px;color:var(--wh)}
+.toc a{display:block;padding:6px 0;color:var(--t2);font-size:.85rem;border-left:2px solid transparent;padding-left:12px;transition:all .2s}
+.toc a:hover,.toc a.active{color:var(--acc);border-color:var(--acc)}
+.nav-lesson{display:flex;justify-content:space-between;margin:40px 0;gap:16px}
+.nav-lesson a{flex:1;background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:16px 20px;transition:all .2s;text-decoration:none}
+.nav-lesson a:hover{border-color:var(--acc)}
+.nav-lesson a span{display:block;color:var(--t2);font-size:.8rem;margin-bottom:4px}
+.quiz-cta{background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:var(--r);padding:32px;text-align:center;margin:40px 0}
+.quiz-cta h3{color:var(--wh);margin-bottom:8px}
+.quiz-cta p{color:rgba(255,255,255,.8);margin-bottom:16px}
+.quiz-cta a{background:var(--wh);color:#3b82f6;padding:10px 24px;border-radius:8px;font-weight:600;display:inline-block}
+.key-takeaways{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:24px;margin:24px 0}
+.key-takeaways h3{margin-bottom:12px;color:var(--success)}
+.key-takeaways li{margin-bottom:6px;color:var(--t2)}
+.interview-section h3{margin-bottom:16px;color:var(--purple)}
+.progress-bar{width:100%;height:4px;background:var(--bdr);border-radius:2px;margin:12px 0 0;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--purple));border-radius:2px;transition:width .3s}
+.module-title{font-size:.8rem;text-transform:uppercase;letter-spacing:1px;color:var(--t2);margin:12px 0 4px;font-family:'Inter',sans-serif;font-weight:600}
+@media(max-width:900px){.container{grid-template-columns:1fr}.sidebar{display:none}.nav-links{display:none}}
+</style>
+</head>
+<body>
+<header class="header"><nav class="nav"><a href="/" class="logo">CortexLLMs<span>.io</span></a><div class="nav-links"><a href="/">Accueil</a><a href="/pages/ai-engineering.html" class="active">Ingenierie IA</a><a href="/pages/devops.html">DevOps</a><a href="/pages/system-design.html">System Design</a><a href="/pages/dsa.html">DSA</a><a href="/pages/entreprises.html">Entreprises</a></div></nav></header>
+
+<div class="container">
+<main id="main-content">
+<div id="lesson-content"></div>
+</main>
+
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-box">
+<h4>Sommaire</h4>
+<div class="toc" id="toc"></div>
+</div>
+<div class="sidebar-box">
+<h4>Progression</h4>
+<p id="progress-text" style="color:var(--t2);font-size:.85rem;margin-bottom:4px"></p>
+<div class="progress-bar"><div class="progress-bar-fill" id="progress-bar"></div></div>
+</div>
+<div class="sidebar-box">
+<h4 id="sidebar-quiz-title">Quiz</h4>
+<p id="sidebar-quiz-desc" style="color:var(--t2);font-size:.85rem;margin-bottom:12px"></p>
+<a href="/pages/quizzes.html" id="sidebar-quiz-link" style="display:block;text-align:center;background:var(--acc);color:var(--wh);padding:10px;border-radius:8px;font-weight:600">Commencer</a>
+</div>
+<div class="sidebar-box">
+<h4>Lecons du module</h4>
+<div id="sidebar-lessons"></div>
+</div>
+</aside>
+</div>
+
+<footer style="border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:var(--t2);font-size:.85rem">
+<p>CortexLLMs.io &copy; 2026 &mdash; Plateforme de preparation aux entretiens IA</p>
+</footer>
+
+<script>const lessons=[
+{id:"01",title:"Introduction au Machine Learning",module:1,moduleName:"Fondamentaux ML",duration:"25 min",difficulty:"Facile",content:[{title:"Definition du Machine Learning",type:"text",text:"Le Machine Learning est un sous-ensemble de l'IA qui permet aux systemes d'apprendre a partir de donnees sans etre programmees explicitement. Les algorithmes decouvrent des patterns et generent des predictions."},{title:"Les trois types d'apprentissage",type:"text",text:"<h3>1. Supervise</h3><p>Apprend a partir de donnees etiquetees (X → Y). Exemples : classification, regression.</p><h3>2. Non-supervise</h3><p>Pas d'etiquettes. Decouvre la structure : clustering, reduction de dimensionnalite.</p><h3>3. Par renforcement</h3><p>Agent apprend par recompenses/penalites. Exemples : AlphaGo, robotique.</p>"},{title:"Cycle de vie d'un projet ML",type:"list",text:"<ul><li><strong>Definition du probleme</strong> : objectif business et metriques</li><li><strong>Collecte des donnees</strong> : acquerir, nettoyer, valider</li><li><strong>Feature engineering</strong> : transformer les variables</li><li><strong>Selection du modele</strong> : choisir l'algorithme</li><li><strong>Entrainement</strong> : ajuster les parametres</li><li><strong>Evaluation</strong> : mesurer sur donnees inedites</li><li><strong>Deploiement</strong> : production et monitoring</li></ul>"},{title:"Pipeline ML",type:"code",text:"from sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import cross_val_score\n\npipe = Pipeline([\n    ('scaler', StandardScaler()),\n    ('clf', RandomForestClassifier(n_estimators=100))\n])\nscores = cross_val_score(pipe, X, y, cv=5, scoring='accuracy')\nprint(f'Accuracy: {scores.mean():.3f}')"}],keyTakeaways:["Le ML se divise en supervise, non-supervise et par renforcement","Un projet suit le cycle : definition → collecte → feature eng → modele → evaluation → deploiement","Toujours valider que le ML est la bonne approche"],interviewQuestions:[{question:"Difference AI, ML et Deep Learning ?",answer:"IA = domaine large. ML = sous-ensemble IA (apprend des donnees). DL = sous-ensemble ML (reseaux profonds)."},{question:"Quand ne PAS utiliser le ML ?",answer:"Quand les regles sont simples, donnees insuffisantes, interpretabilite critique, ou un systeme a regles existant fonctionne bien."}]},
+{
+id:"02",title:"Regression Lineaire",module:1,moduleName:"Fondamentaux ML",duration:"30 min",difficulty:"Facile",content:[{title:"Definition",type:"text",text:"Modelise la relation lineaire entre variable dependante Y et independantes X. Algorithme fondamental du ML."},{title:"Equation",type:"formula",text:"y = w\u2081x\u2081 + w\u2082x\u2082 + ... + w\u2099x\u2099 + b"},{title:"Methode des moindres carres",type:"text",text:"Minimise la somme des carres des residus. Solution analytique : w = (X\u1d40X)\u207b\u00b9X\u1d40Y (normal equation, complexite O(p\u00b3))."},{title:"Descente de gradient",type:"code",text:"import numpy as np\n\ndef gradient_descent(X, y, lr=0.01, epochs=1000):\n    n = len(y)\n    w = np.zeros(X.shape[1])\n    b = 0\n    for epoch in range(epochs):\n        y_pred = X @ w + b\n        dw = -(2/n) * (X.T @ (y - y_pred))\n        db = -(2/n) * np.sum(y - y_pred)\n        w -= lr * dw\n        b -= lr * db\n    return w, b"},{title:"Regularisation",type:"text",text:"<h3>Ridge (L2)</h3><p>J = MSE + \u03bb \u00d7 \u03a3w\u1d62\u00b2. Resserre les poids.</p><h3>Lasso (L1)</h3><p>J = MSE + \u03bb \u00d7 \u03a3|w\u1d62|. Selection de features.</p><h3>Elastic Net</h3><p>Combine L1+L2.</p>"},{title:"Metrics",type:"list",text:"<ul><li><strong>MSE</strong> : erreur quadratique moyenne</li><li><strong>RMSE</strong> : racine du MSE</li><li><strong>MAE</strong> : erreur absolue</li><li><strong>R\u00b2</strong> : variance expliquee (0-1)</li></ul>"}],keyTakeaways:["Trouve la meilleure droite en minimisant les residus","L1/L2 previennent le surapprentissage","R\u00b2 mesure la variance expliquee"],interviewQuestions:[{question:"Ridge vs Lasso ?",answer:"Ridge : toutes les features utiles. Lasso : selection de features. Elastic Net : features correlees."},{question:"Pourquoi normaliser ?",answer:"Sans normalisation, les features a grande echelle dominent. StandardScaler ou MinMaxScaler resolvent cela."}]},
+{
+id:"03",title:"Classification",module:1,moduleName:"Fondamentaux ML",duration:"35 min",difficulty:"Facile",content:[{title:"Regression logistique",type:"text",text:"Malgre son nom, c'est un classifieur. P(y=1) = \u03c3(w\u1d40x + b) = 1/(1+e^(-w\u1d40x-b)). La sigmoid mappe entre 0 et 1."},{title:"SVM",type:"text",text:"Cherche l'hyperplan maximisant la marge. Noyaux : lineaire, polynomial, RBF. Parametre C controle le compromis marge/erreurs."},{title:"k-NN",type:"text",text:"Non-parametrique. Classe par vote des k voisins les plus proches. Petit k = surapprentissage, grand k = sous-apprentissage."},{title:"Arbres de decision",type:"text",text:"Partitionnent l'espace. Gain d'information : Gini = 1 - \u03a3p\u1d62\u00b2 ou Entropie = -\u03a3p\u1d62 \u00d7 log\u2082(p\u1d62). Interpretables mais instables."},{title:"Metrics",type:"code",text:"from sklearn.metrics import classification_report, confusion_matrix\ny_pred = model.predict(X_test)\nprint(confusion_matrix(y_test, y_pred))\nprint(classification_report(y_test, y_pred))"},{title:"Matrice de confusion",type:"list",text:"<ul><li><strong>Accuracy</strong> = (TP+TN)/Total — biaisee si desequilibre</li><li><strong>Precision</strong> = TP/(TP+FP) — fiabilite positive</li><li><strong>Recall</strong> = TP/(TP+FN) — detection positive</li><li><strong>F1</strong> = 2\u00d7(P\u00d7R)/(P+R) — harmonique</li><li><strong>AUC-ROC</strong> : courbe performance</li></ul>"}],keyTakeaways:["Logistique predit des probabilites via sigmoid","SVM maximise la marge, k-NN est non-parametrique","F1 preferable a l'accuracy pour classes desequilibrees"],interviewQuestions:[{question:"Classes desequilibrees ?",answer:"SMOTE, class weights, F1/AUC comme metrique, changer le threshold."},{question:"SVM vs Random Forest ?",answer:"SVM : haute dimension. RF : features mixtes, moins de tuning."}]},
+{
+id:"04",title:"Clustering",module:1,moduleName:"Fondamentaux ML",duration:"30 min",difficulty:"Moyen",content:[{title:"K-Means",type:"text",text:"Partitionne en k clusters en minimisant l'inertie : J = \u03a3\u2097₌\u2081\u207f \u03a3\u2097\u2208C\u1d62 ||x - \u03bc\u1d62||\u00b2. Initialiser, assigner, recalculer, repeter."},{title:"Choix de k",type:"text",text:"<h3>Coude</h3><p>Tracer inertie vs k, le coude = k optimal.</p><h3>Silhouette</h3><p>s(i) = (b(i)-a(i))/max(a(i),b(i)). Score -1 à 1.</p>"},{title:"DBSCAN",type:"text",text:"Base sur la densite. Parametres \u03b5 (rayon) et MinPts. Detecte le bruit, clusters non-spheriques. Sensible aux parametres."},{title:"CAH",type:"text",text:"Classification Ascendante Hierarchique. Dendrogramme. Liens : simple, complet, moyen, Ward. O(n\u00b3)."},{title:"Evaluation",type:"code",text:"from sklearn.cluster import KMeans\nfrom sklearn.metrics import silhouette_score\nfor k in range(2, 11):\n    km = KMeans(n_clusters=k).fit(X)\n    print(f'k={k}: sil={silhouette_score(X, km.labels_):.3f}')"}],keyTakeaways:["K-Means simple mais suppose clusters spheriques","DBSCAN detecte forme arbitraire et bruit","Silhouette evalue sans labels"],interviewQuestions:[{question:"K-Means vs DBSCAN ?",answer:"K-Means : spheriques, connaissez k. DBSCAN : forme arbitraire, gere bruit, pas de k."},{question:"K-Means++ ?",answer:"Initialisation intelligente, centroides bien espaces, converge plus vite."}]},
+{
+id:"05",title:"Regularisation",module:1,moduleName:"Fondamentaux ML",duration:"25 min",difficulty:"Moyen",content:[{title:"Pourquoi regulariser ?",type:"text",text:"Previent le surapprentissage en ajoutant une penalite a la fonction de cout."},{title:"Lasso (L1)",type:"text",text:"J = MSE + \u03bb \u00d7 \u03a3|w\u1d62|. Annule certains poids → selection de features."},{title:"Ridge (L2)",type:"text",text:"J = MSE + \u03bb \u00d7 \u03a3w\u1d62\u00b2. Resserre sans annuler. Garde toutes les features."},{title:"Elastic Net",type:"formula",text:"J = MSE + \u03bb\u2081 \u00d7 \u03a3|w\u1d62| + \u03bb\u2082 \u00d7 \u03a3w\u1d62\u00b2"},{title:"En pratique",type:"code",text:"from sklearn.linear_model import Ridge, Lasso, ElasticNet\nfrom sklearn.model_selection import GridSearchCV\n\nparams = {'alpha': [0.001, 0.01, 0.1, 1, 10]}\nridge_cv = GridSearchCV(Ridge(), params, cv=5)\nridge_cv.fit(X_train, y_train)\nprint(f'Alpha optimal: {ridge_cv.best_params_[\"alpha\"]}')"}],keyTakeaways:["L1 selectionne features, L2 garde tout","Elastic Net combine L1+L2","Dropout regularise les reseaux"],interviewQuestions:[{question:"Comment Lasso selectionne ?",answer:"Zone de non-differentiabilite a 0 tire les poids vers exactement 0."}]},
+{
+id:"06",title:"Evaluation des Modeles",module:1,moduleName:"Fondamentaux ML",duration:"30 min",difficulty:"Moyen",content:[{title:"Train/Test Split",type:"text",text:"Separer en train (70-80%) et test (20-30%). Stratifier pour la classification."},{title:"Validation croisee",type:"text",text:"<ul><li><strong>5-fold</strong> : chaque fold en validation une fois</li><li><strong>10-fold</strong> : standard</li><li><strong>Stratified</strong> : maintient les proportions</li></ul>"},{title:"Bias-Variance",type:"formula",text:"Erreur = Biais\u00b2 + Variance + Bruit"},{title:"Learning curves",type:"text",text:"Tracent performances vs taille donnees. Diagnostiquent sur/sous-apprentissage."},{title:"Code",type:"code",text:"from sklearn.model_selection import learning_curve, cross_val_score\nimport numpy as np\n\nscores = cross_val_score(model, X, y, cv=10)\nprint(f'Accuracy: {scores.mean():.3f} (+/- {scores.std()*2:.3f})')\n\ntrain_sizes, train_sc, val_sc = learning_curve(\n    model, X, y, cv=5, train_sizes=np.linspace(0.1,1.0,10))"}],keyTakeaways:["CV plus fiable qu'un split simple","Erreur = Biais\u00b2 + Variance + Bruit","Learning curves diagnostiquent le probleme"],interviewQuestions:[{question:"Pourquoi CV ?",answer:"Plus fiable car utilise chaque echantillon pour train et validation."}]},
+{
+id:"07",title:"Feature Engineering",module:1,moduleName:"Fondamentaux ML",duration:"30 min",difficulty:"Moyen",content:[{title:"Normalisation",type:"text",text:"StandardScaler (Z-score) : moyenne 0, ecart-type 1. MinMaxScaler : 0 a 1. Indispensable pour SVM, k-NN."},{title:"Encodage",type:"text",text:"Label Encoding pour ordinales. One-Hot pour nominales. Target Encoding pour beaucoup de categories."},{title:"PCA",type:"text",text:"Analyse en Composantes Principales. Projette en dimension inferieure en conservant la variance. Alternative non-lineaire a la PCA : autoencoders."},{title:"Selection",type:"list",text:"<ul><li><strong>Filter</strong> : correlation, chi\u00b2</li><li><strong>Wrapper</strong> : RFE, forward/backward</li><li><strong>Embedded</strong> : Lasso, importance RF</li></ul>"},{title:"Code",type:"code",text:"import pandas as pd\nfrom sklearn.decomposition import PCA\n\ndf['heure'] = pd.to_datetime(df['date']).dt.hour\ndf['est_weekend'] = df['jour_sem'].isin([5,6]).astype(int)\ndf = pd.get_dummies(df, columns=['type'], drop_first=True)\n\npca = PCA(n_components=0.95)\nX_pca = pca.fit_transform(X_scaled)"}],keyTakeaways:["Toujours normaliser","One-Hot pour nominales","PCA reduit la dimensionnalite"],interviewQuestions:[{question:"PCA vs features ?",answer:"PCA : features tres correlees. Garder : interpretabilite importante."}]},
+{
+id:"08",title:"Ensemble Methods",module:1,moduleName:"Fondamentaux ML",duration:"30 min",difficulty:"Moyen",content:[{title:"Bagging",type:"text",text:"Modeles en parallele sur echantillons bootstrap. Vote majoritaire ou moyenne. Reduit variance. Ex : Random Forest."},{title:"Random Forest",type:"text",text:"Arbres + bootstrap + feature bagging (\u221ap features/noeud). Robuste, interpretable, importance features."},{title:"Boosting",type:"text",text:"Sequentiel, corrige erreurs. AdaBoost : re-ponderise. Gradient Boosting : residus. XGBoost : optimise."},{title:"XGBoost",type:"code",text:"import xgboost as xgb\nfrom sklearn.model_selection import GridSearchCV\n\nparams = {'max_depth': [3,5,7], 'learning_rate': [0.01,0.1],\n          'n_estimators': [100,200]}\nmodel = xgb.XGBClassifier(objective='binary:logistic')\ngcv = GridSearchCV(model, params, cv=5, scoring='roc_auc')\ngcv.fit(X_train, y_train)"},{title:"Bagging vs Boosting",type:"list",text:"<ul><li><strong>Bagging</strong> : parallele, reduit variance (RF)</li><li><strong>Boosting</strong> : sequentiel, reduit biais (XGBoost)</li><li><strong>Stacking</strong> : meta-learner</li></ul>"}],keyTakeaways:["Bagging = variance, Boosting = biais","XGBoost = standard competitions"],interviewQuestions:[{question:"RF vs XGBoost ?",answer:"RF : simple, resistant. XGBoost : meilleur tune, gere NaN."}]},
+{
+id:"09",title:"Optimisation Hyperparametres",module:1,moduleName:"Fondamentaux ML",duration:"25 min",difficulty:"Moyen",content:[{title:"Hyperparametres",type:"text",text:"Parametres definis avant entrainement. LR, nombre couches, profondeur arbres, k voisins."},{title:"Grid Search",type:"text",text:"Exhaustif mais couteux. Complexite = \u03a0|H\u1d62|."},{title:"Random Search",type:"text",text:"Plus efficace. Explore plus dans le meme budget. Bergman et al. 2012."},{title:"Optuna",type:"text",text:"Bayesien. Apprend de chaque essai. Supporte pruning."},{title:"Code",type:"code",text:"import optuna\n\ndef objective(trial):\n    params = {\n        'n_estimators': trial.suggest_int('n_estimators', 50, 500),\n        'max_depth': trial.suggest_int('max_depth', 3, 20)\n    }\n    from sklearn.ensemble import RandomForestClassifier\n    model = RandomForestClassifier(**params)\n    return cross_val_score(model, X, y, cv=5).mean()\n\nstudy = optuna.create_study(direction='maximize')\nstudy.optimize(objective, n_trials=100)"}],keyTakeaways:["Random Search > Grid Search en general","Optuna guide intelligemment"],interviewQuestions:[{question:"Grid vs Random ?",answer:"Random plus efficace. Grid si espace bien connu."}]},
+{
+id:"10",title:"Bias-Variance Tradeoff",module:1,moduleName:"Fondamentaux ML",duration:"25 min",difficulty:"Moyen",content:[{title:"Decomposition",type:"formula",text:"Erreur = Biais\u00b2 + Variance + Bruit"},{title:"Surapprentissage",type:"text",text:"Modele memorise le bruit. Bon sur train, mauvais sur test. Solutions : regularisation, early stopping, augmentation."},{title:"Sous-apprentissage",type:"text",text:"Modele trop simple. Mauvais partout. Solutions : plus complexe, plus de features."},{title:"Diagnostic",type:"code",text:"from sklearn.model_selection import validation_curve\nparam_range = range(1, 21)\ntrain_sc, test_sc = validation_curve(\n    DecisionTreeClassifier(), X, y,\n    param_name='max_depth', param_range=param_range, cv=5)\nbest = np.argmax(test_sc.mean(axis=1))\nprint(f'Depth optimal: {param_range[best]}')"},{title:"Techniques",type:"list",text:"<ul><li>Surapprentissage : regularisation, dropout, early stopping, augmentation</li><li>Sous-apprentissage : plus complexe, plus de features</li></ul>"}],keyTakeaways:["Biais = sous-apprentissage, Variance = surapprentissage","Regularisation = outil principal"],interviewQuestions:[{question:"99% train, 60% test ?",answer:"Surapprentissage. Regularisation, simplifier, augmenter donnees."}]},
+{
+id:"11",title:"Pipelines ML",module:1,moduleName:"Fondamentaux ML",duration:"25 min",difficulty:"Facile",content:[{title:"Pourquoi pipelines",type:"text",text:"Previenent data leakage, reproductibilite, code propre, deploiement simple."},{title:"Pipeline",type:"code",text:"from sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.ensemble import RandomForestClassifier\n\nnum_pipe = Pipeline([('scaler', StandardScaler())])\ncat_pipe = Pipeline([('encoder', OneHotEncoder())])\n\npreprocessor = ColumnTransformer([\n    ('num', num_pipe, num_cols),\n    ('cat', cat_pipe, cat_cols)])\n\npipe = Pipeline([('prep', preprocessor), ('clf', RandomForestClassifier())])\npipe.fit(X_train, y_train)"},{title:"Export",type:"code",text:"import joblib\njoblib.dump(pipe, 'model.joblib')\nloaded = joblib.load('model.joblib')\nloaded.predict(X_new)"}],keyTakeaways:["Pipelines previennent data leakage","ColumnTransformer gere types differents"],interviewQuestions:[{question:"Data leakage ?",answer:"Scaler fit sur train+test = leakage. Pipeline fit uniquement sur train."}]},
+{
+id:"12",title:"MLOps",module:1,moduleName:"Fondamentaux ML",duration:"30 min",difficulty:"Avance",content:[{title:"MLflow",type:"text",text:"Tracking (parametres, metriques), Models (format standard), Registry (versions)."},{title:"Exemple MLflow",type:"code",text:"import mlflow\nmlflow.set_experiment('exp1')\nwith mlflow.start_run():\n    mlflow.log_params({'n_estimators': 200})\n    mlflow.log_metric('accuracy', 0.95)\n    mlflow.sklearn.log_model(model, 'model')"},{title:"Deploiement",type:"text",text:"Docker (container), FastAPI (API), Kubernetes (orchestration), CI/CD."},{title:"FastAPI",type:"code",text:"from fastapi import FastAPI\nimport joblib, numpy as np\n\napp = FastAPI()\nmodel = joblib.load('model.joblib')\n\n@app.post('/predict')\ndef predict(data: dict):\n    features = np.array(data['features']).reshape(1, -1)\n    return {'pred': int(model.predict(features)[0])}"},{title:"Monitoring",type:"text",text:"<ul><li><strong>Data drift</strong> : distributions changent</li><li><strong>Concept drift</strong> : relation X-Y change</li><li><strong>Performance</strong> : accuracy, latence</li></ul>"}],keyTakeaways:["MLflow trace experiments","Docker+FastAPI pour deploiement","Monitoring detecte drift"],interviewQuestions:[{question:"Data vs concept drift ?",answer:"Data drift : distributions d'entree. Concept drift : relation X-Y."}]},
+{
+id:"13",title:"Introduction au Deep Learning",module:2,moduleName:"Deep Learning",duration:"30 min",difficulty:"Facile",content:[{title:"Le perceptron",type:"text",text:"Unite de base : y = f(\u03a3(w\u1d62x\u1d62) + b). Ne resout pas XOR. Les reseaux multicouches (MLP) resolvent ce probleme."},{title:"Activations",type:"text",text:"<h3>Sigmoid</h3><p>1/(1+e\u207b\u00b2). Sortie 0-1. Gradient vanishing.</p><h3>ReLU</h3><p>max(0,x). Standard. Rapide. Neurones morts possible.</p><h3>Softmax</h3><p>e\u1d48\u1d62 / \u03a3e\u1d48\u1d63. Probabilites (somme=1). Classification multi-classes.</p>"},{title:"Reseaux profonds",type:"text",text:"Entree → couches cachees (representations hierarchiques) → sortie. Chaque couche : lineaire + activation."},{title:"Backpropagation",type:"formula",text:"\u2202J/\u2202w = \u2202J/\u2202\u0177 \u00d7 \u2202\u0177/\u2202h \u00d7 \u2202h/\u2202w (regle de la chaine)"},{title:"PyTorch",type:"code",text:"import torch, torch.nn as nn\n\nclass SimpleNN(nn.Module):\n    def __init__(self, in_s, hid_s, out_s):\n        super().__init__()\n        self.l1 = nn.Linear(in_s, hid_s)\n        self.act = nn.ReLU()\n        self.l2 = nn.Linear(hid_s, out_s)\n    def forward(self, x):\n        return self.l2(self.act(self.l1(x)))\n\nmodel = SimpleNN(10, 64, 2)\nopt = torch.optim.Adam(model.parameters(), lr=0.001)"}],keyTakeaways:["Perceptron ne resout pas XOR","ReLU est l'activation standard","Backprop calcule les gradients"],interviewQuestions:[{question:"ReLU vs Sigmoid ?",answer:"ReLU : pas de vanishing, plus rapide. Sigmoid : vanishing, couteux."}]},
+{
+id:"14",title:"DNN",module:2,moduleName:"Deep Learning",duration:"30 min",difficulty:"Moyen",content:[{title:"Forward/Backward",type:"text",text:"Forward : donnees dans le reseau. Backward : gradients par backprop, poids mis a jour."},{title:"Initialisation",type:"text",text:"<ul><li><strong>Zeros</strong> : mauvais</li><li><strong>Xavier</strong> : variance=2/(n_in+n_out) pour tanh</li><li><strong>He</strong> : variance=2/n_in pour ReLU (recommande)</li></ul>"},{title:"Optimiseurs",type:"text",text:"<h3>SGD+momentum</h3><p>v = \u03b2v + \u03b1\u2207J, w = w - v. Accelere.</p><h3>Adam</h3><p>Momentum+RMSProp. Par defaut. Adapte lr par parametre.</p>"},{title:"DNN PyTorch",type:"code",text:"class DNN(nn.Module):\n    def __init__(self, in_d, hiddens, out_d):\n        super().__init__()\n        layers = []\n        prev = in_d\n        for h in hiddens:\n            layers += [nn.Linear(prev,h), nn.BatchNorm1d(h),\n                      nn.ReLU(), nn.Dropout(0.3)]\n            prev = h\n        layers.append(nn.Linear(prev, out_d))\n        self.net = nn.Sequential(*layers)\n    def forward(self, x): return self.net(x)"},{title:"BatchNorm",type:"text",text:"BN(x) = \u03b3(x-\u03bc)/\u03c3+\u03b2. Accelere, regularise faiblement."}],keyTakeaways:["He pour ReLU, Xavier pour tanh","Adam = standard","BatchNorm accelere"],interviewQuestions:[{question:"Pourquoi Adam ?",answer:"Adapte lr, combine momentum+RMSProp, robuste."}]},
+{
+id:"15",title:"CNN",module:2,moduleName:"Deep Learning",duration:"35 min",difficulty:"Moyen",content:[{title:"Convolutions",type:"text",text:"Filtres extraient motifs locaux (contours, textures). Couches profondes combinent motifs."},{title:"Parametres",type:"list",text:"<ul><li>Filtres : 32, 64, 128...</li><li>Noyau : 3\u00d73 standard</li><li>Stride : pas (1)</li><li>Padding : same/valid</li></ul>"},{title:"Pooling",type:"text",text:"MaxPool2d(2,2) : reduit dimension, invariance translation. AveragePool aussi possible."},{title:"Architectures",type:"text",text:"<h3>VGG</h3><p>Conv 3\u00d73 + MaxPool. 16-19 couches.</p><h3>ResNet</h3><p>y = F(x) + x. Skip connections. 50-152 couches. Resout vanishing gradient.</p>"},{title:"PyTorch",type:"code",text:"class CNN(nn.Module):\n    def __init__(self, nc=10):\n        super().__init__()\n        self.feat = nn.Sequential(\n            nn.Conv2d(1,32,3,padding=1), nn.BatchNorm2d(32),\n            nn.ReLU(), nn.MaxPool2d(2),\n            nn.Conv2d(32,64,3,padding=1), nn.BatchNorm2d(64),\n            nn.ReLU(), nn.MaxPool2d(2))\n        self.cls = nn.Sequential(nn.Flatten(),\n            nn.Linear(64*7*7,128), nn.ReLU(),\n            nn.Dropout(0.5), nn.Linear(128,nc))\n    def forward(self,x): return self.cls(self.feat(x))"}],keyTakeaways:["Conv extraient motifs hierarchiques","MaxPool reduit et invariant","ResNet = skip connections"],interviewQuestions:[{question:"Pourquoi CNN images ?",answer:"Partage parametres, connexite locale, hierarchie, invariance."}]},
+{
+id:"16",title:"RNN et LSTM",module:2,moduleName:"Deep Learning",duration:"35 min",difficulty:"Moyen",content:[{title:"RNN",type:"text",text:"Etat cache : h\u209c = tanh(W\u2097h h\u209c\u208b\u2081 + W\u2097h x\u209c). Memoire courte. Vanishing gradient."},{title:"LSTM",type:"text",text:"3 portes : oublie (f), entree (i), sortie (o). Cellule memoire c\u209c. Gere dependances long terme."},{title:"GRU",type:"text",text:"2 portes (mise a jour, reinitialisation). Plus simple, parfois egal LSTM."},{title:"PyTorch",type:"code",text:"class LSTM(nn.Module):\n    def __init__(self, vs, ed, hd, nc):\n        super().__init__()\n        self.emb = nn.Embedding(vs, ed)\n        self.lstm = nn.LSTM(ed, hd, 2, batch_first=True,\n                          bidirectional=True)\n        self.fc = nn.Linear(hd*2, nc)\n    def forward(self, x):\n        _, (h, _) = self.lstm(self.emb(x))\n        return self.fc(torch.cat((h[-2],h[-1]),1))"}],keyTakeaways:["RNN traite sequences, vanishing gradient","LSTM = portes + memoire","Transformers ont depasse RNN"],interviewQuestions:[{question:"LSTM vs GRU ?",answer:"LSTM plus de capacite, GRU plus simple et rapide."}]},
+{
+id:"17",title:"Transformers",module:2,moduleName:"Deep Learning",duration:"35 min",difficulty:"Avance",content:[{title:"Architecture",type:"text",text:"Vaswani 2017. Attention uniquement. Encodeur + Decodeur. Parallelisable."},{title:"Self-Attention",type:"formula",text:"Attention(Q,K,V) = softmax(QK\u1d40/\u221ad\u2096) \u00d7 V"},{title:"Multi-Head",type:"text",text:"Plusieurs tetes d'attention. Capture differentes relations. Concat + projection."},{title:"Positional Encoding",type:"formula",text:"PE(pos,2i) = sin(pos/10000^(2i/d))"},{title:"Code",type:"code",text:"class SelfAttention(nn.Module):\n    def __init__(self, es, heads):\n        super().__init__()\n        self.h = heads\n        self.hd = es // heads\n        self.q = nn.Linear(es, es)\n        self.k = nn.Linear(es, es)\n        self.v = nn.Linear(es, es)\n        self.out = nn.Linear(es, es)\n    def forward(self, x):\n        N, sl, _ = x.shape\n        q = self.q(x).view(N,sl,self.h,self.hd)\n        k = self.k(x).view(N,sl,self.h,self.hd)\n        v = self.v(x).view(N,sl,self.h,self.hd)\n        e = torch.einsum('nqhd,nkhd->nhqk',q,k)\n        a = torch.softmax(e/math.sqrt(self.hd),-1)\n        o = torch.einsum('nhqk,nvhd->nqhd',a,v)\n        return self.out(o.reshape(N,sl,-1))"}],keyTakeaways:["Self-attention = chaque token voit tous les autres","Multi-Head = differentes relations","BERT=encodeur, GPT=decodeur"],interviewQuestions:[{question:"Pourquoi \u221ad\u2096 ?",answer:"Stabilise la variance des gradients dans le softmax."}]},
+{
+id:"18",title:"Transfer Learning",module:2,moduleName:"Deep Learning",duration:"25 min",difficulty:"Moyen",content:[{title:"Principe",type:"text",text:"Reutilise modele pre-entraine. Adapte a nouvelle tache. Moins de donnees, moins de calcul."},{title:"Strategies",type:"text",text:"<h3>Feature Extraction</h3><p>Geler couches, entrainer classifieur. Rapide.</p><h3>Fine-tuning</h3><p>Debloquer couches, lr faible. Meilleur.</p>"},{title:"Code",type:"code",text:"from torchvision import models\nmodel = models.resnet50(pretrained=True)\nfor p in model.parameters(): p.requires_grad = False\nmodel.fc = nn.Linear(model.fc.in_features, nc)\nopt = torch.optim.Adam(model.fc.parameters(), lr=0.001)"},{title:"Pitfalls",type:"callout",text:"<strong>Attention :</strong> Negative transfer si domaines differents. Catastrophic forgetting. LR tres faible (1e-5)."},{title:"Quand",type:"list",text:"<ul><li>Peu de donnees</li><li>Domaine similaire a pre-training</li><li>Modele pre-entraine sur donnees larges</li></ul>"}],keyTakeaways:["Feature extraction rapide, fine-tuning meilleur","LR 1e-5 pour fine-tuning"],interviewQuestions:[{question:"Transfer vs depuis zero ?",answer:"Transfer : peu de donnees, domaine similaire. Zero : domaine specifique, beaucoup de donnees."}]},
+{
+id:"19",title:"Regularisation DL",module:2,moduleName:"Deep Learning",duration:"25 min",difficulty:"Moyen",content:[{title:"Dropout",type:"text",text:"Desactive neurones (p=0.2-0.5). En inference : scaling par (1-p). Representations robustes."},{title:"BatchNorm",type:"text",text:"Normalise par mini-batch. Acceleration, regularisation leger."},{title:"Early Stopping",type:"text",text:"Arreter quand val loss stagne. Sauvegarder meilleurs poids. Simple et efficace."},{title:"Data Augmentation",type:"text",text:"Rotation, flip, zoom, CutMix, Mixup. La plus puissante regularisation images."},{title:"Code",type:"code",text:"# Model avec regularisation\nclass RegModel(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.f = nn.Sequential(\n            nn.Conv2d(3,64,3,padding=1), nn.BatchNorm2d(64),\n            nn.ReLU(), nn.MaxPool2d(2), nn.Dropout2d(0.25),\n            nn.Conv2d(64,128,3,padding=1), nn.BatchNorm2d(128),\n            nn.ReLU(), nn.AdaptiveAvgPool2d(1))\n        self.c = nn.Sequential(nn.Flatten(), nn.Linear(128,64),\n            nn.ReLU(), nn.Dropout(0.5), nn.Linear(64,10))\n    def forward(self,x): return self.c(self.f(x))\n\nopt = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-4)"}],keyTakeaways:["Dropout = neurones aleatoires","BatchNorm accelere","Data augmentation = plus puissant"],interviewQuestions:[{question:"BatchNorm vs LayerNorm ?",answer:"BatchNorm sur batch, LayerNorm sur features. LayerNorm pour Transformers."}]},
+{
+id:"20",title:"Optimisation DL",module:2,moduleName:"Deep Learning",duration:"30 min",difficulty:"Avance",content:[{title:"LR Scheduling",type:"list",text:"<ul><li>Step Decay : reduction a epoques fixes</li><li>Cosine Annealing : sinusoidal + restarts</li><li>Warm-up + Cosine : standard</li><li>ReduceLROnPlateau : adapte</li></ul>"},{title:"Gradient Clipping",type:"text",text:"Si ||g|| > max : g = max \u00d7 g/||g||. Evite exploding gradient."},{title:"Mixed Precision",type:"text",text:"Float16+float32. 2-3x plus rapide, 2x moins memoire. Loss scaling."},{title:"Code",type:"code",text:"from torch.cuda.amp import autocast, GradScaler\nscaler = GradScaler()\nfor batch in loader:\n    opt.zero_grad()\n    with autocast():\n        loss = criterion(model(batch), labels)\n    scaler.scale(loss).backward()\n    scaler.unscale_(opt)\n    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)\n    scaler.step(opt)\n    scaler.update()"},{title:"Avancees",type:"list",text:"<ul><li>Label Smoothing</li><li>Stochastic Depth</li><li>EMA (moyenne poids)</li></ul>"}],keyTakeaways:["LR scheduling indispensable","Mixed precision double la vitesse","Adam lr=1e-3 par defaut"],interviewQuestions:[{question:"Cosine vs Step ?",answer:"Cosine adaptatif, generalement meilleur."}]},
+{
+id:"21",title:"GAN",module:2,moduleName:"Deep Learning",duration:"30 min",difficulty:"Avance",content:[{title:"Principe",type:"text",text:"Generateur (G) cree fausses donnees. Discriminateur (D) les distingue. Jeu a somme nulle."},{title:"Objectif",type:"formula",text:"min_G max_D E[log D(x)] + E[log(1-D(G(z)))]"},{title:"Entrainement",type:"text",text:"Alterner : 1) Entrainer D (vraies=1, fausses=0). 2) Entrainer G pour tromper D."},{title:"WGAN",type:"text",text:"Distance de Wasserstein. Plus stable, pas de mode collapse. Critic au lieu de D."},{title:"Variantes",type:"list",text:"<ul><li>DCGAN : convolutions, standard</li><li>StyleGAN : haute resolution</li><li>CycleGAN : sans paires (cheval \u2194 zebre)</li><li>cGAN : conditionnel</li></ul>"}],keyTakeaways:["GAN = jeu G vs D","WGAN plus stable","Mode collapse = probleme commun"],interviewQuestions:[{question:"Evaluer un GAN ?",answer:"FID (distance distributions), IS (diversite), visuel."}]},
+{
+id:"22",title:"Autoencoders/VAE",module:2,moduleName:"Deep Learning",duration:"30 min",difficulty:"Avance",content:[{title:"Autoencoder",type:"text",text:"Compresse (encodeur) → espace latent → reconstruit (decodeur). Minimise difference entree/sortie."},{title:"Types",type:"text",text:"Sparse (sparsite), Contractif (robustesse), VAE (generatif)."},{title:"VAE",type:"formula",text:"z = \u03bc + \u03c3\u03b5, \u03b5~N(0,I). L = recon + KL(q(z|x)||p(z))"},{title:"Applications",type:"list",text:"<ul><li>Reduction dimensionnalite</li><li>Denosing</li><li>Generation (VAE)</li><li>Anomaly detection</li></ul>"},{title:"PyTorch",type:"code",text:"class VAE(nn.Module):\n    def __init__(self, id=784, ld=32):\n        super().__init__()\n        self.enc = nn.Sequential(nn.Linear(id,256),nn.ReLU(),nn.Linear(256,128),nn.ReLU())\n        self.mu = nn.Linear(128,ld)\n        self.lv = nn.Linear(128,ld)\n        self.dec = nn.Sequential(nn.Linear(ld,128),nn.ReLU(),nn.Linear(128,256),nn.ReLU(),nn.Linear(256,id),nn.Sigmoid())\n    def reparam(self,mu,lv):\n        return mu + torch.exp(0.5*lv)*torch.randn_like(mu)\n    def forward(self,x):\n        h=self.enc(x); mu,lv=self.mu(h),self.lv(h)\n        return self.dec(self.reparam(mu,lv)),mu,lv"}],keyTakeaways:["AE compresse et reconstruit","VAE apprend distribution dans l'espace latent"],interviewQuestions:[{question:"AE vs PCA ?",answer:"AE non-lineaire, PCA lineaire. AE capture patterns complexes."}]}
+];
+,
+{id:"23",title:"NLP Fondamentaux",module:3,moduleName:"LLMs et NLP",duration:"30 min",difficulty:"Facile",content:[{title:"BPE",type:"text",text:"Byte Pair Encoding. Commence par caracteres, fusionne paires frequentes. Standard LLMs."},{title:"TF-IDF",type:"formula",text:"TF-IDF(t,d) = TF(t,d) \u00d7 log(N/DF(t))"},{title:"Word Embeddings",type:"text",text:"<h3>Word2Vec</h3><p>Skip-gram (contexte depuis mot) ou CBOW (mot depuis contexte).</p><h3>GloVe</h3><p>Factorise matrice cooccurrence.</p><h3>FastText</h3><p>N-grams sous-mots. Gere OOV.</p>"},{title:"Exemple",type:"code",text:"from gensim.models import Word2Vec\ncorpus = [['ml','est','IA'],['dl','reseaux','neurones']]\nmodel = Word2Vec(corpus, vector_size=100, window=5)\nresult = model.wv.most_similar(positive=['king','woman'],negative=['man'])"},{title:"Limites",type:"text",text:"Embeddings statiques = polysemie non geree. Transformers resolutionnent cela."}],keyTakeaways:["BPE = tokenisation standard","TF-IDF mesure importance","Embeddings statiques pas de polysemie"],interviewQuestions:[{question:"Pourquoi BPE ?",answer:"Gere OOV, adapte vocab, partage sous-mots."}]},
+{
+id:"24",title:"Transformers NLP",module:3,moduleName:"LLMs et NLP",duration:"35 min",difficulty:"Moyen",content:[{title:"BERT",type:"text",text:"Encodeur. MLM (tokens masques) + NSP. Bidirectionnel. Classification, NER, QA."},{title:"GPT",type:"text",text:"Decodeur. Unidirectionnel. Token suivant. Generation, conversation."},{title:"T5",type:"text",text:"Text-to-text. Toutes les taches = texte→texte."},{title:"Choix",type:"list",text:"<ul><li>BERT : comprehension</li><li>GPT : generation</li><li>T5/BART : seq2seq</li><li>RoBERTa : BERT ameliore</li></ul>"},{title:"HuggingFace",type:"code",text:"from transformers import pipeline\nclf = pipeline('sentiment-analysis')\nprint(clf('Excellent film'))\nqa = pipeline('question-answering')\nprint(qa(question='Qui?', context='Victor Hugo'))"}],keyTakeaways:["BERT = comprehension bidirectionnelle","GPT = generation unidirectionnelle","HuggingFace = standard"],interviewQuestions:[{question:"BERT vs GPT ?",answer:"BERT : comprehension. GPT : generation."}]},
+{
+id:"25",title:"Fine-tuning LLMs",module:3,moduleName:"LLMs et NLP",duration:"35 min",difficulty:"Avance",content:[{title:"Pourquoi",type:"text",text:"Pre-training = general. Fine-tuning = specifique. Quand prompt ne suffit pas."},{title:"LoRA",type:"text",text:"W' = W + BA. Rang faible. 0.1-1% parametres. Tres economique."},{title:"QLoRA",type:"text",text:"LoRA + quantification 4-bit (NF4). 7B-13B sur GPU 24GB."},{title:"Code",type:"code",text:"from peft import LoraConfig, get_peft_model\n\nmodel = AutoModelForCausalLM.from_pretrained(name, device_map='auto')\nlora = LoraConfig(r=16, lora_alpha=32, target_modules=['q_proj','v_proj'])\nmodel = get_peft_model(model, lora)\nmodel.print_trainable_parameters()"},{title:"Instruction Tuning",type:"text",text:"Paires (instruction, reponse). Alpaca 52K, ShareGPT."}],keyTakeaways:["LoRA = 0.1-1% parametres","QLoRA = 4-bit + LoRA","Instruction tuning aligne aux demandes"],interviewQuestions:[{question:"LoRA vs Full ?",answer:"LoRA : 90% cas. Full : domaine tres specifique."}]},
+{
+id:"26",title:"RAG",module:3,moduleName:"LLMs et NLP",duration:"35 min",difficulty:"Avance",content:[{title:"Principe",type:"text",text:"Recherche documents + generation. Reponses a jour, sources citables."},{title:"Vector DB",type:"list",text:"<ul><li>Pinecone : managed</li><li>Weaviate : open source</li><li>ChromaDB : local</li><li>FAISS : Meta, rapide</li></ul>"},{title:"Embeddings",type:"list",text:"<ul><li>OpenAI text-embedding-3</li><li>Sentence Transformers</li><li>BGE : tres bonnes perfs</li></ul>"},{title:"Chunking",type:"text",text:"Fixed (256-1024 tokens), Semantic, Recursive. Le chunking est critique."},{title:"Code",type:"code",text:"from langchain.vectorstores import Chroma\nfrom langchain.embeddings import OpenAIEmbeddings\nfrom langchain.chains import RetrievalQA\n\nemb = OpenAIEmbeddings()\nvdb = Chroma.from_documents(docs, emb)\nretriever = vdb.as_retriever(search_kwargs={'k':3})\nqa = RetrievalQA.from_chain_type(llm=OpenAI(), retriever=retriever)\nresult = qa.run('Explique le RAG')"}],keyTakeaways:["RAG = recherche + generation","Chunking critique pour qualite","Vector DB indexe embeddings"],interviewQuestions:[{question:"RAG vs fine-tuning ?",answer:"RAG : accces specifique, pas retraining. FT : connaissance integree."}]},
+{
+id:"27",title:"Prompt Engineering",module:3,moduleName:"LLMs et NLP",duration:"25 min",difficulty:"Facile",content:[{title:"Principes",type:"text",text:"Clarte, contexte, format, exemples. La base."},{title:"Few-shot",type:"text",text:"3-5 exemples dans le prompt. Le LLM generalise le pattern."},{title:"Chain-of-Thought",type:"text",text:"'Pensez etape par etape'. Ameliore raisonnement."},{title:"System Prompts",type:"text",text:"Role, comportement, contraintes. Persistants."},{title:"Avancees",type:"list",text:"<ul><li>Few-shot : 3-5 exemples</li><li>CoT : raisonnement</li><li>Self-consistency : multiples chemins</li><li>Tree-of-Thought : exploration branches</li><li>ReAct : raisonnement + action</li></ul>"}],keyTakeaways:["Clarte = base","Few-shot et CoT ameliorent","System prompts definissent le comportement"],interviewQuestions:[{question:"Few-shot vs zero ?",answer:"Zero : generique. Few-shot : specifique, meilleur."}]},
+{
+id:"28",title:"Alignement IA",module:3,moduleName:"LLMs et NLP",duration:"30 min",difficulty:"Avance",content:[{title:"Pourquoi",type:"text",text:"L'alignement rend LLM utile, inoffensif, honnete."},{title:"RLHF",type:"text",text:"Reward model + PPO. Preferences humaines → recompense → optimisation."},{title:"DPO",type:"text",text:"Optimisation directe des preferences. Plus simple, meme perfs."},{title:"Constitutional AI",type:"text",text:"Modele suit principes. Auto-critique et correction."},{title:"Code",type:"code",text:"from trl import PPOTrainer, PPOConfig\nconfig = PPOConfig(lr=1e-5, batch_size=16, ppo_epochs=4)\nppo = PPOTrainer(model=model, ref_model=ref, tokenizer=tok, config=config)\n# Boucle : query → generate → reward → step"},{title:"Echelles",type:"list",text:"<ul><li>Helpful : utile</li><li>Harmless : inoffensif</li><li>Honest : honnete</li></ul>"}],keyTakeaways:["RLHF = reward model + PPO","DPO = direct, plus simple","Constitutional AI = principes"],interviewQuestions:[{question:"RLHF vs DPO ?",answer:"RLHF flexible mais couteux. DPO simple, meme performance."}]},
+{
+id:"29",title:"Evaluation LLMs",module:3,moduleName:"LLMs et NLP",duration:"25 min",difficulty:"Moyen",content:[{title:"Benchmarks",type:"list",text:"<ul><li>MMLU : 57 matieres</li><li>HumanEval : code</li><li>GSM8K : maths</li><li>MT-Bench : conversation</li></ul>"},{title:"Perplexity",type:"formula",text:"PPL = exp(-1/N \u00d7 \u03a3 log P(w\u1d62))"},{title:"Auto",type:"list",text:"<ul><li>BLEU : similarite n-gram (traduction)</li><li>ROUGE : recouvrement (resume)</li><li>Exact Match : reponse exacte (QA)</li></ul>"},{title:"Humaine",type:"text",text:"MT-Bench, Chatbot Arena. Mesure utilite, honnetete, securite."},{title:"Code",type:"code",text:"from lm_eval import evaluator\nresults = evaluator.simple_evaluate(\n    model='hf', model_args='pretrained=Llama-2-7b',\n    tasks=['mmlu'], num_fewshot=5)"}],keyTakeaways:["MMLU et HumanEval = reference","Perplexite = qualite prediction","Evaluation humaine indispensable"],interviewQuestions:[{question:"BLEU vs ROUGE ?",answer:"BLEU = precision. ROUGE = rappel."}]},
+{
+id:"30",title:"Deploiement LLMs",module:3,moduleName:"LLMs et NLP",duration:"30 min",difficulty:"Avance",content:[{title:"Quantification",type:"text",text:"INT8 (2x), INT4 (4x). GGUF, GPTQ, AWQ. BitsAndBytes en PyTorch."},{title:"vLLM",type:"text",text:"PagedAttention, continuous batching, tensor parallel. 2-24x plus rapide."},{title:"TensorRT",type:"text",text:"Compilation NVIDIA. Operations optimisees GPU. 2-5x speedup."},{title:"Distillation",type:"text",text:"Teacher → Student. Petit modele imite grand. Connaissances transferees."},{title:"Code",type:"code",text:"from vllm import LLM, SamplingParams\nllm = LLM(model='Llama-2-7b', tensor_parallel_size=2)\nparams = SamplingParams(temperature=0.7, max_tokens=512)\nout = llm.generate(['Explique ML'], params)"}],keyTakeaways:["INT4 = 4x moins memoire","vLLM = standard serving","Distillation = modeles compacts"],interviewQuestions:[{question:"Quantification vs distillation ?",answer:"Quant = precision poids. Distill = entraine petit. Complementaires."}]},
+{
+id:"31",title:"Agents IA",module:3,moduleName:"LLMs et NLP",duration:"35 min",difficulty:"Avance",content:[{title:"Concept",type:"text",text:"LLM qui agit. Raisonne, decide, utilise outils, execute actions."},{title:"Tool Use",type:"text",text:"LLM decide quand utiliser outils. Fonctions decrites en JSON."},{title:"ReAct",type:"text",text:"Penser (CoT) → Agir (outil) → Observer (resultat) → repeter."},{title:"LangGraph",type:"text",text:"Graphe d'execution. Etats, conditions, boucles. Plus flexible que chains."},{title:"Code",type:"code",text:"functions = [{'name': 'search_db',\n    'description': 'Rechercher en base',\n    'parameters': {'type':'object',\n        'properties': {'query': {'type':'string'}},\n        'required': ['query']}}]\n\nresp = openai.chat.completions.create(\n    model='gpt-4',\n    messages=[{'role':'user','content':'Trouve Paris'}],\n    functions=functions)"},{title:"Patterns",type:"list",text:"<ul><li>ReAct : raisonner + agir</li><li>Plan-and-Execute</li><li>Multi-Agent</li><li>Reflection : auto-critique</li></ul>"}],keyTakeaways:["Agent = LLM + actions","ReAct = CoT + outils","LangGraph = graphes"],interviewQuestions:[{question:"Agent vs LLM ?",answer:"Agent agit (outils, APIs). LLM genere texte."}]},
+{
+id:"32",title:"Ethique IA",module:3,moduleName:"LLMs et NLP",duration:"25 min",difficulty:"Moyen",content:[{title:"Biais",type:"text",text:"Modeles reproduisent/amplifient biais donnees. Audit par demographie. Mitigation : re-echantillonnage, diversite."},{title:"Hallucinations",type:"text",text:"Genere faux avec assurance. Solutions : RAG, citations, calibration, fine-tuning fiable."},{title:"Red Teaming",type:"text",text:"Test systematique failles : prompt injection, jailbreak, contenu dangereux."},{title:"AI Act",type:"text",text:"Reglement UE :<ul><li>Inacceptable : interdit</li><li>Eleve : regule</li><li>Limite : transparence</li><li>Minimal : libre</li></ul>"},{title:"Pratiques",type:"list",text:"<ul><li>Documentation : model cards</li><li>Transparence : informer utilisateur</li><li>Consentement : donnees avec accord</li><li>Explicabilite : decisions critiques</li><li>Controle humain : decisions importantes</li></ul>"}],keyTakeaways:["Modeles reproduisent biais","Red teaming = test failles","AI Act = reglement UE"],interviewQuestions:[{question:"Mitiger biais ?",answer:"Audit, re-echantillonnage, debiasing, diversite equipes."}]},
+];
+
+function getDifficultyClass(d) {
+  if(d==='Facile') return 'badge-easy';
+  if(d==='Moyen') return 'badge-medium';
+  return 'badge-hard';
+}
+
+function getModuleQuizTitle(m) {
+  const titles = {1:'Fondamentaux ML',2:'Deep Learning',3:'LLMs et NLP'};
+  return titles[m] || 'Module';
+}
+
+function getProgress() {
+  try { return JSON.parse(localStorage.getItem('cortex_progress') || '{}'); } catch(e) { return {}; }
+}
+
+function saveProgress(id) {
+  const p = getProgress();
+  if(!p[id]) { p[id] = {completed: Date.now()}; localStorage.setItem('cortex_progress', JSON.stringify(p)); }
+}
+
+function renderLesson(lesson, id) {
+  document.title = lesson.title + ' - CortexLLMs.io';
+
+  // Breadcrumb + Meta
+  let metaHTML = '<div class="breadcrumb"><a href="/">Accueil</a> / <a href="/pages/ai-engineering.html">Ingenierie IA</a> / ' + lesson.title + '</div>';
+  metaHTML += '<h1>' + lesson.title + '</h1>';
+  metaHTML += '<div class="lesson-meta">';
+  metaHTML += '<span class="meta-item">Module ' + lesson.module + ' : ' + lesson.moduleName + '</span>';
+  metaHTML += '<span class="meta-item">Lecon ' + lesson.id + '/32</span>';
+  metaHTML += '<span class="meta-item">' + lesson.duration + '</span>';
+  metaHTML += '<span class="badge ' + getDifficultyClass(lesson.difficulty) + '">' + lesson.difficulty + '</span>';
+  metaHTML += '</div>';
+
+  // Content
+  let contentHTML = '<div class="content">';
+  lesson.content.forEach(function(section, i) {
+    const slug = 'section-' + i;
+    contentHTML += '<h2 id="' + slug + '">' + section.title + '</h2>';
+    if(section.type === 'text') contentHTML += section.text;
+    else if(section.type === 'code') contentHTML += '<pre><code>' + section.text + '</code></pre>';
+    else if(section.type === 'formula') contentHTML += '<div class="formula">' + section.text + '</div>';
+    else if(section.type === 'callout') contentHTML += '<div class="callout">' + section.text + '</div>';
+    else if(section.type === 'list') contentHTML += section.text;
+  });
+  contentHTML += '</div>';
+
+  // Key Takeaways
+  contentHTML += '<div class="key-takeaways"><h3>Points cles a retenir</h3><ul>';
+  lesson.keyTakeaways.forEach(function(t) { contentHTML += '<li>' + t + '</li>'; });
+  contentHTML += '</ul></div>';
+
+  // Interview Questions
+  contentHTML += '<div class="interview-section"><h3>Questions d\'entretien</h3>';
+  lesson.interviewQuestions.forEach(function(qa, i) {
+    contentHTML += '<div class="qa"><h4>Q' + (i+1) + ' : ' + qa.question + '</h4><p>' + qa.answer + '</p></div>';
+  });
+  contentHTML += '</div>';
+
+  // Quiz CTA
+  contentHTML += '<div class="quiz-cta"><h3>Testez vos connaissances</h3><p>Quiz sur ' + lesson.moduleName + '</p><a href="/pages/quizzes.html">Commencer le Quiz</a></div>';
+
+  // Prev/Next
+  var prevId = null, nextId = null;
+  for(var i=0; i<lessons.length; i++) {
+    if(lessons[i].id === id) {
+      if(i > 0) prevId = lessons[i-1].id;
+      if(i < lessons.length-1) nextId = lessons[i+1].id;
+      break;
+    }
+  }
+  contentHTML += '<div class="nav-lesson">';
+  if(prevId) {
+    var prev = lessons.find(function(l){return l.id===prevId;});
+    contentHTML += '<a href="?id=' + prevId + '"><span>&larr; Lecon precedente</span>' + prev.title + '</a>';
+  } else {
+    contentHTML += '<a></a>';
+  }
+  if(nextId) {
+    var next = lessons.find(function(l){return l.id===nextId;});
+    contentHTML += '<a href="?id=' + nextId + '"><span>Lecon suivante &rarr;</span>' + next.title + '</a>';
+  } else {
+    contentHTML += '<a></a>';
+  }
+  contentHTML += '</div>';
+
+  document.getElementById('lesson-content').innerHTML = metaHTML + contentHTML;
+
+  // Sidebar TOC
+  var tocHTML = '';
+  lesson.content.forEach(function(section, i) {
+    tocHTML += '<a href="#section-' + i + '">' + section.title + '</a>';
+  });
+  document.getElementById('toc').innerHTML = tocHTML;
+
+  // Sidebar progress
+  var progress = getProgress();
+  var completed = Object.keys(progress).length;
+  var pct = Math.round((completed / 32) * 100);
+  document.getElementById('progress-text').textContent = completed + '/32 lecons completees (' + pct + '%)';
+  document.getElementById('progress-bar').style.width = pct + '%';
+
+  // Sidebar quiz
+  document.getElementById('sidebar-quiz-title').textContent = 'Quiz ' + lesson.moduleName;
+  document.getElementById('sidebar-quiz-desc').textContent = 'Testez sur ' + lesson.moduleName;
+
+  // Sidebar lessons
+  var modLessons = lessons.filter(function(l){return l.module===lesson.module;});
+  var sideHTML = '<div class="module-title">Module ' + lesson.module + ' - ' + lesson.moduleName + '</div>';
+  modLessons.forEach(function(l) {
+    var cls = l.id === id ? 'current' : '';
+    var done = progress[l.id] ? ' &#10003;' : '';
+    sideHTML += '<a href="?id=' + l.id + '" class="' + cls + '" style="display:block;padding:4px 0;color:var(--t2);font-size:.85rem' + (cls ? ';color:var(--acc);font-weight:600' : '') + '">' + parseInt(l.id) + '. ' + l.title + done + '</a>';
+  });
+  document.getElementById('sidebar-lessons').innerHTML = sideHTML;
+
+  // Mark as viewed
+  saveProgress(id);
+
+  // TOC scroll spy
+  var tocLinks = document.querySelectorAll('.toc a');
+  var sectionEls = document.querySelectorAll('.content h2[id]');
+  window.addEventListener('scroll', function() {
+    var current = '';
+    sectionEls.forEach(function(s) { if(window.scrollY >= s.offsetTop - 100) current = s.id; });
+    tocLinks.forEach(function(a) { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
+  });
+}
+
+// Parse URL and render
+var params = new URLSearchParams(window.location.search);
+var lessonId = params.get('id') || '01';
+if(lessonId.length === 1) lessonId = '0' + lessonId;
+
+var lesson = lessons.find(function(l){return l.id===lessonId;});
+if(!lesson) lesson = lessons[0];
+renderLesson(lesson, lessonId);
+</script>
+</body>
+</html>
