@@ -62,7 +62,7 @@ code{font-family:'JetBrains Mono',monospace;color:#a5f3fc}
 .lesson-link .check{display:none;font-size:.7rem}
 .lesson-link.completed .check{display:inline}
 .module-toggle{cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center}
-.module-toggle::after{content:'▾';transition:transform .2s}
+.module-toggle::after{content:'';transition:transform .2s}
 .module-toggle.collapsed::after{transform:rotate(-90deg)}
 .module-lessons{overflow:hidden;transition:max-height .3s}
 .module-lessons.collapsed{max-height:0!important}
@@ -407,7 +407,7 @@ content:`
         prev = current
         current = next_temp
     
-    # head est maintenant la fin du groupe,递归 le reste
+    # head est maintenant la fin du groupe, le reste
     head.next = reverse_k_group(current, k)
     return prev</code></pre>
 

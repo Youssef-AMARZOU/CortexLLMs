@@ -62,7 +62,7 @@ code{font-family:'JetBrains Mono',monospace;color:#a5f3fc}
 .lesson-link .check{display:none;font-size:.7rem}
 .lesson-link.completed .check{display:inline}
 .module-toggle{cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center}
-.module-toggle::after{content:'▾';transition:transform .2s}
+.module-toggle::after{content:'';transition:transform .2s}
 .module-toggle.collapsed::after{transform:rotate(-90deg)}
 .module-lessons{overflow:hidden;transition:max-height .3s}
 .module-lessons.collapsed{max-height:0!important}
@@ -571,7 +571,7 @@ content:`
 </ul>
 
 <h2 id="pacelc">PACELC</h2>
-<p>PACELC etend CAP en考虑ant aussi les cas sans partition :</p>
+<p>PACELC etend CAP enant aussi les cas sans partition :</p>
 <div class="formula">En cas de Partition : A ou C. Sinon : Latence ou Coherence.</div>
 <ul>
 <li><strong>PA/EL</strong> : disponibilite + latence (DynamoDB, Cassandra)</li>

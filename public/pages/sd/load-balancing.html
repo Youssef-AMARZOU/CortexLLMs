@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -128,7 +128,7 @@ code{font-family:JetBrains Mono,monospace;color:#a5f3fc}
 
 <div class="formula">Position = hash(serveur_id + "#" + vnode_numero)</div>
 
-<p>Netflix利用这个概念 avec Cassanda et DynamoDB. Chaque partition de donnees est attribuee a un serveur en suivant l anneau. Les vnodes garantissent une distribution quasi-uniforme meme avec un petit nombre de serveurs physiques.</p>
+<p>Netflix avec Cassanda et DynamoDB. Chaque partition de donnees est attribuee a un serveur en suivant l anneau. Les vnodes garantissent une distribution quasi-uniforme meme avec un petit nombre de serveurs physiques.</p>
 
 <div class="callout">
 <strong>Utilisation re :</strong> Le consistent hashing est utilise dans Amazon DynamoDB, Apache Cassandra, Memcached, Discord, et CDNs comme Cloudflare. C est un concept incontournable pour les systemes distribues qui necessitent une distribution efficace des donnees avec un minimum de reassignments lors des changements de topologie.

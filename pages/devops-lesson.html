@@ -62,7 +62,7 @@ code{font-family:'JetBrains Mono',monospace;color:#a5f3fc}
 .lesson-link .check{display:none;font-size:.7rem}
 .lesson-link.completed .check{display:inline}
 .module-toggle{cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center}
-.module-toggle::after{content:'▾';transition:transform .2s}
+.module-toggle::after{content:'';transition:transform .2s}
 .module-toggle.collapsed::after{transform:rotate(-90deg)}
 .module-lessons{overflow:hidden;transition:max-height .3s}
 .module-lessons.collapsed{max-height:0!important}
@@ -924,7 +924,7 @@ spec:
           value: "3"</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : GitOps vs CI/CD traditionnel ?</h4><p><strong>CI/CD trad</strong> : pipeline push les changements (侵入的). <strong>GitOps</strong> : reconciliateur pull depuis Git (declaratif). GitOps offre : audit trail (Git), rollback facile (git revert), securite (pas de credentials dans le pipeline), drift detection.</p></div>
+<div class="qa"><h4>Q1 : GitOps vs CI/CD traditionnel ?</h4><p><strong>CI/CD trad</strong> : pipeline push les changements (). <strong>GitOps</strong> : reconciliateur pull depuis Git (declaratif). GitOps offre : audit trail (Git), rollback facile (git revert), securite (pas de credentials dans le pipeline), drift detection.</p></div>
 <div class="qa"><h4>Q2 : Comment gerer les secrets dans un workflow GitOps ?</h4><p>1) Sealed Secrets (chiffre dans Git). 2) SOPS (Mozilla) pour chiffrer les fichiers YAML. 3) External Secrets Operator (lecture depuis Vault/AWS SM). 4) Vault Agent Injector (sidecar). 5) Jamais de secrets en clair dans Git.</p></div>
 `},
 

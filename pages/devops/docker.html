@@ -117,7 +117,7 @@ RUN go build -o /app
 FROM alpine:3.18
 COPY --from=builder /app /app
 CMD ["/app"]</code></pre>
-<p>L image finale ne contient que l executable compile et l image alpine (5 Mo), sans les outils de compilation (几百 Mo). Cela reduit significativement la taille de l image et la surface d attaque.</p>
+<p>L image finale ne contient que l executable compile et l image alpine (5 Mo), sans les outils de compilation ( Mo). Cela reduit significativement la taille de l image et la surface d attaque.</p>
 
 <div class="callout warning">
 <strong>Bonnes pratiques Dockerfile :</strong> 1) Ordonner les instructions du moins changeable au plus changeable (COPY requirements.txt avant COPY .). 2) Utiliser .dockerignore pour exclure fichiers inutiles. 3) Ne jamais stocker de secrets dans les layers (utiliser des variables d environnement ou des secrets Docker). 4) Utiliser des images officielles et verified publishers. 5) Fixer les versions des dependances pour la reproductibilite.
@@ -346,7 +346,7 @@ docker history mon-app:1.0   # couches d une image</code></pre>
 
 <div class="qa">
 <h4>Q4 : Un conteneur Docker est-il aussi isole qu une machine virtuelle ?</h4>
-<p>Non. Les conteneurs partagent le noyau Linux de l hote, ce qui signifie qu une vulnerabilite du noyau peut potentiellement permettre une echappatoire (container escape). Les VMs ont un noyau完全 isole. En pratique, on combine les deux : les conteneurs dans des VMs, avec des measures de securite comme seccomp, AppArmor, SELinux, et --cap-drop pour reduire les privileges. Kubernetes utilise souvent des sandboxing comme gVisor ou Kata Containers pour renforcer l isolation.</p>
+<p>Non. Les conteneurs partagent le noyau Linux de l hote, ce qui signifie qu une vulnerabilite du noyau peut potentiellement permettre une echappatoire (container escape). Les VMs ont un noyau isole. En pratique, on combine les deux : les conteneurs dans des VMs, avec des measures de securite comme seccomp, AppArmor, SELinux, et --cap-drop pour reduire les privileges. Kubernetes utilise souvent des sandboxing comme gVisor ou Kata Containers pour renforcer l isolation.</p>
 </div>
 
 <div class="qa">
