@@ -98,7 +98,7 @@ const LESSONS=[
 {id:1,title:"Integration Continue (CI)",module:1,difficulty:"facile",duration:"20 min",
 content:`
 <h2 id="definition">Qu'est-ce que l'Integration Continue?</h2>
-<p>L'Integration Continue (CI) est une pratiques DevOps ou les developpeurs fusionnent leurs modifications dans un depot partage frequentement, typiquement plusieurs fois par jour. Chaque fusion est verifiee par un pipeline automatique qui construit l'application et execute les tests.</p>
+<p>L'Integration Continue, ou CI, est une pratique DevOps. Les developpeurs fusionnent leurs modifications dans un depot partage frequemment, typiquement plusieurs fois par jour. Chaque fusion est verifiee par un pipeline automatique qui construit l'application et execute les tests.</p>
 <div class="callout"><strong>Objectif :</strong> Detecter les problemes le plus tot possible dans le cycle de developpement, reduisant le cout de correction.</div>
 
 <h2 id="gitflow">Branchement GitFlow</h2>
@@ -143,7 +143,7 @@ git branch -d feature/auth-system</code></pre>
 <li><strong>Lint</strong> : verification du style de code (ESLint, Prettier)</li>
 <li><strong>Unit Tests</strong> : tests unitaires rapides</li>
 <li><strong>Integration Tests</strong> : tests d'integration avec bases de donnees</li>
-<li><strong>Security Scan</strong : analyse de vulnerabilites (Snyk, Trivy)</li>
+<li><strong>Security Scan</strong> : analyse de vulnerabilites (Snyk, Trivy)</li>
 <li><strong>Coverage</strong> : verification du taux de couverture de code</li>
 </ol>
 <pre><code># Exemple pipeline GitLab CI
@@ -193,10 +193,10 @@ test:
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quelle est la difference entre CI et CD ?</h4><p>CI (Integration Continue) automatise la construction et les tests a chaque fusion. CD peut signifier <strong>Delivery</strong> (automatisation jusqu'a un artefact deployable) ou <strong>Deployment</strong> (automatisation jusqu'a la production). Le CD complet inclut la CI.</p></div>
-<div class="qa"><h4>Q2 : Comment gerez-vous les echecs de build flaky ?</h4><p>1) Isoler et corriger le test flaky. 2) Ajouter un mecanisme de retry avec limite. 3) Mettre de cote le test temporairement. 4) Tracker les tests flaky avec un dashboard. 5) Fixer la cause racine (race conditions, dependances externes).</p></div>
-<div class="qa"><h4>Q3 : Comment optimiser un pipeline CI lent ?</h4><p>1) Paraleliser les jobs independants. 2) Cacher les dependances (node_modules, docker layers). 3) Utiliser des containers pre-build. 4) Executer les tests les plus rapides en premier (fail fast). 5) Splitter les tests unitaires et d'integration dans des pipelines separes.</p></div>
-<div class="qa"><h4>Q4 : Qu'est-ce qu'un build artifact et comment le gerer ?</h4><p>Un artifact est le produit compile du build (JAR, Docker image, bundle JS). Bonnes pratiques : 1) Versionner avec le commit SHA. 2) Storer dans un registre centralise (Nexus, Artifactory, GHCR). 3) Retention automatique (garder les 10 derniers). 4) Signer pour la securite.</p></div>
+<div class="qa"><h4>Q1 : Quelle est la difference entre CI et CD ?</h4><p>La <strong>CI</strong>, ou Integration Continue, automatise la construction et les tests a chaque fusion. Le <strong>CD</strong> peut signifier Continuous Delivery, jusqu'a un artefact deployable, ou Continuous Deployment, jusqu'a la production. Le CD complet inclut la CI.</p></div>
+<div class="qa"><h4>Q2 : Comment gerez-vous les echecs de build flaky ?</h4><ul><li>Isoler et corriger le test flaky.</li><li>Ajouter un mecanisme de retry avec limite.</li><li>Mettre de cote le test temporairement.</li><li>Tracker les tests flaky avec un dashboard.</li><li>Fixer la cause racine (race conditions, dependances externes).</li></ul></div>
+<div class="qa"><h4>Q3 : Comment optimiser un pipeline CI lent ?</h4><ul><li>Paraleliser les jobs independants.</li><li>Cacher les dependances (node_modules, docker layers).</li><li>Utiliser des containers pre-build.</li><li>Executer les tests les plus rapides en premier (fail fast).</li><li>Splitter les tests unitaires et d'integration dans des pipelines separes.</li></ul></div>
+<div class="qa"><h4>Q4 : Qu'est-ce qu'un build artifact et comment le gerer ?</h4><p>Un artifact est le produit compile du build (JAR, Docker image, bundle JS). Bonnes pratiques :</p><ul><li>Versionner avec le commit SHA.</li><li>Storer dans un registre centralise (Nexus, Artifactory, GHCR).</li><li>Retention automatique (garder les 10 derniers).</li><li>Signer pour la securite.</li></ul></div>
 `},
 
 {id:2,title:"Deploiement Continu (CD)",module:1,difficulty:"moyen",duration:"25 min",
@@ -296,9 +296,9 @@ promote-production:
   when: manual</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quand utiliser Blue-Green vs Canary ?</h4><p><strong>Blue-Green</strong> : quand vous voulez un basculement instantane et un rollback immediat (applications sans etat). <strong>Canary</strong> : quand vous voulez valider progressivement avec du vrai trafic (reduit le risque). Canary est plus econome en ressources.</p></div>
-<div class="qa"><h4>Q2 : Comment gerez-vous les rollback en production ?</h4><p>1) Kubernetes : <code>kubectl rollout undo deployment/app</code>. 2) Blue-Green : basculer le load balancer. 3) Feature flags : desactiver la feature. 4) Database : migrations backward-compatible. 5) Tjours garder les N-1 versions d'images Docker.</p></div>
-<div class="qa"><h4>Q3 : Qu'est-ce que le drift detection en deploiement ?</h4><p>Le drift detection identifie les ecarts entre l'etat desire (code) et l'etat reel (infrastructure). Outils : Terraform drift detection, Kubernetes audit logs, AWS Config. Correction : re-appliquer la configuration ou arreger manuellement.</p></div>
+<div class="qa"><h4>Q1 : Quand utiliser Blue-Green vs Canary ?</h4><p>Le deploiement <strong>Blue-Green</strong> convient quand vous voulez un basculement instantane et un rollback immediat, notamment sur des applications sans etat. La strategie <strong>Canary</strong> vous permet de valider progressivement avec du vrai trafic, ce qui reduit le risque. Canary consomme aussi moins de ressources.</p></div>
+<div class="qa"><h4>Q2 : Comment gerez-vous les rollback en production ?</h4><ul><li>Kubernetes : <code>kubectl rollout undo deployment/app</code>.</li><li>Blue-Green : basculer le load balancer.</li><li>Feature flags : desactiver la feature.</li><li>Database : migrations backward-compatible.</li><li>Toujours garder les N-1 versions d'images Docker.</li></ul></div>
+<div class="qa"><h4>Q3 : Qu'est-ce que le drift detection en deploiement ?</h4><p>La detection de derive identifie les ecarts entre l'etat desire, le code, et l'etat reel de l'infrastructure. Trois outils couvrent ce besoin : la drift detection de Terraform, les audit logs de Kubernetes et AWS Config. Corrigez la derive en re-appliquant la configuration ou en intervenant manuellement.</p></div>
 `},
 
 {id:3,title:"Pipelines GitLab CI",module:1,difficulty:"moyen",duration:"25 min",
@@ -342,7 +342,7 @@ test-integration:
   needs: ["build", "test-unit"]</code></pre>
 
 <h2 id="cache-artifacts">Cache et Artifacts</h2>
-<p><strong>Cache</strong> : stocke des fichiers entre les pipelines (dependances). <strong>Artifacts</strong> : stocke les produits d'un job pour les jobs suivants :</p>
+<p>Le <strong>Cache</strong> stocke des fichiers entre les pipelines, comme les dependances. Les <strong>Artifacts</strong> stockent les produits d'un job pour les jobs suivants :</p>
 <pre><code># Cache les node_modules
 cache:
   key:
@@ -378,7 +378,7 @@ build:
 # accesibles via $VARIABLE_NAME
 
 # Variables protegees (seulement sur branches protegees)
-# Variables маски (masquees dans les logs)</code></pre>
+# Variables masquees (jamais affichees dans les logs)</code></pre>
 
 <h2 id="rules">Rules et Conditions</h2>
 <p>Les rules remplacent <code>only/except</code> pour un controle fin :</p>
@@ -406,7 +406,7 @@ build:
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
 <div class="qa"><h4>Q1 : Comment structurer un pipeline GitLab CI pour une microservice architecture ?</h4><p>Utiliser <strong>include</strong> pour inclure un pipeline template par service. Chaque service a son propre .gitlab-ci.yml avec des stages communs. Utiliser <code>rules:changes</code> pour ne builder que les services modifies. Ex: <code>changes: [services/api/**]</code>.</p></div>
-<div class="qa"><h4>Q2 : Comment gerer les secrets dans GitLab CI ?</h4><p>1) Variables CI/CD protegees et masquees. 2) Vault integration avec <code>hashicorp-vault</code>. 3) <code>dotenv</code> artifacts pour les secrets dynamiques. 4) Jamais en dur dans le .gitlab-ci.yml. 5) Rotation reguliere des tokens.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer les secrets dans GitLab CI ?</h4><ul><li>Variables CI/CD protegees et masquees.</li><li>Vault integration avec <code>hashicorp-vault</code>.</li><li><code>dotenv</code> artifacts pour les secrets dynamiques.</li><li>Jamais en dur dans le .gitlab-ci.yml.</li><li>Rotation reguliere des tokens.</li></ul></div>
 `},
 
 {id:4,title:"GitHub Actions",module:1,difficulty:"moyen",duration:"25 min",
@@ -517,8 +517,8 @@ jobs:
       npm-\${{ runner.os }}-</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment securiser les GitHub Actions ?</h4><p>1) Pin les actions par SHA (pas par tag). 2) Utiliser <code>permissions</code> minimales. 3) Secrets dans le repo, pas en dur. 4) Valider les inputs des workflows reutilisables. 5) Audit les actions tierces. 6) Branch protection rules.</p></div>
-<div class="qa"><h4>Q2 : Comment gérer les conflits de merge dans les workflows ?</h4><p>1) Separer les workflows par domaine (CI, deploy, release). 2) Utiliser des paths ignores. 3) Conventions de nommage <code>workflow-name-feature.yml</code>. 4) Codeowners pour review des workflows. 5) Tests des workflows dans des PR dediees.</p></div>
+<div class="qa"><h4>Q1 : Comment securiser les GitHub Actions ?</h4><ul><li>Pin les actions par SHA (pas par tag).</li><li>Utiliser <code>permissions</code> minimales.</li><li>Secrets dans le repo, pas en dur.</li><li>Valider les inputs des workflows reutilisables.</li><li>Audit les actions tierces.</li><li>Branch protection rules.</li></ul></div>
+<div class="qa"><h4>Q2 : Comment gérer les conflits de merge dans les workflows ?</h4><ul><li>Separer les workflows par domaine (CI, deploy, release).</li><li>Utiliser des paths ignores.</li><li>Conventions de nommage <code>workflow-name-feature.yml</code>.</li><li>Codeowners pour review des workflows.</li><li>Tests des workflows dans des PR dediees.</li></ul></div>
 `},
 
 {id:5,title:"Jenkins",module:1,difficulty:"moyen",duration:"20 min",
@@ -618,8 +618,8 @@ def call(Map config = [:]) {
 standardPipeline buildCommand: 'mvn package', testCommand: 'mvn test'</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Jenkins vs GitHub Actions - lequel choisir ?</h4><p><strong>Jenkins</strong> : quand vous avez besoin de controle total, infrastructure self-hosted, plugins specialises, ou pipeline tres complexes. <strong>GitHub Actions</strong> : quand votre code est sur GitHub, vous voulez peu de maintenance, et des pipelines standardises. Jenkins est plus flexible mais plus lourd.</p></div>
-<div class="qa"><h4>Q2 : Comment scaler Jenkins pour 500+ projets ?</h4><p>1) Kubernetes agents dynamiques (spin up/down). 2) Pipeline Shared Libraries pour standardiser. 3) CasC (Configuration as Code) pour gerer la config. 4) Master securise (pas de builds dessus). 5) Monitoring avec Prometheus/Grafana. 6) Backup automatique de JENKINS_HOME.</p></div>
+<div class="qa"><h4>Q1 : Jenkins vs GitHub Actions - lequel choisir ?</h4><p><strong>Jenkins</strong> convient quand vous avez besoin d'un controle total, d'une infrastructure self-hosted, de plugins specialises ou de pipelines tres complexes. <strong>GitHub Actions</strong> convient quand votre code est deja sur GitHub, que vous voulez peu de maintenance et des pipelines standardises. Jenkins reste plus flexible. GitHub Actions reste plus leger.</p></div>
+<div class="qa"><h4>Q2 : Comment scaler Jenkins pour 500+ projets ?</h4><ul><li>Kubernetes agents dynamiques (spin up/down).</li><li>Pipeline Shared Libraries pour standardiser.</li><li>CasC (Configuration as Code) pour gerer la config.</li><li>Master securise (pas de builds dessus).</li><li>Monitoring avec Prometheus/Grafana.</li><li>Backup automatique de JENKINS_HOME.</li></ul></div>
 `},
 
 {id:6,title:"Qualite du Code",module:1,difficulty:"moyen",duration:"20 min",
@@ -644,7 +644,7 @@ sonarqube-check:
 <ul>
 <li><strong>Bugs</strong> : problemes logiques dans le code</li>
 <li><strong>Vulnerabilites</strong> : failles de securite potentielles</li>
-<li><strong>Code Smells</def> : code maintenable (complexite, duplication)</li>
+<li><strong>Code Smells</strong> : signaux de dette technique (complexite, duplication)</li>
 <li><strong>Coverage</strong> : taux de couverture des tests</li>
 <li><strong>Duplications</strong> : code duplique detecte</li>
 </ul>
@@ -689,8 +689,8 @@ npx jest --coverage --coverageReporters=text --coverageReporters=cobertura
 pytest --cov=src --cov-report=xml</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment imposer la qualite de code sans ralentir le developpement ?</h4><p>1) Quality gates automatiques (pas de deploiement sans pass). 2) Linting en pre-commit (husky, lint-staged). 3) Feedback rapide dans les PR. 4) Standards documentes et partages. 5) Code review systematique. 6) Ne pas etre trop strict au debut, monter progressivement.</p></div>
-<div class="qa"><h4>Q2 : 100% de couverture est-il necessaire ?</h4><p>Non. 100% ne garantit pas l'absence de bugs. visez 80%+ pour le code metier, 100% pour les chemins critiques (securite, paiement). Focus sur la <strong>couverture de branches</strong> (branch coverage) plutot que la couverture de lignes. Les tests d'integration sont souvent plus utiles que les tests unitaires excessifs.</p></div>
+<div class="qa"><h4>Q1 : Comment imposer la qualite de code sans ralentir le developpement ?</h4><ul><li>Quality gates automatiques (pas de deploiement sans pass).</li><li>Linting en pre-commit (husky, lint-staged).</li><li>Feedback rapide dans les PR.</li><li>Standards documentes et partages.</li><li>Code review systematique.</li><li>Ne pas etre trop strict au debut, monter progressivement.</li></ul></div>
+<div class="qa"><h4>Q2 : 100% de couverture est-il necessaire ?</h4><p>Non, 100% de couverture ne garantit pas l'absence de bugs. Visez 80% ou plus pour le code metier, et 100% pour les chemins critiques comme la securite et le paiement. Privilegiez la couverture de branches plutot que la couverture de lignes. Les tests d'integration sont souvent plus utiles que des tests unitaires excessifs.</p></div>
 `},
 
 {id:7,title:"Gestion des Secrets",module:1,difficulty:"difficile",duration:"25 min",
@@ -756,9 +756,9 @@ steps:
 <li><strong>Mutual TLS</strong> : chiffrement et authentification mutuelle</li>
 </ul>
 
-<h2 id="interview">Questions d'entretien frequentes</2>
-<div class="qa"><h4>Q1 : Que faire si un secret est expose publiquement ?</h4><p>1) <strong>Rotation immediate</strong> du secret expose. 2) Revoquer tous les tokens associes. 3) Analyser les logs d'acces. 4) Scanner le code (git-secrets, truffleHog). 5) Ajouter des pre-commit hooks. 6) Enseigner aux equipes. 7) Automatiser la detection (GitHub secret scanning).</p></div>
-<div class="qa"><h4>Q2 : Comment gerer les secrets dans Kubernetes ?</h4><p>1) Kubernetes Secrets (base64, pas chiffre par defaut). 2) Sealed Secrets (chiffrement GitOps). 3) External Secrets Operator (Vault/AWS SM). 4) CSI Secret Store Driver. 5) Jamais monter en volume si possible (prefer env vars). 6) RBAC strict sur les secrets.</p></div>
+<h2 id="interview">Questions d'entretien frequentes</h2>
+<div class="qa"><h4>Q1 : Que faire si un secret est expose publiquement ?</h4><ul><li><strong>Rotation immediate</strong> du secret expose.</li><li>Revoquer tous les tokens associes.</li><li>Analyser les logs d'acces.</li><li>Scanner le code (git-secrets, truffleHog).</li><li>Ajouter des pre-commit hooks.</li><li>Enseigner aux equipes.</li><li>Automatiser la detection (GitHub secret scanning).</li></ul></div>
+<div class="qa"><h4>Q2 : Comment gerer les secrets dans Kubernetes ?</h4><ul><li>Kubernetes Secrets (base64, pas chiffre par defaut).</li><li>Sealed Secrets (chiffrement GitOps).</li><li>External Secrets Operator (Vault/AWS SM).</li><li>CSI Secret Store Driver.</li><li>Jamais monter en volume si possible (prefer env vars).</li><li>RBAC strict sur les secrets.</li></ul></div>
 `},
 
 {id:8,title:"Feature Flags",module:1,difficulty:"facile",duration:"15 min",
@@ -826,8 +826,8 @@ const rollout = {
 };</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quand utiliser des feature flags vs branches ?</h4><p><strong>Feature flags</strong> : deploiement progressif, A/B testing, rollback instantane, experimentation. <strong>Branches</strong> : developpement parallele, code review, isolation de grosse feature. Utilisez les deux : branches pour le developpement, flags pour le deploiement.</p></div>
-<div class="qa"><h4>Q2 : Comment eviter la dette technique des feature flags ?</h4><p>1) Nettoyer apres activation (supprimer le flag et le code mort). 2) Datation : chaque flag a une date d'expiration. 3) Limite : max 10-15 flags actifs par service. 4) Audit regulier des flags. 5) Automation du cleanup.</p></div>
+<div class="qa"><h4>Q1 : Quand utiliser des feature flags vs branches ?</h4><p>Les <strong>feature flags</strong> servent au deploiement progressif, a l'A/B testing, au rollback instantane et a l'experimentation. Les <strong>branches</strong> servent au developpement parallele, a la code review et a l'isolation des grosses features. Utilisez les deux : les branches pour le developpement, les flags pour le deploiement.</p></div>
+<div class="qa"><h4>Q2 : Comment eviter la dette technique des feature flags ?</h4><ul><li>Nettoyer apres activation (supprimer le flag et le code mort).</li><li>Datation : chaque flag a une date d'expiration.</li><li>Limite : max 10-15 flags actifs par service.</li><li>Audit regulier des flags.</li><li>Automation du cleanup.</li></ul></div>
 `},
 
 {id:9,title:"GitOps",module:1,difficulty:"difficile",duration:"25 min",
@@ -924,8 +924,8 @@ spec:
           value: "3"</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : GitOps vs CI/CD traditionnel ?</h4><p><strong>CI/CD trad</strong> : pipeline push les changements (). <strong>GitOps</strong> : reconciliateur pull depuis Git (declaratif). GitOps offre : audit trail (Git), rollback facile (git revert), securite (pas de credentials dans le pipeline), drift detection.</p></div>
-<div class="qa"><h4>Q2 : Comment gerer les secrets dans un workflow GitOps ?</h4><p>1) Sealed Secrets (chiffre dans Git). 2) SOPS (Mozilla) pour chiffrer les fichiers YAML. 3) External Secrets Operator (lecture depuis Vault/AWS SM). 4) Vault Agent Injector (sidecar). 5) Jamais de secrets en clair dans Git.</p></div>
+<div class="qa"><h4>Q1 : GitOps vs CI/CD traditionnel ?</h4><p>Le <strong>CI/CD classique</strong> pousse les changements vers le pipeline. Le <strong>GitOps</strong> utilise un reconciliateur qui tire les changements depuis Git, de facon declarative. Le GitOps apporte une trace d'audit dans Git, un rollback simple avec git revert, une securite accrue car il n'y a pas de credentials dans le pipeline, et une detection de derive.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer les secrets dans un workflow GitOps ?</h4><ul><li>Sealed Secrets (chiffre dans Git).</li><li>SOPS (Mozilla) pour chiffrer les fichiers YAML.</li><li>External Secrets Operator (lecture depuis Vault/AWS SM).</li><li>Vault Agent Injector (sidecar).</li><li>Jamais de secrets en clair dans Git.</li></ul></div>
 `},
 
 {id:10,title:"Release Management",module:1,difficulty:"moyen",duration:"20 min",
@@ -997,8 +997,8 @@ content:`
 <div class="callout warning"><strong>Critique :</strong> Un hotfix doit toujours etre merge dans develop pour eviter de re-introduire le bug.</div>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment gerer les releases dans un mono-repo ?</h4><p>1) Tools : Lerna, Turborepo, Nx, Changesets. 2) Versionnement independant ou lockstep. 3) Conventional commits pour automatiser les versions. 4) Release branches (release/v1.x). 5) Tagging specifique par package.</p></div>
-<div class="qa"><h4>Q2 : Comment decider entre release branch et trunk-based ?</h4><p><strong>Release branches</strong> : cycle long, releases planifiees, maintenance de versions multiples. <strong>Trunk-based</strong> : deploiement continu, feature flags, cycle court. Trunk-based est recommande pour les equipes matures avec une bonne culture CI/CD.</p></div>
+<div class="qa"><h4>Q1 : Comment gerer les releases dans un mono-repo ?</h4><ul><li>Tools : Lerna, Turborepo, Nx, Changesets.</li><li>Versionnement independant ou lockstep.</li><li>Conventional commits pour automatiser les versions.</li><li>Release branches (release/v1.x).</li><li>Tagging specifique par package.</li></ul></div>
+<div class="qa"><h4>Q2 : Comment decider entre release branch et trunk-based ?</h4><p>Les <strong>release branches</strong> conviennent aux cycles longs, aux releases planifiees et a la maintenance de versions multiples. L'approche <strong>trunk-based</strong> vise le deploiement continu, les feature flags et un cycle court. Le trunk-based est recommande pour les equipes matures avec une bonne culture CI/CD.</p></div>
 `},
 
 {id:11,title:"Docker Fundamentaux",module:2,difficulty:"facile",duration:"25 min",
@@ -1063,8 +1063,8 @@ coverage
 .github</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment reduire la taille d'une image Docker ?</h4><p>1) Utiliser des images alpine. 2) Multi-stage builds. 3) Combiner les RUN. 4) Utiliser .dockerignore. 5) Nettoyer le cache (<code>rm -rf /var/cache/apk/*</code>). 6) Executer en tant que user non-root. 7) Distinguer les dependances de dev et prod.</p></div>
-<div class="qa"><h4>Q2 : Quelle difference entre COPY et ADD ?</h4><p><code>COPY</code> : copie simplement les fichiers. <code>ADD</code> : copie + peut decompresser les archives + supporter les URLs. Utilisez COPY sauf si vous avez besoin de la decompression automatique. ADD rend le comportement moins previsible.</p></div>
+<div class="qa"><h4>Q1 : Comment reduire la taille d'une image Docker ?</h4><ul><li>Utiliser des images alpine.</li><li>Multi-stage builds.</li><li>Combiner les RUN.</li><li>Utiliser .dockerignore.</li><li>Nettoyer le cache (<code>rm -rf /var/cache/apk/*</code>).</li><li>Executer en tant que user non-root.</li><li>Distinguer les dependances de dev et prod.</li></ul></div>
+<div class="qa"><h4>Q2 : Quelle difference entre COPY et ADD ?</h4><p><code>COPY</code> copie simplement les fichiers. <code>ADD</code> copie les fichiers, peut decompresser les archives et accepte les URLs. Utilisez COPY, sauf si vous avez besoin de la decompression automatique. ADD rend le comportement moins previsible.</p></div>
 `},
 
 {id:12,title:"Docker Compose",module:2,difficulty:"moyen",duration:"20 min",
@@ -1149,7 +1149,7 @@ volumes:
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
 <div class="qa"><h4>Q1 : Docker Compose en production ?</h4><p>Docker Compose est concu pour le developpement. En production, utilisez Kubernetes ou Docker Swarm. Cependant, compose peut etre utilise pour de petits deploiments avec des outils comme Docker Compose on a Server (dockge, yacht).</p></div>
-<div class="qa"><h4>Q2 : Comment gerer les environnements multiples ?</h4><p>1) Fichiers <code>docker-compose.override.yml</code>. 2) <code>docker-compose -f compose.prod.yml</code>. 3) Variables d'environnement dans <code>.env</code>. 4) Profiles pour des services optionnels. 5) Merge des fichiers avec <code>docker compose config</code>.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer les environnements multiples ?</h4><ul><li>Fichiers <code>docker-compose.override.yml</code>.</li><li><code>docker-compose -f compose.prod.yml</code>.</li><li>Variables d'environnement dans <code>.env</code>.</li><li>Profiles pour des services optionnels.</li><li>Merge des fichiers avec <code>docker compose config</code>.</li></ul></div>
 `},
 
 {id:13,title:"Docker Networking",module:2,difficulty:"moyen",duration:"20 min",
@@ -1192,8 +1192,8 @@ docker run -p 127.0.0.1:8080:80 nginx  # Localhost uniquement
 docker run -P nginx                # Expose toutes les ports declares</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quand utiliser host vs bridge ?</h4><p><strong>Host</strong> : quand la performance reseau est critique (bases de donnees haute performance). <strong>Bridge</strong> : par defaut, offre l'isolation et le port mapping. Bridge est recommande pour la plupart des cas d'usage.</p></div>
-<div class="qa"><h4>Q2 : Comment debugger les problemes reseau Docker ?</h4><p>1) <code>docker network inspect</code>. 2) <code>docker exec -it container ping</code>. 3) <code>nsenter</code> pour entrer dans le namespace reseau. 4) Logs avec <code>docker logs</code>. 5) Outils : tcpdump, netshoot.</p></div>
+<div class="qa"><h4>Q1 : Quand utiliser host vs bridge ?</h4><p>Le mode <strong>Host</strong> convient quand la performance reseau est critique, par exemple pour des bases de donnees haute performance. Le mode <strong>Bridge</strong> est le mode par defaut : il offre l'isolation et le port mapping. Bridge convient a la plupart des cas d'usage.</p></div>
+<div class="qa"><h4>Q2 : Comment debugger les problemes reseau Docker ?</h4><ul><li><code>docker network inspect</code>.</li><li><code>docker exec -it container ping</code>.</li><li><code>nsenter</code> pour entrer dans le namespace reseau.</li><li>Logs avec <code>docker logs</code>.</li><li>Outils : tcpdump, netshoot.</li></ul></div>
 `},
 
 {id:14,title:"Docker Volumes",module:2,difficulty:"facile",duration:"15 min",
@@ -1232,7 +1232,7 @@ volumes:
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Volume vs Bind mount - lequel utiliser ?</h4><p><strong>Volume</strong> : donnees persistantes (bases de donnees). Gere par Docker, portable. <strong>Bind mount</strong> : developpement local (monter le code). Dependant de l'hote, moins portable. En production, utilisez les volumes.</p></div>
+<div class="qa"><h4>Q1 : Volume vs Bind mount - lequel utiliser ?</h4><p>Les <strong>volumes</strong> stockent des donnees persistantes comme les bases de donnees. Docker les gere et ils restent portables. Les <strong>bind mounts</strong> servent au developpement local, pour monter le code. Ils dependent de l'hote et sont moins portables. En production, utilisez les volumes.</p></div>
 `},
 
 {id:15,title:"Kubernetes Pods",module:2,difficulty:"moyen",duration:"25 min",
@@ -1295,7 +1295,7 @@ spec:
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
 <div class="qa"><h4>Q1 : Pod vs Deployment ?</h4><p>Un <strong>Pod</strong> est l'unite physique (un conteneur). Un <strong>Deployment</strong> est une ressource abstraite qui gere les Pods (replicas, rolling updates, rollback). En production, ne creez jamais de Pods directement, utilisez des Deployments.</p></div>
-<div class="qa"><h4>Q2 : Comment Kubernetes choisit le node pour un Pod ?</h4><p>Le scheduler considere : 1) Ressources demandees vs disponibles. 2) Node selectors/affinity. 3) Taints and tolerations. 4) Pod topology spread. 5) Local storage. L'algorithme combine ces facteurs avec un score.</p></div>
+<div class="qa"><h4>Q2 : Comment Kubernetes choisit le node pour un Pod ?</h4><p>Le scheduler considere :</p><ul><li>Ressources demandees vs disponibles.</li><li>Node selectors/affinity.</li><li>Taints and tolerations.</li><li>Pod topology spread.</li><li>Local storage.</li></ul><p>L'algorithme combine ces facteurs avec un score.</p></div>
 `},
 
 {id:16,title:"Kubernetes Deployments",module:2,difficulty:"moyen",duration:"25 min",
@@ -1348,8 +1348,8 @@ kubectl rollout undo deployment/mon-app --to-revision=2</code></pre>
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment effectuer un zero-downtime deployment ?</h4><p>1) Rolling update avec maxUnavailable=0. 2) Readiness probes (le nouveau pod est pret avant de recevoir du trafic). 3) Pre-stop hooks (graceful shutdown). 4) Grace period. 5) PodDisruptionBudget.</p></div>
-<div class="qa"><h4>Q2 : Que faire si un pod reste en CrashLoopBackOff ?</h4><p>1) <code>kubectl logs pod-name --previous</code>. 2) Verifier les resource limits. 3) Verifier les healthchecks. 4) Exec dans le container pour debugger. 5) Verifier les dependances (init containers, secrets, configmaps).</p></div>
+<div class="qa"><h4>Q1 : Comment effectuer un zero-downtime deployment ?</h4><ul><li>Rolling update avec maxUnavailable=0.</li><li>Readiness probes (le nouveau pod est pret avant de recevoir du trafic).</li><li>Pre-stop hooks (graceful shutdown).</li><li>Grace period.</li><li>PodDisruptionBudget.</li></ul></div>
+<div class="qa"><h4>Q2 : Que faire si un pod reste en CrashLoopBackOff ?</h4><ul><li><code>kubectl logs pod-name --previous</code>.</li><li>Verifier les resource limits.</li><li>Verifier les healthchecks.</li><li>Exec dans le container pour debugger.</li><li>Verifier les dependances (init containers, secrets, configmaps).</li></ul></div>
 `},
 
 {id:17,title:"Kubernetes Services",module:2,difficulty:"moyen",duration:"20 min",
@@ -1392,7 +1392,7 @@ spec:
   externalName: api.externale.com</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quand utiliser chaque type de Service ?</h4><p><strong>ClusterIP</strong> : communication inter-services (defaut). <strong>NodePort</strong> : developpement/test, accès direct au node. <strong>LoadBalancer</strong> : services web en production (cloud). <strong>ExternalName</strong> : accès a des services externes.</p></div>
+<div class="qa"><h4>Q1 : Quand utiliser chaque type de Service ?</h4><p><strong>ClusterIP</strong> sert a la communication inter-services et est le mode par defaut. <strong>NodePort</strong> sert au developpement et au test, avec un acces direct au node. <strong>LoadBalancer</strong> sert aux services web en production sur le cloud. <strong>ExternalName</strong> donne acces a des services externes.</p></div>
 <div class="qa"><h4>Q2 : Comment fonctionne le load balancing dans Kubernetes ?</h4><p>Kubernetes utilise iptables ou IPVS pour le load balancing Layer 4 (TCP/UDP). Les connexions sont distribuees aux pods selectionnes par le service. Pas de health check au niveau service (utilisez les readiness probes). Pour L7, utilisez un Ingress.</p></div>
 `},
 
@@ -1460,7 +1460,7 @@ spec:
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Ingress vs LoadBalancer ?</h4><p><strong>LoadBalancer</strong> : 1 service = 1 load balancer (cout eleve). <strong>Ingress</strong> : 1 load balancer pour tous les services HTTP (routing L7, TLS centralise, rules). En production avec HTTP, utilisez Ingress.</p></div>
+<div class="qa"><h4>Q1 : Ingress vs LoadBalancer ?</h4><p>Avec un <strong>LoadBalancer</strong>, chaque service cree son propre load balancer, ce qui coute cher. Un <strong>Ingress</strong> fournit un load balancer unique pour tous les services HTTP, avec du routage L7, du TLS centralise et des regles. En production avec HTTP, utilisez l'Ingress.</p></div>
 <div class="qa"><h4>Q2 : Comment gerer le trafic WebSocket dans un Ingress ?</h4><p>Ajoutez les annotations : <code>nginx.ingress.kubernetes.io/proxy-read-timeout: 3600</code> et <code>nginx.ingress.kubernetes.io/proxy-send-timeout: 3600</code>. Aussi <code>nginx.ingress.kubernetes.io/websocket-services: mon-service</code>.</p></div>
 `},
 
@@ -1535,7 +1535,7 @@ containers:
 </ol>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : ConfigMap vs Secret ?</h4><p><strong>ConfigMap</strong> : configuration non sensible (URLs, parametres). <strong>Secret</strong> : donnees sensibles (mots de passe, cles API). Les secrets sont base64 encode (pas chiffre par defaut). Pour le vrai chiffrement, utilisez Sealed Secrets ou External Secrets.</p></div>
+<div class="qa"><h4>Q1 : ConfigMap vs Secret ?</h4><p>La <strong>ConfigMap</strong> contient la configuration non sensible, comme des URLs et des parametres. Le <strong>Secret</strong> contient des donnees sensibles, comme des mots de passe et des cles API. Les secrets ne sont que base64, donc pas chiffres par defaut. Pour un vrai chiffrement, utilisez Sealed Secrets ou External Secrets.</p></div>
 `},
 
 {id:20,title:"Kubernetes Monitoring",module:2,difficulty:"difficile",duration:"25 min",
@@ -1591,8 +1591,8 @@ spec:
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Prometheus vs Datadog ?</h4><p><strong>Prometheus</strong> : open source, self-hosted, excellent pour Kubernetes. <strong>Datadog</strong> : SaaS, plus complet (APM, logs, metriques), cout eleve. Prometheus est le standard Kubernetes. Datadog est plus facile a demarrer.</p></div>
-<div class="qa"><h4>Q2 : Comment monitorer une application sans metrics exposes ?</h4><p>1) Sidecar container qui expose les metriques. 2) Exporter Prometheus (mysqld_exporter, etc). 3) Adapter l'application pour exposer /metrics. 4) Utiliser des metriques derivees (latence, erreurs). 5) Service mesh pour les metriques reseau.</p></div>
+<div class="qa"><h4>Q1 : Prometheus vs Datadog ?</h4><p><strong>Prometheus</strong> est open source, se deploie chez vous et fonctionne tres bien avec Kubernetes. <strong>Datadog</strong> est un SaaS plus complet, avec APM, logs et metriques, mais il coute cher. Prometheus est le standard sur Kubernetes. Datadog est plus facile a demarrer.</p></div>
+<div class="qa"><h4>Q2 : Comment monitorer une application sans metrics exposes ?</h4><ul><li>Sidecar container qui expose les metriques.</li><li>Exporter Prometheus (mysqld_exporter, etc).</li><li>Adapter l'application pour exposer /metrics.</li><li>Utiliser des metriques derivees (latence, erreurs).</li><li>Service mesh pour les metriques reseau.</li></ul></div>
 `},
 
 {id:21,title:"Terraform Fundamentaux",module:3,difficulty:"moyen",duration:"25 min",
@@ -1675,8 +1675,8 @@ terraform fmt
 terraform validate</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Terraform vs Ansible ?</h4><p><strong>Terraform</strong> : declaratif, IaC, best pour le provisioning (AWS, GCP). <strong>Ansible</strong> : imperatif, configuration management, best pour configurer les serveurs. Utilisez les deux : Terraform cree l'infrastructure, Ansible la configure.</p></div>
-<div class="qa"><h4>Q2 : Comment gerer le state en equipe ?</h4><p>1) Backend distant (S3 + DynamoDB, Terraform Cloud). 2) State locking (evite les conflits). 3) Workspaces pour les environnements. 4) Code review des changements d'infra. 5) Plan avant apply.</p></div>
+<div class="qa"><h4>Q1 : Terraform vs Ansible ?</h4><p><strong>Terraform</strong> est declaratif et se concentre sur le provisioning d'infrastructures sur AWS ou GCP. <strong>Ansible</strong> est imperatif et se concentre sur la configuration des serveurs. Utilisez les deux : Terraform cree l'infrastructure, Ansible la configure.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer le state en equipe ?</h4><ul><li>Backend distant (S3 + DynamoDB, Terraform Cloud).</li><li>State locking (evite les conflits).</li><li>Workspaces pour les environnements.</li><li>Code review des changements d'infra.</li><li>Plan avant apply.</li></ul></div>
 `},
 
 {id:22,title:"Terraform Avance",module:3,difficulty:"difficile",duration:"30 min",
@@ -1732,8 +1732,8 @@ terraform import aws_instance.existing i-1234567890abcdef0</code></pre>
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment migrer le state vers un backend distant ?</h4><p>1) Configurer le backend dans le code. 2) <code>terraform init -migrate-state</code>. 3) Terraform detecte l'ancien state et propose la migration. 4) Confirmer. 5) Verifier avec <code>terraform state list</code>. 6) Backup l'ancien state.</p></div>
-<div class="qa"><h4>Q2 : Comment gerez-vous les secrets dans Terraform ?</h4><p>1) Variables d'environnement (<code>TF_VAR_</code>). 2) <code>terraform.tfvars</code> (jamais commiter). 3) Vault provider. 4) SSM Parameter Store / Secrets Manager. 5) <code>sensitive = true</code> sur les outputs. 6) Backend encrypté.</p></div>
+<div class="qa"><h4>Q1 : Comment migrer le state vers un backend distant ?</h4><ul><li>Configurer le backend dans le code.</li><li><code>terraform init -migrate-state</code>.</li><li>Terraform detecte l'ancien state et propose la migration.</li><li>Confirmer.</li><li>Verifier avec <code>terraform state list</code>.</li><li>Backup l'ancien state.</li></ul></div>
+<div class="qa"><h4>Q2 : Comment gerez-vous les secrets dans Terraform ?</h4><ul><li>Variables d'environnement (<code>TF_VAR_</code>).</li><li><code>terraform.tfvars</code> (jamais commiter).</li><li>Vault provider.</li><li>SSM Parameter Store / Secrets Manager.</li><li><code>sensitive = true</code> sur les outputs.</li><li>Backend encrypté.</li></ul></div>
 `},
 
 {id:23,title:"Ansible",module:3,difficulty:"moyen",duration:"25 min",
@@ -1820,8 +1820,8 @@ ansible-galaxy install geerlingguy.docker
 ansible-galaxy install -r requirements.yml</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Ansible vs Terraform ?</h4><p><strong>Terraform</strong> : IaC declaratif, provisioning d'infra (creer des VMs, reseaux). <strong>Ansible</strong> : configuration management imperatif (configurer les serveurs). Terraform gere l'infra, Ansible configure le dessus. Complementaires.</p></div>
-<div class="qa"><h4>Q2 : Comment tester Ansible ?</h4><p>1) <code>--check</code> (dry run). 2) <code>--diff</code> pour voir les changements. 3) Molecule pour les tests de roles. 4) <code>ansible-lint</code> pour la validation. 5) <code>--limit</code> pour tester sur un seul host. 6) Vagrant pour tester localement.</p></div>
+<div class="qa"><h4>Q1 : Ansible vs Terraform ?</h4><p><strong>Terraform</strong> est un outil d'IaC declaratif pour le provisioning d'infrastructure : VMs, reseaux et services manages. <strong>Ansible</strong> est un outil de configuration management imperatif : il configure les serveurs. Terraform gere l'infrastructure, Ansible configure la couche au-dessus. Les deux sont complementaires.</p></div>
+<div class="qa"><h4>Q2 : Comment tester Ansible ?</h4><ul><li><code>--check</code> (dry run).</li><li><code>--diff</code> pour voir les changements.</li><li>Molecule pour les tests de roles.</li><li><code>ansible-lint</code> pour la validation.</li><li><code>--limit</code> pour tester sur un seul host.</li><li>Vagrant pour tester localement.</li></ul></div>
 `},
 
 {id:24,title:"Cloud AWS",module:3,difficulty:"moyen",duration:"30 min",
@@ -1913,8 +1913,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment concevoir une architecture HA sur AWS ?</h4><p>1) Multi-AZ pour les bases (RDS Multi-AZ). 2) Auto Scaling Groups. 3) Load Balancer (ALB/NLB). 4) S3 pour le stockage. 5) CloudFront pour le CDN. 6) Route 53 pour le DNS. 7) Secrets Manager pour les credentials.</p></div>
-<div class="qa"><h4>Q2 : Comment optimiser les couts AWS ?</h4><p>1) Reserved Instances / Savings Plans. 2) Spot Instances pour les workloads tolerants. 3) Right-sizing avec Compute Optimizer. 4) S3 Intelligent-Tiering. 5) Lambda pour les charges irregulieres. 6) Tags de cout. 7) Budgets et alertes.</p></div>
+<div class="qa"><h4>Q1 : Comment concevoir une architecture HA sur AWS ?</h4><ul><li>Multi-AZ pour les bases (RDS Multi-AZ).</li><li>Auto Scaling Groups.</li><li>Load Balancer (ALB/NLB).</li><li>S3 pour le stockage.</li><li>CloudFront pour le CDN.</li><li>Route 53 pour le DNS.</li><li>Secrets Manager pour les credentials.</li></ul></div>
+<div class="qa"><h4>Q2 : Comment optimiser les couts AWS ?</h4><ul><li>Reserved Instances / Savings Plans.</li><li>Spot Instances pour les workloads tolerants.</li><li>Right-sizing avec Compute Optimizer.</li><li>S3 Intelligent-Tiering.</li><li>Lambda pour les charges irregulieres.</li><li>Tags de cout.</li><li>Budgets et alertes.</li></ul></div>
 `},
 
 {id:25,title:"Cloud GCP",module:3,difficulty:"moyen",duration:"25 min",
@@ -1986,7 +1986,7 @@ resource "google_storage_bucket" "data" {
 }</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : GCP vs AWS - principales differences ?</h4><p><strong>GCP</strong> : meilleur pour Kubernetes (GKE), data/analytics (BigQuery), IA/ML (Vertex AI). <strong>AWS</strong> : plus de services, plus de regions, plus de maturite enterprise. GCP souvent plus simple et moins cher pour les cas d'usage specifiques.</p></div>
+<div class="qa"><h4>Q1 : GCP vs AWS - principales differences ?</h4><p><strong>GCP</strong> est meilleur pour Kubernetes avec GKE, pour la data et l'analytics avec BigQuery, et pour l'IA avec Vertex AI. <strong>AWS</strong> offre plus de services, plus de regions et plus de maturite enterprise. GCP reste souvent plus simple et moins cher pour des cas d'usage precis.</p></div>
 `},
 
 {id:26,title:"Cloud Azure",module:3,difficulty:"moyen",duration:"25 min",
@@ -2116,8 +2116,8 @@ resource "aws_apigatewayv2_route" "post" {
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quand utiliser serverless vs containers ?</h4><p><strong>Serverless</strong> : charges irregulieres, APIs, evenements, prototypage rapide. <strong>Containers</strong> : charges constantes, workloads longues, microservices complexes, controle total. Serverless est plus simple mais peut devenir cher a haute echelle.</p></div>
-<div class="qa"><h4>Q2 : Comment gerer le cold start ?</h4><p>1) Provisioned concurrency (AWS). 2) Min instances (GCP). 3) Keep-warm avec CloudWatch Events. 4) Reduire la taille du package. 5) Languages plus rapides (Go, Rust). 6) Architecture async pour tolerer la latence.</p></div>
+<div class="qa"><h4>Q1 : Quand utiliser serverless vs containers ?</h4><p>Le <strong>serverless</strong> convient aux charges irregulieres, aux APIs, aux evenements et au prototypage rapide. Les <strong>containers</strong> conviennent aux charges constantes, aux workloads longues, aux microservices complexes, et offrent un controle total. Le serverless est plus simple, mais peut devenir cher a haute echelle.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer le cold start ?</h4><ul><li>Provisioned concurrency (AWS).</li><li>Min instances (GCP).</li><li>Keep-warm avec CloudWatch Events.</li><li>Reduire la taille du package.</li><li>Languages plus rapides (Go, Rust).</li><li>Architecture async pour tolerer la latence.</li></ul></div>
 `},
 
 {id:28,title:"Service Mesh",module:3,difficulty:"difficile",duration:"25 min",
@@ -2181,7 +2181,7 @@ kubectl label namespace default istio-injection=enabled
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
 <div class="qa"><h4>Q1 : Quand utiliser un service mesh ?</h4><p>Quand vous avez : 10+ microservices, besoin de mTLS, observabilite fine, traffic management avance, politiques de securite. Pour de petits systemes, c'est de la surcomplexite. Commencez sans, ajoutez quand le besoin se presente.</p></div>
-<div class="qa"><h4>Q2 : Istio vs Linkerd ?</h4><p><strong>Istio</strong> : plus complet, plus complexe, plus de resources. <strong>Linkerd</strong> : plus simple, plus leger, plus facile a demarrer. Istio est le standard enterprise. Linkerd est excellent pour les petites equipes.</p></div>
+<div class="qa"><h4>Q2 : Istio vs Linkerd ?</h4><p><strong>Istio</strong> est plus complet, mais aussi plus complexe et plus gourmand en ressources. <strong>Linkerd</strong> est plus simple, plus leger et plus facile a demarrer. Istio est le standard enterprise. Linkerd convient bien aux petites equipes.</p></div>
 `},
 
 {id:29,title:"Observabilite",module:3,difficulty:"difficile",duration:"25 min",
@@ -2237,8 +2237,8 @@ provider.addSpanProcessor(new BatchSpanProcessor(exporter));</code></pre>
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment implementer l'observabilite dans une microservice architecture ?</h4><p>1) OpenTelemetry pour standardiser. 2) Structured logging (JSON). 3) Metrics avec Prometheus. 4) Tracing avec Jaeger. 5) Dashboards Grafana. 6) Alerting avec Prometheus/AlertManager. 7) Correlation ID pour relier logs/metrics/traces.</p></div>
-<div class="qa"><h4>Q2 : Logs structurés vs logs en texte brut ?</h4><p><strong>JSON structuré</strong> : recherche facettee, parsing automatique, compatible ELK. <strong>Texte brut</strong> : lisible humainement, mais difficile a analyser. Toujours utiliser le JSON en production avec des champs standardises (timestamp, level, message, traceId).</p></div>
+<div class="qa"><h4>Q1 : Comment implementer l'observabilite dans une microservice architecture ?</h4><ul><li>OpenTelemetry pour standardiser.</li><li>Structured logging (JSON).</li><li>Metrics avec Prometheus.</li><li>Tracing avec Jaeger.</li><li>Dashboards Grafana.</li><li>Alerting avec Prometheus/AlertManager.</li><li>Correlation ID pour relier logs/metrics/traces.</li></ul></div>
+<div class="qa"><h4>Q2 : Logs structurés vs logs en texte brut ?</h4><p>Les logs <strong>JSON structures</strong> permettent la recherche facettee, le parsing automatique et la compatibilite avec ELK. Le <strong>texte brut</strong> se lit facilement par un humain, mais reste difficile a analyser. Utilisez le JSON en production, avec des champs standardises comme timestamp, level, message et traceId.</p></div>
 `},
 
 {id:30,title:"Securite Cloud",module:3,difficulty:"difficile",duration:"25 min",
@@ -2311,8 +2311,8 @@ spec:
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment securiser une architecture cloud ?</h4><p>1) IAM strict (moindre privilege). 2) Chiffrement partout. 3) Network segmentation. 4) Monitoring et alerting. 5) Patch management. 6) Security reviews regulieres. 7) Backup et disaster recovery. 8) Training des equipes.</p></div>
-<div class="qa"><h4>Q2 : Que faire face a une compromission en production ?</h4><p>1) <strong>Containment</strong> : isoler le systeme compromise. 2) <strong>Eradication</strong> : supprimer l'acces malveillant. 3) <strong>Recovery</strong> : restaurer depuis backup propre. 4) <strong>Post-mortem</strong> : analyser et ameliorer. 5) <strong>Notification</strong> : informer les parties concernees. 6) <strong>Rotation</strong> : tous les credentials potentiellement exposes.</p></div>
+<div class="qa"><h4>Q1 : Comment securiser une architecture cloud ?</h4><ul><li>IAM strict (moindre privilege).</li><li>Chiffrement partout.</li><li>Network segmentation.</li><li>Monitoring et alerting.</li><li>Patch management.</li><li>Security reviews regulieres.</li><li>Backup et disaster recovery.</li><li>Training des equipes.</li></ul></div>
+<div class="qa"><h4>Q2 : Que faire face a une compromission en production ?</h4><ul><li><strong>Containment</strong> : isoler le systeme compromise.</li><li><strong>Eradication</strong> : supprimer l'acces malveillant.</li><li><strong>Recovery</strong> : restaurer depuis backup propre.</li><li><strong>Post-mortem</strong> : analyser et ameliorer.</li><li><strong>Notification</strong> : informer les parties concernees.</li><li><strong>Rotation</strong> : tous les credentials potentiellement exposes.</li></ul></div>
 `}
 ];
 

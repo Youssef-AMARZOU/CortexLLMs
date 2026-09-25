@@ -159,9 +159,9 @@ upstream backend {
 <div class="callout warning"><strong>Attention :</strong> Les sticky sessions empechent le load balancing uniforme et compliquent le scaling. Preferez le stateless avec Redis/Memcached pour les sessions.</div>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment choisir entre L4 et L7 ?</h4><p><strong>L4</strong> : quand vous avez besoin de performance brute (TCP, gaming, streaming). <strong>L7</strong> : quand vous avez besoin de routing intelligent (URL-based, header-based, SSL termination). La plupart des apps web utilisent L7.</p></div>
-<div class="qa"><h4>Q2 : Que faire si le load balancer devient un point de panne ?</h4><p>1) Deployer en mode actif-passif (failover automatique). 2) DNS round robin avec plusieurs LB. 3) Anycast IP. 4) Load balancer distribue (Consul, Envoy). 5) Cloud provider managed LB (haute disponibilite).</p></div>
-<div class="qa"><h4>Q3 : Comment gerer les connexions WebSocket avec un LB ?</h4><p>1) Sticky sessions (IP hash ou cookie). 2) Health checks sur le port WebSocket. 3) Idle timeout long (300s+). 4) Connection draining. 5) L4 load balancer pour maintenir la connexion TCP.</p></div>
+<div class="qa"><h4>Q1 : Comment choisir entre L4 et L7 ?</h4><p>Un load balancer <strong>L4</strong> convient quand vous avez besoin de performance brute, comme pour TCP, le gaming ou le streaming. Le <strong>L7</strong> convient quand vous avez besoin de routage intelligent, par URL, par header ou avec SSL termination. La plupart des applications web utilisent L7.</p></div>
+<div class="qa"><h4>Q2 : Que faire si le load balancer devient un point de panne ?</h4><ul><li>Deployer en mode actif-passif (failover automatique).</li><li>DNS round robin avec plusieurs LB.</li><li>Anycast IP.</li><li>Load balancer distribue (Consul, Envoy).</li><li>Cloud provider managed LB (haute disponibilite).</li></ul></div>
+<div class="qa"><h4>Q3 : Comment gerer les connexions WebSocket avec un LB ?</h4><ul><li>Sticky sessions (IP hash ou cookie).</li><li>Health checks sur le port WebSocket.</li><li>Idle timeout long (300s+).</li><li>Connection draining.</li><li>L4 load balancer pour maintenir la connexion TCP.</li></ul></div>
 `},
 
 {id:2,title:"Caching",module:1,difficulty:"moyen",duration:"25 min",
@@ -235,9 +235,9 @@ value = memcached.get("key")</code></pre>
 2. Le cache ecrit dans la DB de maniere asynchrone</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment eviter le cache stampede (thundering herd) ?</h4><p>Quand le cache expire et 1000 requetes frappent la DB en meme temps. Solutions : 1) Lock mutex (seul un process charge le cache). 2) Pre-warming. 3) Refresh-ahead cache. 4) Jitter sur le TTL. 5) Probabilistic early expiration.</p></div>
-<div class="qa"><h4>Q2 : Cache-aside vs Read-through ?</h4><p><strong>Cache-aside</strong> : l'application gere le cache (plus de controle, plus de code). <strong>Read-through</strong> : le cache gere le loading (plus simple). Cache-aside est plus flexible et plus courant.</p></div>
-<div class="qa"><h4>Q3 : Comment gerer la coherence du cache ?</h4><p>1) TTL court pour les donnees critiques. 2) Event-driven invalidation (CDC). 3) Cache versioning. 4) Eventual consistency acceptable pour beaucoup de cas. 5) Strong consistency : write-through (plus lent).</p></div>
+<div class="qa"><h4>Q1 : Comment eviter le cache stampede (thundering herd) ?</h4><p>Quand le cache expire et 1000 requetes frappent la DB en meme temps. Solutions :</p><ul><li>Lock mutex (seul un process charge le cache).</li><li>Pre-warming.</li><li>Refresh-ahead cache.</li><li>Jitter sur le TTL.</li><li>Probabilistic early expiration.</li></ul></div>
+<div class="qa"><h4>Q2 : Cache-aside vs Read-through ?</h4><p>Avec le <strong>Cache-aside</strong>, l'application gere le cache. Vous avez plus de controle, mais aussi plus de code. Avec le <strong>Read-through</strong>, le cache gere le chargement, ce qui est plus simple. Le Cache-aside reste plus flexible et plus courant.</p></div>
+<div class="qa"><h4>Q3 : Comment gerer la coherence du cache ?</h4><ul><li>TTL court pour les donnees critiques.</li><li>Event-driven invalidation (CDC).</li><li>Cache versioning.</li><li>Eventual consistency acceptable pour beaucoup de cas.</li><li>Strong consistency : write-through (plus lent).</li></ul></div>
 `},
 
 {id:3,title:"Message Queues",module:1,difficulty:"moyen",duration:"25 min",
@@ -302,9 +302,9 @@ channel.consume('task_queue', (msg) => {
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Kafka vs RabbitMQ ?</h4><p><strong>Kafka</strong> : streaming, haut debit, replay, log durable. <strong>RabbitMQ</strong> : routing complexe, messages courts, at-most-once. Kafka est mieux pour le data pipeline, RabbitMQ pour les taches asynchrones.</p></div>
-<div class="qa"><h4>Q2 : Comment gerer les messages en echec ?</h4><p>1) Dead Letter Queue (DLQ) pour les messages rejetes. 2) Retry avec backoff exponentiel. 3) Circuit breaker pour eviter les cascades. 4) Alerting sur les DLQ. 5) Analyse et reprocessing manuel.</p></div>
-<div class="qa"><h4>Q3 : Comment garantir l'ordre des messages ?</h4><p>1) Partition par cle (user_id) dans Kafka. 2) FIFO queue dans SQS. 3) Routing key dans RabbitMQ. Attention : l'ordre est garanti par partition/clef, pas globalement.</p></div>
+<div class="qa"><h4>Q1 : Kafka vs RabbitMQ ?</h4><p><strong>Kafka</strong> est fait pour le streaming, avec un debit eleve, du replay et un log durable. <strong>RabbitMQ</strong> convient au routage complexe, aux messages courts et a la livraison at-most-once. Kafka est meilleur pour un pipeline de donnees. RabbitMQ est meilleur pour les taches asynchrones.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer les messages en echec ?</h4><ul><li>Dead Letter Queue (DLQ) pour les messages rejetes.</li><li>Retry avec backoff exponentiel.</li><li>Circuit breaker pour eviter les cascades.</li><li>Alerting sur les DLQ.</li><li>Analyse et reprocessing manuel.</li></ul></div>
+<div class="qa"><h4>Q3 : Comment garantir l'ordre des messages ?</h4><ul><li>Partition par cle (user_id) dans Kafka.</li><li>FIFO queue dans SQS.</li><li>Routing key dans RabbitMQ.</li></ul><p>Attention : l'ordre est garanti par partition/clef, pas globalement.</p></div>
 `},
 
 {id:4,title:"SQL vs NoSQL",module:1,difficulty:"moyen",duration:"25 min",
@@ -344,8 +344,8 @@ shard = hash(user_id) % number_of_shards
 </table>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quand utiliser NoSQL ?</h4><p>1) Schema flexible (donnees semi-structurees). 2) Scalabilite horizontale necesaire. 3) Haute disponibilite critique. 4) Donnees de type key-value ou document. 5) Pas besoin de transactions complexes. 6) Volume de donnees massif.</p></div>
-<div class="qa"><h4>Q2 : Comment faire des JOINs dans NoSQL ?</h4><p>1) Denormalisation (duplicer les donnees). 2) Embedding (inserer les documents lies). 3) References avec requetes cote applicatif. 4) MongoDB $lookup (JOIN left). 5) Redis : pre-calculer les relations. Les JOINs sont un trade-off : performance vs integrite.</p></div>
+<div class="qa"><h4>Q1 : Quand utiliser NoSQL ?</h4><ul><li>Schema flexible (donnees semi-structurees).</li><li>Scalabilite horizontale necesaire.</li><li>Haute disponibilite critique.</li><li>Donnees de type key-value ou document.</li><li>Pas besoin de transactions complexes.</li><li>Volume de donnees massif.</li></ul></div>
+<div class="qa"><h4>Q2 : Comment faire des JOINs dans NoSQL ?</h4><ul><li>Denormalisation (duplicer les donnees).</li><li>Embedding (inserer les documents lies).</li><li>References avec requetes cote applicatif.</li><li>MongoDB $lookup (JOIN left).</li><li>Redis : pre-calculer les relations.</li></ul><p>Les JOINs sont un trade-off : performance vs integrite.</p></div>
 `},
 
 {id:5,title:"API Design",module:1,difficulty:"moyen",duration:"25 min",
@@ -436,8 +436,8 @@ X-RateLimit-Reset: 1609459200
 # Fixed Window : compteur par fenetre temporelle</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : REST vs GraphQL vs gRPC ?</h4><p><strong>REST</strong> : standard, simple, cache HTTP. <strong>GraphQL</strong> : flexibilite client, pas de over-fetching, complexe a cacher. <strong>gRPC</strong> : haute performance, streaming, service-to-service. Choisissez selon le cas d'usage.</p></div>
-<div class="qa"><h4>Q2 : Comment concevoir une API RESTful bien ?</h4><p>1) Noms de ressources au pluriel. 2) Verbes HTTP appropries. 3) Codes de reponse corrects. 4) Pagination. 5) Versioning. 6) Rate limiting. 7) Documentation (OpenAPI). 8) HATEOAS (liens d'hypermedia).</p></div>
+<div class="qa"><h4>Q1 : REST vs GraphQL vs gRPC ?</h4><p><strong>REST</strong> est un standard simple qui exploite le cache HTTP. <strong>GraphQL</strong> donne de la flexibilite au client et evite le sur-fetching, mais il est plus complexe a cacher. <strong>gRPC</strong> offre haute performance, streaming et communication service a service. Choisissez selon le cas d'usage.</p></div>
+<div class="qa"><h4>Q2 : Comment concevoir une API RESTful bien ?</h4><ul><li>Noms de ressources au pluriel.</li><li>Verbes HTTP appropries.</li><li>Codes de reponse corrects.</li><li>Pagination.</li><li>Versioning.</li><li>Rate limiting.</li><li>Documentation (OpenAPI).</li><li>HATEOAS (liens d'hypermedia).</li></ul></div>
 `},
 
 {id:6,title:"DNS",module:1,difficulty:"facile",duration:"15 min",
@@ -471,10 +471,10 @@ content:`
 # TTL long : 86400s (24 heures)</code></pre>
 
 <h2 id="geodns">GeoDNS et Failover</h2>
-<p><strong>GeoDNS</strong> : resout vers le serveur le plus proche geographiquement. <strong>Failover</strong> : redirige vers un backup si le primaire echoue.</p>
+<p>Le <strong>GeoDNS</strong> resout vers le serveur le plus proche geographiquement. Le <strong>Failover</strong> redirige vers un serveur de secours si le primaire echoue.</p>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Que faire si le DNS est lent ?</h4><p>1) Reduire le TTL. 2) Utiliser un resolver local (unbound). 3) Pre-fetch DNS (dns-prefetch HTML tag). 4) CDN avec edge DNS. 5) DNS over HTTPS pour la securite.</p></div>
+<div class="qa"><h4>Q1 : Que faire si le DNS est lent ?</h4><ul><li>Reduire le TTL.</li><li>Utiliser un resolver local (unbound).</li><li>Pre-fetch DNS (dns-prefetch HTML tag).</li><li>CDN avec edge DNS.</li><li>DNS over HTTPS pour la securite.</li></ul></div>
 `},
 
 {id:7,title:"CDN",module:1,difficulty:"facile",duration:"15 min",
@@ -514,7 +514,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 aws cloudfront create-invalidation \
   --distribution-id E1234567890 \
   --paths "/index.html" "/css/*"</code></pre>
-<p><strong>Strategies :</strong> 1) Versioning d'URL (<code>style.v2.css</code>). 2) Invalidation apres deploiement. 3) TTL court pour le developpement.</p>
+<p><strong>Strategies :</strong></p><ul><li>Versioning d'URL (<code>style.v2.css</code>).</li><li>Invalidation apres deploiement.</li><li>TTL court pour le developpement.</li></ul>
 
 <h2 id="origin-shielding">Origin Shielding</h2>
 <p>Origin shielding ajoute un cache intermediaire pour proteger l'origine :</p>
@@ -525,7 +525,7 @@ aws cloudfront create-invalidation \
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : CDN pour du contenu dynamique ?</h4><p>Possible avec : 1) Edge computing (CloudFront Functions, Workers). 2) API caching (reponses cacheables). 3) Early hints (103). 4) Cache-Control headers. Le CDN ne cache pas le contenu dynamique mais peut accelerer les headers et les reponses semi-statiques.</p></div>
+<div class="qa"><h4>Q1 : CDN pour du contenu dynamique ?</h4><p>Possible avec :</p><ul><li>Edge computing (CloudFront Functions, Workers).</li><li>API caching (reponses cacheables).</li><li>Early hints (103).</li><li>Cache-Control headers.</li></ul><p>Le CDN ne cache pas le contenu dynamique mais peut accelerer les headers et les reponses semi-statiques.</p></div>
 `},
 
 {id:8,title:"Proxies",module:1,difficulty:"moyen",duration:"15 min",
@@ -556,7 +556,7 @@ content:`
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Nginx est-il un proxy ou un load balancer ?</h4><p>Les deux. Nginx peut fonctionner comme : 1) Reverse proxy (proxy_pass). 2) Load balancer (upstream). 3) Web server (contenu statique). 4) API gateway (routing). 5) SSL termination. Sa polyvalence est sa force.</p></div>
+<div class="qa"><h4>Q1 : Nginx est-il un proxy ou un load balancer ?</h4><p>Les deux. Nginx peut fonctionner comme :</p><ul><li>Reverse proxy (proxy_pass).</li><li>Load balancer (upstream).</li><li>Web server (contenu statique).</li><li>API gateway (routing).</li><li>SSL termination.</li></ul><p>Sa polyvalence est sa force.</p></div>
 `},
 
 {id:9,title:"CAP Theorem",module:2,difficulty:"difficile",duration:"20 min",
@@ -585,7 +585,7 @@ content:`
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
 <div class="qa"><h4>Q1 : Un systeme peut-il etre CP et AP ?</h4><p>Non, c'est contradictoire. Un systeme CP sacrifie la disponibilite en cas de partition (erreur si pas de reponse). Un systeme AP sacrifie la coherence (donnees potentiellement incoherentes). Chaque service peut faire un choix different.</p></div>
-<div class="qa"><h4>Q2 : Comment choisir entre CP et AP ?</h4><p><strong>CP</strong> : systemes financiers, inventaire, medicaments (les donnees doivent etre exactes). <strong>AP</strong> : reseaux sociaux, likes, commentaires (disponibilite > coherence exacte). La plupart des apps modernes sont AP avec eventual consistency.</p></div>
+<div class="qa"><h4>Q2 : Comment choisir entre CP et AP ?</h4><p>Un systeme <strong>CP</strong> convient aux systemes financiers, a l'inventaire et au medicament, ou les donnees doivent etre exactes. Un systeme <strong>AP</strong> convient aux reseaux sociaux, aux likes et aux commentaires, ou la disponibilite prime sur la coherence exacte. La plupart des applications modernes sont en AP avec une coherence eventuelle.</p></div>
 `},
 
 {id:10,title:"Consensus",module:2,difficulty:"difficile",duration:"25 min",
@@ -627,8 +627,8 @@ content:`
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Paxos vs Raft ?</h4><p><strong>Paxos</strong> : plus flexible, plus difficile a implementer, utilise par Google. <strong>Raft</strong> : plus simple, plus pedagogique, utilise par etcd, Consul. Raft est le choix recommande pour la plupart des systemes.</p></div>
-<div class="qa"><h4>Q2 : Comment gerer les split-brains ?</h4><p>Un split-brain survient quand deux leaders coexistent. Solutions : 1) Fencing tokens (numero de sequence). 2) Quorum pour les decisions. 3) STONITH (Shoot The Other Node In The Head). 4) Watchdog timers.</p></div>
+<div class="qa"><h4>Q1 : Paxos vs Raft ?</h4><p><strong>Paxos</strong> est plus flexible mais plus difficile a implementer, et Google l'utilise. <strong>Raft</strong> est plus simple et plus pedagogique ; il est utilise par etcd et Consul. Raft est le choix recommande pour la plupart des systemes.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer les split-brains ?</h4><p>Un split-brain survient quand deux leaders coexistent. Solutions :</p><ul><li>Fencing tokens (numero de sequence).</li><li>Quorum pour les decisions.</li><li>STONITH (Shoot The Other Node In The Head).</li><li>Watchdog timers.</li></ul></div>
 `},
 
 {id:11,title:"Consistency Models",module:2,difficulty:"difficile",duration:"20 min",
@@ -644,7 +644,7 @@ content:`
 <p>Exemples : Cassandra, DynamoDB, DNS.</p>
 
 <h2 id="causal">Consistance Causale</h2>
-<p>Les operations causalement liees sont vues dans l'ordre correct :</pre><code># Exemple causal
+<p>Les operations causalement liees sont vues dans l'ordre correct :</p><pre><code># Exemple causal
 Alice ecrit message A
 Bob lit message A, puis ecrit reponse B
 Meme si B arrive avant A dans le reseau,
@@ -658,7 +658,7 @@ PUT /user/123/name "Jean"
 GET /user/123/name -> "Jean" (toujours, pas de stale)</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quand utiliser la consistance forte vs eventuelle ?</h4><p><strong>Forte</strong> : finances, inventaire, medicats (donnees critiques). <strong>Eventuelle</strong> : reseaux sociaux, analytics, cache (tolerance au delai). La plupart des apps modernes utilisent un mix selon les donnees.</p></div>
+<div class="qa"><h4>Q1 : Quand utiliser la consistance forte vs eventuelle ?</h4><p>Une coherence <strong>forte</strong> convient aux finances, a l'inventaire et au medicament, donc aux donnees critiques. Une coherence <strong>eventuelle</strong> convient aux reseaux sociaux, a l'analytics et au cache, donc quand un delai est acceptable. La plupart des applications modernes melangent les deux selon les donnees.</p></div>
 `},
 
 {id:12,title:"Distributed Storage",module:2,difficulty:"difficile",duration:"25 min",
@@ -702,8 +702,8 @@ Noeud C -> hash: 60-100%
 # Seule la portion 60-80% est reorganisee (pas tout)</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Cassandra vs DynamoDB ?</h4><p><strong>Cassandra</strong> : open source, self-hosted, plus flexible, courbe d'apprentissage. <strong>DynamoDB</strong> : managed, serverless, scaling automatique, plus simple. DynamoDB est mieux pour les petits projets, Cassandra pour le controle total.</p></div>
-<div class="qa"><h4>Q2 : Comment choisir la partition key ?</h4><p>1) Distribution uniforme (eviter le hot spotting). 2) Acces frequent ensemble. 3) Cardinalite elevee. 4) Test avec les patterns de requetes reels. Ex: user_id pour un access par utilisateur.</p></div>
+<div class="qa"><h4>Q1 : Cassandra vs DynamoDB ?</h4><p><strong>Cassandra</strong> est open source, se deploie chez vous et reste plus flexible, mais elle demande un apprentissage. <strong>DynamoDB</strong> est manage, serverless, avec un scaling automatique, donc plus simple. DynamoDB convient mieux aux petits projets. Cassandra convient quand vous voulez le controle total.</p></div>
+<div class="qa"><h4>Q2 : Comment choisir la partition key ?</h4><ul><li>Distribution uniforme (eviter le hot spotting).</li><li>Acces frequent ensemble.</li><li>Cardinalite elevee.</li><li>Test avec les patterns de requetes reels.</li></ul><p>Ex: user_id pour un access par utilisateur.</p></div>
 `},
 
 {id:13,title:"Microservices",module:2,difficulty:"moyen",duration:"25 min",
@@ -756,8 +756,8 @@ nslookup api-user.service.consul</code></pre>
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Monolithique vs Microservices ?</h4><p><strong>Monolithique</strong> : simple a developper, deployer, debugger. <strong>Microservices</strong> : scalable independamment, technologiquement divers, plus complexe. Commencez monolithique, decoupez quand le besoin se presente (monolithique modulaire).</p></div>
-<div class="qa"><h4>Q2 : Comment gerer la transactionnalite entre microservices ?</h4><p>1) Saga pattern (orchestration ou choreography). 2) Event sourcing. 3) Two-phase commit (bloquant, rarement recommande). 4) Idempotence. 5) Compensation transactions. 6) Eventual consistency acceptable.</p></div>
+<div class="qa"><h4>Q1 : Monolithique vs Microservices ?</h4><p>Une architecture <strong>monolithique</strong> est simple a developper, a deployer et a debugger. Les <strong>microservices</strong> se scalent independamment et permettent la diversite technologique, mais ils sont plus complexes. Commencez par un monolithique. Decoupez quand le besoin se presente.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer la transactionnalite entre microservices ?</h4><ul><li>Saga pattern (orchestration ou choreography).</li><li>Event sourcing.</li><li>Two-phase commit (bloquant, rarement recommande).</li><li>Idempotence.</li><li>Compensation transactions.</li><li>Eventual consistency acceptable.</li></ul></div>
 `},
 
 {id:14,title:"Event Sourcing",module:2,difficulty:"difficile",duration:"25 min",
@@ -824,8 +824,8 @@ class OrderCreatedEvent:
 2. InventoryRelease -> cancelOrder()</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Event Sourcing vs CRUD traditionnel ?</h4><p><strong>CRUD</strong> : simple, etat actuel uniquement, pas d'historique. <strong>Event Sourcing</strong> : historique complet, audit trail, temps de reversion, mais plus complexe. Utilisez Event Sourcing quand l'historique est critique (finance, medicat).</p></div>
-<div class="qa"><h4>Q2 : Comment gerer les schema changes dans Event Sourcing ?</h4><p>1) Upcasting : migrer les anciens evenements au nouveau format. 2) Versioning des evenements. 3) Multi-version support. 4) Mapping cote lecture. 5) Event store immutable avec projections updatable.</p></div>
+<div class="qa"><h4>Q1 : Event Sourcing vs CRUD traditionnel ?</h4><p>Le <strong>CRUD</strong> est simple et ne gere que l'etat actuel, sans historique. L'<strong>Event Sourcing</strong> conserve l'historique complet, fournit un audit trail et permet de remonter dans le temps, mais il est plus complexe. Utilisez l'Event Sourcing quand l'historique est critique, en finance ou en medecine.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer les schema changes dans Event Sourcing ?</h4><ul><li>Upcasting : migrer les anciens evenements au nouveau format.</li><li>Versioning des evenements.</li><li>Multi-version support.</li><li>Mapping cote lecture.</li><li>Event store immutable avec projections updatable.</li></ul></div>
 `},
 
 {id:15,title:"REST API Design",module:3,difficulty:"moyen",duration:"25 min",
@@ -888,8 +888,8 @@ GET /api/v1/users?cursor=abc123&limit=20
 }</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Offset vs Cursor pagination ?</h4><p><strong>Offset</strong> : simple, permet d'aller a une page specifique, lent pour les grandes donnees (skip N rows). <strong>Cursor</strong> : performant, stable, mais ne permet pas d'aller a une page specifique. Cursor est recommande pour les APIs.</p></div>
-<div class="qa"><h4>Q2 : Comment gerer les erreurs dans une API ?</h4><p>Format standard : <code>{"error": {"code": "VALIDATION_ERROR", "message": "...", "details": [...]}}</code>. Toujours : 1) Codes HTTP corrects. 2) Messages utiles. 3) Details pour le debugging. 4) Correlation ID pour le tracking.</p></div>
+<div class="qa"><h4>Q1 : Offset vs Cursor pagination ?</h4><p>La pagination par <strong>offset</strong> est simple et permet d'aller a n'importe quelle page, mais elle est lente sur les grosses donnees car elle saute des lignes. La pagination par <strong>cursor</strong> est performante et stable, mais elle ne permet pas de sauter a une page precise. Le cursor est recommande pour les APIs.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer les erreurs dans une API ?</h4><p>Format standard : <code>{"error": {"code": "VALIDATION_ERROR", "message": "...", "details": [...]}}</code>. Toujours :</p><ul><li>Codes HTTP corrects.</li><li>Messages utiles.</li><li>Details pour le debugging.</li><li>Correlation ID pour le tracking.</li></ul></div>
 `},
 
 {id:16,title:"GraphQL",module:3,difficulty:"moyen",duration:"25 min",
@@ -971,8 +971,8 @@ const resolvers = {
 };</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : GraphQL - over-fetching et N+1 ?</h4><p><strong>Over-fetching</strong> : GraphQL resout en demandant uniquement les champs necessaires. <strong>N+1</strong> : DataLoader resout en batch les requetes. Aussi : schema design, pagination, depth limiting pour eviter les requetes complexes.</p></div>
-<div class="qa"><h4>Q2 : GraphQL en production - bonnes pratiques ?</h4><p>1) Rate limiting par query complexity. 2) Depth limiting. 3) Persisted queries. 4) Caching au niveau du resolver. 5) Monitoring des performances. 6) Schema registry. 7) Codegen pour le typage.</p></div>
+<div class="qa"><h4>Q1 : GraphQL - over-fetching et N+1 ?</h4><p>GraphQL resout le <strong>sur-fetching</strong> en ne demandant que les champs necessaires. DataLoader resout le probleme <strong>N+1</strong> en groupant les requetes par lot. Pensez aussi au schema design, a la pagination et au depth limiting pour eviter les requetes complexes.</p></div>
+<div class="qa"><h4>Q2 : GraphQL en production - bonnes pratiques ?</h4><ul><li>Rate limiting par query complexity.</li><li>Depth limiting.</li><li>Persisted queries.</li><li>Caching au niveau du resolver.</li><li>Monitoring des performances.</li><li>Schema registry.</li><li>Codegen pour le typage.</li></ul></div>
 `},
 
 {id:17,title:"gRPC",module:3,difficulty:"moyen",duration:"20 min",
@@ -1102,8 +1102,8 @@ if (!result.success) {
 }</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : JWT vs Sessions ?</h4><p><strong>JWT</strong> : stateless, scalable, pas de cote serveur, mais pas de revocation facile. <strong>Sessions</strong> : stateful, revocation simple, mais necessite un store cote serveur. JWT pour les APIs, sessions pour les apps web traditionnelles.</p></div>
-<div class="qa"><h4>Q2 : Comment prevenir les attaques sur une API ?</h4><p>1) Rate limiting. 2) Input validation. 3) CORS strict. 4) Authentication (JWT/OAuth). 5) Authorization (RBAC). 6) HTTPS partout. 7) Headers de securite (HSTS, CSP). 8) Logging et monitoring.</p></div>
+<div class="qa"><h4>Q1 : JWT vs Sessions ?</h4><p>Le <strong>JWT</strong> est stateless et scalable : il ne demande rien au cote serveur, mais il se revoque difficilement. Les <strong>sessions</strong> sont stateful : la revoction est simple, mais elles exigent un store cote serveur. Utilisez JWT pour les APIs et les sessions pour les applications web traditionnelles.</p></div>
+<div class="qa"><h4>Q2 : Comment prevenir les attaques sur une API ?</h4><ul><li>Rate limiting.</li><li>Input validation.</li><li>CORS strict.</li><li>Authentication (JWT/OAuth).</li><li>Authorization (RBAC).</li><li>HTTPS partout.</li><li>Headers de securite (HSTS, CSP).</li><li>Logging et monitoring.</li></ul></div>
 `},
 
 {id:19,title:"API Documentation",module:3,difficulty:"facile",duration:"15 min",
@@ -1170,7 +1170,7 @@ components:
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : OpenAPI vs API Blueprint ?</h4><p><strong>OpenAPI</strong> : standard industrie, large support d'outils, YAML/JSON. <strong>API Blueprint</strong> : Markdown-based, plus lisible. OpenAPI est le standard recommande pour les APIs REST.</p></div>
+<div class="qa"><h4>Q1 : OpenAPI vs API Blueprint ?</h4><p><strong>OpenAPI</strong> est un standard d'industrie, supporte par de nombreux outils, au format YAML ou JSON. <strong>API Blueprint</strong> est base sur Markdown et se lit plus facilement. OpenAPI est le standard recommande pour les APIs REST.</p></div>
 `},
 
 {id:20,title:"WebSockets",module:3,difficulty:"moyen",duration:"20 min",
@@ -1233,8 +1233,8 @@ socket.on('message', (data) => console.log(data));</code></pre>
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : WebSockets vs Server-Sent Events (SSE) ?</h4><p><strong>WebSockets</strong> : bidirectionnel, plus flexible, plus complexe. <strong>SSE</strong> : unidirectionnel (serveur -> client), plus simple, reconnection automatique. SSE pour les notifications, WebSockets pour le chat/collaboration.</p></div>
-<div class="qa"><h4>Q2 : Comment gerer les reconnexions WebSocket ?</h4><p>1) Backoff exponentiel (1s, 2s, 4s, 8s...). 2) Heartbeat pour detecter les connexions mortes. 3) Queue cote client pour les messages pendant la deconnexion. 4) Acknowledgments cote serveur. 5) Socket.IO gere automatiquement la reconnexion.</p></div>
+<div class="qa"><h4>Q1 : WebSockets vs Server-Sent Events (SSE) ?</h4><p><strong>WebSockets</strong> sont bidirectionnels, plus flexibles et plus complexes. <strong>SSE</strong> est unidirectionnel, du serveur vers le client, plus simple, avec reconnexion automatique. Utilisez SSE pour les notifications et WebSockets pour le chat et la collaboration.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer les reconnexions WebSocket ?</h4><ul><li>Backoff exponentiel (1s, 2s, 4s, 8s...).</li><li>Heartbeat pour detecter les connexions mortes.</li><li>Queue cote client pour les messages pendant la deconnexion.</li><li>Acknowledgments cote serveur.</li><li>Socket.IO gere automatiquement la reconnexion.</li></ul></div>
 `}
 ];
 

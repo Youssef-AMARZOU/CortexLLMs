@@ -141,7 +141,7 @@ def remove_duplicates(nums):
 <div class="formula">Temps : O(n) | Espace : O(1)</div>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quand utiliser Two Pointers vs Hash Map ?</h4><p><strong>Two Pointers</strong> : tableau trie, pas besoin de stocker des elements. <strong>Hash Map</strong> : tableau non trie, besoin de lookup rapide. Two Pointers est plus econome en espace O(1) vs O(n).</p></div>
+<div class="qa"><h4>Q1 : Quand utiliser Two Pointers vs Hash Map ?</h4><p><strong>Two Pointers</strong> convient sur un tableau trie, quand vous ne voulez pas stocker les elements. <strong>Hash Map</strong> convient sur un tableau non trie, quand vous avez besoin de recherches rapides. Two Pointers consomme moins de memoire : O(1) contre O(n).</p></div>
 <div class="qa"><h4>Q2 : Comment detecter un cycle dans une linked list ?</h4><p>Utilisez le cycle detection de Floyd : un pointeur avance de 1, l'autre de 2. S'ils se rencontrent, il y a un cycle. Temps O(n), espace O(1).</p></div>
 `},
 
@@ -202,8 +202,8 @@ def sliding_window(s):
     return result</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment reconnaitre un probleme sliding window ?</h4><p>Indices : 1) Sous-chaine/sous-tableau continu. 2) Taille fixe ou contrainte de longueur. 3) Min/max de quelque chose. 4) Pattern de caracteres consecutifs.</p></div>
-<div class="qa"><h4>Q2 : Sliding window vs Two Pointers ?</h4><p><strong>Sliding Window</strong> : sous-structure contigue, fenetre qui grandit/retrécit. <strong>Two Pointers</strong> : deux positions independantes, souvent debut/fin. Sliding window est un cas special de two pointers.</p></div>
+<div class="qa"><h4>Q1 : Comment reconnaitre un probleme sliding window ?</h4><p>Indices :</p><ul><li>Sous-chaine/sous-tableau continu.</li><li>Taille fixe ou contrainte de longueur.</li><li>Min/max de quelque chose.</li><li>Pattern de caracteres consecutifs.</li></ul></div>
+<div class="qa"><h4>Q2 : Sliding window vs Two Pointers ?</h4><p><strong>Sliding Window</strong> travaille sur une sous-structure contigue, avec une fenetre qui grandit ou retrecit. <strong>Two Pointers</strong> utilise deux positions independantes, souvent le debut et la fin. La fenetre glissante est un cas particulier de deux pointeurs.</p></div>
 `},
 
 {id:3,title:"Fast & Slow Pointers",module:1,difficulty:"moyen",duration:"15 min",
@@ -318,7 +318,7 @@ content:`
 <div class="formula">Temps : O(n log n) pour le tri | Espace : O(n)</div>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Probleme classique avec Merge Intervals ?</h4><p>1) Merge Overlapping Intervals. 2) Insert Interval. 3) Minimum Number of Arrows to Burst Balloons. 4) Non-overlapping Intervals. 5) Meeting Rooms II.</p></div>
+<div class="qa"><h4>Q1 : Probleme classique avec Merge Intervals ?</h4><ul><li>Merge Overlapping Intervals.</li><li>Insert Interval.</li><li>Minimum Number of Arrows to Burst Balloons.</li><li>Non-overlapping Intervals.</li><li>Meeting Rooms II.</li></ul></div>
 `},
 
 {id:5,title:"Cyclic Sort",module:1,difficulty:"moyen",duration:"15 min",
@@ -415,7 +415,7 @@ content:`
 <div class="formula">Temps : O(n) | Espace : O(1)</div>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment inverser une partie d'une linked list ?</h4><p>1) Trouver le debut et la fin. 2) Inverser les pointeurs dans la plage. 3) Reconnecter les extremites. 4) Attention aux edge cases (debut, fin, taille k).</p></div>
+<div class="qa"><h4>Q1 : Comment inverser une partie d'une linked list ?</h4><ul><li>Trouver le debut et la fin.</li><li>Inverser les pointeurs dans la plage.</li><li>Reconnecter les extremites.</li><li>Attention aux edge cases (debut, fin, taille k).</li></ul></div>
 `},
 
 {id:7,title:"Tree BFS",module:1,difficulty:"moyen",duration:"20 min",
@@ -497,7 +497,7 @@ def level_order(root):
             queue.append((node.right, depth + 1))</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : BFS vs DFS pour les arbres ?</h4><p><strong>BFS</strong> : trouver le plus court chemin, parcours niveau par niveau, arbre equilibre. <strong>DFS</strong> : verifier l'existence d'un chemin, chemins racine-feuille, espace moins profond. BFS utilise une file, DFS utilise une pile (ou recursion).</p></div>
+<div class="qa"><h4>Q1 : BFS vs DFS pour les arbres ?</h4><p><strong>BFS</strong> sert a trouver le plus court chemin. Il parcourt niveau par niveau et convient aux arbres equilibres. <strong>DFS</strong> sert a verifier l'existence d'un chemin, des racines aux feuilles, et consomme moins de memoire. BFS utilise une file. DFS utilise une pile ou la recursion.</p></div>
 `},
 
 {id:8,title:"Tree DFS",module:1,difficulty:"moyen",duration:"20 min",
@@ -574,7 +574,7 @@ def inorder_iterative(root):
     return result</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quand utiliser chaque type de DFS ?</h4><p><strong>Preorder</strong> : copier/cloner un arbre, prefix expression. <strong>Inorder</strong> : BST triee, expression infix. <strong>Postorder</strong> : supprimer un arbre, expression postfix, calcul de taille.</p></div>
+<div class="qa"><h4>Q1 : Quand utiliser chaque type de DFS ?</h4><p>Le parcours <strong>preorder</strong> sert a copier ou cloner un arbre et produit l'expression prefixe. Le parcours <strong>inorder</strong> produit une BST triee et l'expression infix. Le parcours <strong>postorder</strong> sert a supprimer un arbre, produit l'expression postfix et permet de calculer la taille.</p></div>
 `},
 
 {id:9,title:"Two Heaps",module:1,difficulty:"moyen",duration:"15 min",
@@ -678,7 +678,7 @@ content:`
     return result</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Subsets vs Subsequences ?</h4><p><strong>Subsets</strong> : tous les sous-ensembles possibles (2^n). <strong>Subsequences</strong> : elements dans l'ordre (pas necessairement consecutifs). Subsets contient toutes les subsequences.</p></div>
+<div class="qa"><h4>Q1 : Subsets vs Subsequences ?</h4><p><strong>Subsets</strong> contient tous les sous-ensembles possibles, soit 2^n d'entre eux. <strong>Subsequences</strong> contient des elements pris dans l'ordre, mais pas necessairement consecutifs. Les subsets contiennent donc toutes les subsequences correspondantes.</p></div>
 `},
 
 {id:11,title:"Modified Binary Search",module:2,difficulty:"moyen",duration:"20 min",
@@ -783,7 +783,7 @@ def top_k_frequent(nums, k):
     return result</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Min heap vs Max heap pour Top K ?</h4><p><strong>Min heap de taille K</strong> : garde les K plus grands. Quand un element plus grand que le sommet arrive, on remplace. <strong>Max heap</strong> : garde les K plus petits. Min heap est plus efficient car il ne garde que K elements.</p></div>
+<div class="qa"><h4>Q1 : Min heap vs Max heap pour Top K ?</h4><p>Une <strong>min heap de taille K</strong> conserve les K plus grands elements. Quand un element plus grand que le sommet arrive, on le remplace. Une <strong>max heap</strong> conserve les K plus petits elements. La min heap est plus efficace car elle ne garde que K elements.</p></div>
 `},
 
 {id:13,title:"K-Way Merge",module:2,difficulty:"moyen",duration:"20 min",
@@ -823,7 +823,7 @@ def median_of_k_arrays(arrays):
     return merged[n//2]</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : K-Way Merge vs K-Merge classique ?</h4><p><strong>K-Way Merge</strong> : O(N log k) avec heap. <strong>K-Merge classique</strong> (deux a deux) : O(N k log k). K-Way est toujours meilleur quand K > 2.</p></div>
+<div class="qa"><h4>Q1 : K-Way Merge vs K-Merge classique ?</h4><p>Le <strong>K-Way Merge</strong> fusionne K listes en O(N log k) avec un heap. Le <strong>K-Merge classique</strong>, qui fusionne deux listes a la fois, coute O(N k log k). Le K-Way est donc toujours meilleur quand K depasse 2.</p></div>
 `},
 
 {id:14,title:"Topological Sort",module:2,difficulty:"moyen",duration:"20 min",
@@ -886,7 +886,7 @@ def topological_sort(num_courses, prerequisites):
     return order[::-1]</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : BFS vs DFS pour le tri topologique ?</h4><p><strong>BFS (Kahn)</strong> : plus intuitif, detecte les cycles facilement, donne l'ordre dans l'ordre de traitement. <strong>DFS</strong> : plus naturel pour la recursion, utile pour les problemes de path finding. Les deux sont O(V+E).</p></div>
+<div class="qa"><h4>Q1 : BFS vs DFS pour le tri topologique ?</h4><p><strong>BFS avec l'algorithme de Kahn</strong> est plus intuitif, detecte facilement les cycles et donne l'ordre de traitement. <strong>DFS</strong> est plus naturel avec la recursion et convient aux problemes de chemin. Les deux algorithmes coutent O(V+E).</p></div>
 `},
 
 {id:15,title:"Matrix Traversal",module:2,difficulty:"moyen",duration:"20 min",
@@ -950,7 +950,7 @@ def oranges_rotting(grid):
     return minutes if fresh == 0 else -1</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : BFS vs DFS pour les matrices ?</h4><p><strong>BFS</strong> : trouver le plus court chemin, level-by-level processing. <strong>DFS</strong> : compter les composants connectes, plus simple a implementer. BFS est preferred pour les problemes de distance.</p></div>
+<div class="qa"><h4>Q1 : BFS vs DFS pour les matrices ?</h4><p><strong>BFS</strong> sert a trouver le plus court chemin, avec un traitement niveau par niveau. <strong>DFS</strong> sert a compter les composants connectes et reste plus simple a implementer. BFS est prefere pour les problemes de distance.</p></div>
 `},
 
 {id:16,title:"Backtracking",module:2,difficulty:"difficile",duration:"25 min",
@@ -1022,7 +1022,7 @@ content:`
     solve()</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Backtracking vs Brute Force ?</h4><p><strong>Brute Force</strong> : genere toutes les combinaisons, pas de pruning. <strong>Backtracking</strong> : abandonne les branches non viablees tot, reduisant le nombre de configurations testees. Backtracking est plus efficace grace au pruning.</p></div>
+<div class="qa"><h4>Q1 : Backtracking vs Brute Force ?</h4><p>La <strong>brute force</strong> genere toutes les combinaisons, sans aucun pruning. Le <strong>backtracking</strong> abandonne tot les branches non viablees et reduit ainsi le nombre de configurations testees. Le backtracking est plus efficace grace a ce pruning.</p></div>
 `},
 
 {id:17,title:"Greedy",module:2,difficulty:"moyen",duration:"20 min",
@@ -1070,7 +1070,7 @@ content:`
     return result</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Greedy vs Dynamic Programming ?</h4><p><strong>Greedy</strong> : choix local optimal, pas de reconsideration, plus rapide O(n) ou O(n log n). <strong>DP</strong> : considere toutes les options, plus lent mais toujours optimal. Utilisez Greedy quand le probleme a la propriete greedy choice.</p></div>
+<div class="qa"><h4>Q1 : Greedy vs Dynamic Programming ?</h4><p>L'approche <strong>greedy</strong> fait le choix local optimal sans jamais revenir en arriere. Elle est plus rapide, en O(n) ou O(n log n). La <strong>DP</strong> considere toutes les options : elle est plus lente mais reste optimale. Utilisez le greedy si le probleme possede la propriete de choix glouton.</p></div>
 `},
 
 {id:18,title:"Trie",module:2,difficulty:"moyen",duration:"20 min",
@@ -1131,7 +1131,7 @@ class Trie:
     return results</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Trie vs Hash Map pour le prefix matching ?</h4><p><strong>Trie</strong> : O(m) pour le prefix matching, espace partage. <strong>Hash Map</strong> : O(m) pour exact match, O(n*m) pour prefix. Le Trie est meilleur pour les operations de prefix et l'autocomplete.</p></div>
+<div class="qa"><h4>Q1 : Trie vs Hash Map pour le prefix matching ?</h4><p>Un <strong>Trie</strong> repond en O(m) pour une recherche de prefixe et partage son espace entre les cles. Une <strong>Hash Map</strong> repond en O(m) pour une recherche exacte, mais en O(n*m) pour un prefixe. Le Trie est meilleur pour les operations de prefixe et l'autocomplete.</p></div>
 `},
 
 {id:19,title:"Union-Find",module:2,difficulty:"moyen",duration:"20 min",
@@ -1177,7 +1177,7 @@ content:`
     return uf.components</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quand utiliser Union-Find ?</h4><p>Problemes de connectivite : 1) Composants connectes dans un graphe. 2) Detection de cycle dans un graphe non-oriente. 3) Percolation (connexite water-merge). 4) Kruskal's MST.</p></div>
+<div class="qa"><h4>Q1 : Quand utiliser Union-Find ?</h4><p>Problemes de connectivite :</p><ul><li>Composants connectes dans un graphe.</li><li>Detection de cycle dans un graphe non-oriente.</li><li>Percolation (connexite water-merge).</li><li>Kruskal's MST.</li></ul></div>
 `},
 
 {id:20,title:"Bit Manipulation",module:2,difficulty:"moyen",duration:"20 min",
@@ -1221,7 +1221,7 @@ def count_bits(n):
     return result</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quand utiliser XOR ?</h4><p>1) Trouver l'element unique. 2) Inverser les bits. 3) Verifier la parity. 4) Echanger deux valeurs sans variable temporaire. 5) Generer le masque de bits.</p></div>
+<div class="qa"><h4>Q1 : Quand utiliser XOR ?</h4><ul><li>Trouver l'element unique.</li><li>Inverser les bits.</li><li>Verifier la parity.</li><li>Echanger deux valeurs sans variable temporaire.</li><li>Generer le masque de bits.</li></ul></div>
 `},
 
 {id:21,title:"Kadane's Algorithm",module:3,difficulty:"moyen",duration:"15 min",
@@ -1298,7 +1298,7 @@ content:`
     return result</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Monotonic stack - quand l'utiliser ?</h4><p>Problemes : 1) Prochain element plus grand/petit. 2) Largest rectangle in histogram. 3) Trapping rain water. 4) Sliding window maximum.</p></div>
+<div class="qa"><h4>Q1 : Monotonic stack - quand l'utiliser ?</h4><p>Problemes :</p><ul><li>Prochain element plus grand/petit.</li><li>Largest rectangle in histogram.</li><li>Trapping rain water.</li><li>Sliding window maximum.</li></ul></div>
 `},
 
 {id:23,title:"Prefix Sum",module:3,difficulty:"facile",duration:"15 min",
@@ -1333,7 +1333,7 @@ def range_sum(prefix, i, j):
     return count</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Prefix Sum vs Sliding Window ?</h4><p><strong>Prefix Sum</strong> : requetes de somme de range, sous-tableaux avec somme = k. <strong>Sliding Window</strong> : sous-tableaux de taille fixe ou variable, max/min. Prefix Sum est meilleur pour les sommes, Sliding Window pour les contraintes de taille.</p></div>
+<div class="qa"><h4>Q1 : Prefix Sum vs Sliding Window ?</h4><p>La <strong>Prefix Sum</strong> sert aux requetes de somme sur un intervalle et detecte les sous-tableaux de somme egale a k. La <strong>Sliding Window</strong> sert aux sous-tableaux de taille fixe ou variable, pour un max ou un min. La Prefix Sum est meilleure pour les sommes. La fenetre glissante est meilleure pour les contraintes de taille.</p></div>
 `},
 
 {id:24,title:"DP 1D",module:3,difficulty:"moyen",duration:"25 min",
@@ -1392,7 +1392,7 @@ def climb_stairs_optimized(n):
     return dp[amount] if dp[amount] != float('inf') else -1</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment reconnaitre un probleme DP 1D ?</h4><p>1) Sous-problemes optimises. 2) Choix a chaque etape. 3) Pas de structure de donnees complexe (juste un tableau). 4) La solution depend des solutions precedentes (recurrence).</p></div>
+<div class="qa"><h4>Q1 : Comment reconnaitre un probleme DP 1D ?</h4><ul><li>Sous-problemes optimises.</li><li>Choix a chaque etape.</li><li>Pas de structure de donnees complexe (juste un tableau).</li><li>La solution depend des solutions precedentes (recurrence).</li></ul></div>
 `},
 
 {id:25,title:"DP 2D",module:3,difficulty:"difficile",duration:"25 min",
@@ -1570,7 +1570,7 @@ content:`
     return dp[m][n]</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment aborder un probleme DP sur les chaines ?</h4><p>1) Definir dp[i][j] = resultat pour s1[0:i] et s2[0:j]. 2) Trouver la relation de recurrence. 3) Cas de base (chaîne vide). 4) Parcourir dans le bon ordre. 5) Optimiser l'espace si possible.</p></div>
+<div class="qa"><h4>Q1 : Comment aborder un probleme DP sur les chaines ?</h4><ul><li>Definir dp[i][j] = resultat pour s1[0:i] et s2[0:j].</li><li>Trouver la relation de recurrence.</li><li>Cas de base (chaîne vide).</li><li>Parcourir dans le bon ordre.</li><li>Optimiser l'espace si possible.</li></ul></div>
 `},
 
 {id:28,title:"DP on Trees",module:3,difficulty:"difficile",duration:"25 min",
@@ -1628,7 +1628,7 @@ content:`
     return validate(root)</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment faire de la DP sur les arbres ?</h4><p>1) Post-order traversal (traiter les enfants avant le parent). 2) Calculer la solution pour chaque sous-arbre. 3) Combiner les solutions des enfants pour le parent. 4) Stocker les resultats pour eviter les recalculs.</p></div>
+<div class="qa"><h4>Q1 : Comment faire de la DP sur les arbres ?</h4><ul><li>Post-order traversal (traiter les enfants avant le parent).</li><li>Calculer la solution pour chaque sous-arbre.</li><li>Combiner les solutions des enfants pour le parent.</li><li>Stocker les resultats pour eviter les recalculs.</li></ul></div>
 `},
 
 {id:29,title:"Dijkstra",module:3,difficulty:"difficile",duration:"25 min",
@@ -1675,7 +1675,7 @@ def reconstruct_path(previous, target):
 <div class="formula">Temps : O((V + E) log V) avec un min heap | Espace : O(V)</div>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Dijkstra vs Bellman-Ford vs Floyd-Warshall ?</h4><p><strong>Dijkstra</strong> : source unique, poids positifs, O((V+E) log V). <strong>Bellman-Ford</strong> : source unique, poids negatifs, O(VE). <strong>Floyd-Warshall</strong> : tous les paires, poids negatifs, O(V³).</p></div>
+<div class="qa"><h4>Q1 : Dijkstra vs Bellman-Ford vs Floyd-Warshall ?</h4><p><strong>Dijkstra</strong> resout la source unique avec des poids positifs en O((V+E) log V). <strong>Bellman-Ford</strong> resout la source unique avec des poids negatifs en O(VE). <strong>Floyd-Warshall</strong> resout toutes les paires, memes avec des poids negatifs, en O(V³).</p></div>
 <div class="qa"><h4>Q2 : Pourquoi pas de poids negatifs avec Dijkstra ?</h4><p>Dijkstra suppose que chaque fois qu'on visite un noeud, on a trouve le plus court chemin. Avec des poids negatifs, un chemin plus long (en nombre d'aretes) pourrait etre plus court en poids total, violant cette hypothese.</p></div>
 `},
 
@@ -1721,7 +1721,7 @@ content:`
 <div class="formula">Temps : O(VE) | Espace : O(V)</div>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quand utiliser Bellman-Ford vs Dijkstra ?</h4><p><strong>Bellman-Ford</strong> : poids negatifs, detection de cycles negatifs, plus lent O(VE). <strong>Dijkstra</strong> : poids positifs uniquement, plus rapide O((V+E) log V). Utilisez Dijkstra par defaut, Bellman-Ford quand il y a des poids negatifs.</p></div>
+<div class="qa"><h4>Q1 : Quand utiliser Bellman-Ford vs Dijkstra ?</h4><p><strong>Bellman-Ford</strong> gere les poids negatifs et detecte les cycles negatifs, mais il est plus lent en O(VE). <strong>Dijkstra</strong> n'accepte que des poids positifs et est plus rapide en O((V+E) log V). Utilisez Dijkstra par defaut. Passez a Bellman-Ford des qu'il y a des poids negatifs.</p></div>
 `},
 
 {id:31,title:"Floyd-Warshall",module:3,difficulty:"difficile",duration:"20 min",
@@ -1769,7 +1769,7 @@ content:`
 <div class="formula">Temps : O(V³) | Espace : O(V²)</div>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Floyd-Warshall vs Dijkstra pour tous les paires ?</h4><p><strong>Floyd-Warshall</strong> : O(V³), simple, gere les poids negatifs. <strong>Dijkstra x V</strong> : O(V(V+E) log V), plus rapide pour les graphes eparses. Floyd-Warshall est meilleur pour les graphes denses, Dijkstra pour les graphes eparses.</p></div>
+<div class="qa"><h4>Q1 : Floyd-Warshall vs Dijkstra pour tous les paires ?</h4><p><strong>Floyd-Warshall</strong> coute O(V³), reste simple et gere les poids negatifs. <strong>Dijkstra execute V fois</strong> coute O(V(V+E) log V) et est plus rapide sur les graphes epars. Floyd-Warshall convient aux graphes denses. Dijkstra convient aux graphes epars.</p></div>
 <div class="qa"><h4>Q2 : Comment reconstruire les chemins avec Floyd-Warshall ?</h4><p>Ajoutez une matrice next[i][j] = le premier noeud apres i sur le chemin vers j. Initialiser next[i][j] = j si il y a une arete directe. Mettre a jour en meme temps que dist. Pour reconstruire : suivre next depuis la source.</p></div>
 `}
 ];

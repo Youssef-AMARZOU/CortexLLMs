@@ -98,7 +98,7 @@ const LESSONS=[
 {id:1,title:"Introduction au Machine Learning",module:1,difficulty:"facile",duration:"25 min",
 content:`
 <h2 id="definition">Qu'est-ce que le Machine Learning ?</h2>
-<p>Le Machine Learning est une branche de l'intelligence artificielle qui permet aux systemes d'apprendre a partir de donnees sans etre programmees explicitement. Plutot que de suivre des regles statiques, les modeles ML identifient des patterns dans les donnees pour faire des predictions ou des decisions.</p>
+<p>Le Machine Learning est une branche de l'intelligence artificielle. Les systemes y apprennent a partir de donnees, sans etre programmes explicitement. Plutot que d'appliquer des regles statiques, le modele identifie des patterns dans les donnees. Il en tire ensuite des predictions ou des decisions.</p>
 <div class="callout"><strong>Principe fondamental :</strong> Un algorithme ML apprend une fonction f mapping X (entrees) vers Y (sorties) en optimisant une metrique de performance sur des donnees d'entrainement.</div>
 
 <h2 id="types">Types d'apprentissage</h2>
@@ -168,8 +168,8 @@ pipeline.fit(X_train, y_train)
 score = pipeline.score(X_test, y_test)</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Supervise vs Non supervise - quand utiliser chaque approche ?</h4><p><strong>Supervise</strong> : quand vous avez des donnees etiquetees et un objectif clair (classification, prediction). <strong>Non supervise</strong> : quand vous explorez des donnees sans etiquettes (clustering, detection d'anomalies). En pratique, le supervised est plus courant car les entreprises ont des donnees etiquetees.</p></div>
-<div class="qa"><h4>Q2 : Quelle est la difference entre ML et Deep Learning ?</h4><p>Le <strong>ML classique</strong> necessite du feature engineering manuel, fonctionne bien avec des donnees tabulaires, et est plus interpretable. Le <strong>Deep Learning</strong> apprend automatiquement les features, excelle sur les donnees non structurenees (images, texte), mais necessite plus de donnees et de calcul.</p></div>
+<div class="qa"><h4>Q1 : Supervise vs Non supervise - quand utiliser chaque approche ?</h4><p>L'apprentissage <strong>supervise</strong> utilise des donnees etiquetees et un objectif clair, comme une classification ou une prediction. L'apprentissage <strong>non supervise</strong> explore des donnees sans etiquettes, comme pour du clustering ou de la detection d'anomalies. En pratique, le supervise reste le plus courant, car les entreprises disposent de donnees etiquetees.</p></div>
+<div class="qa"><h4>Q2 : Quelle est la difference entre ML et Deep Learning ?</h4><p>Le <strong>ML classique</strong> necessite un feature engineering manuel. Il fonctionne bien sur des donnees tabulaires et reste interpretable. Le <strong>Deep Learning</strong> apprend ses features automatiquement et excelle sur les donnees non structurenees, comme les images ou le texte. Il demande en revanche plus de donnees et plus de calcul.</p></div>
 `},
 
 {id:2,title:"Regression Lineaire",module:1,difficulty:"facile",duration:"25 min",
@@ -232,8 +232,8 @@ for model, name in [(ridge, "Ridge"), (lasso, "Lasso"), (elastic, "ElasticNet")]
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quand la regression lineaire est-elle appropriee ?</h4><p>Quand la relation entre X et Y est lineaire, les erreurs sont independantes et homoscedastiques, et pas de multicollinearite forte. Verifiez avec les residus (plot residus vs predictions). Si non-lineaire, essayez des transformations ou des modeles non-lineaires.</p></div>
-<div class="qa"><h4>Q2 : Comment gerer la multicollinearite ?</h4><p>1) Calculer la matrice de correlation. 2) VIF (Variance Inflation Factor) > 5 indique un probleme. 3) Supprimer une variable correlee. 4) Utiliser Ridge regression. 5) PCA pour reduire les dimensions. 6) Combinaison des variables.</p></div>
+<div class="qa"><h4>Q1 : Quand la regression lineaire est-elle appropriee ?</h4><p>La regression lineaire convient quand la relation entre X et Y est lineaire, quand les erreurs sont independantes et homoscedastiques, et quand il n'y a pas de multicollinearite forte. Verifiez ces hypotheses avec le graphique des residus contre les predictions. En cas de non-linearite, essayez des transformations ou des modeles non lineaires.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer la multicollinearite ?</h4><ul><li>Calculer la matrice de correlation.</li><li>VIF (Variance Inflation Factor) > 5 indique un probleme.</li><li>Supprimer une variable correlee.</li><li>Utiliser Ridge regression.</li><li>PCA pour reduire les dimensions.</li><li>Combinaison des variables.</li></ul></div>
 `},
 
 {id:3,title:"Classification",module:1,difficulty:"facile",duration:"30 min",
@@ -289,8 +289,8 @@ print(f"Confusion Matrix:\n{cm}")
 print(f"AUC: {roc_auc_score(y_test, model.predict_proba(X_test)[:,1]):.4f}")</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Accuracy vs F1 - quand utiliser chaque metrique ?</h4><p><strong>Accuracy</strong> : classes equilibrees. <strong>F1-Score</strong> : desequilibre de classes (ex: detection de fraude a 0.1%). Utilisez aussi la matrice de confusion pour comprendre les erreurs specifiques (faux positifs vs faux negatifs).</p></div>
-<div class="qa"><h4>Q2 : Comment gerer les classes desequilibrees ?</h4><p>1) SMOTE (oversampling synthetique). 2) Undersampling. 3) Class weight='balanced'. 4) Focal loss. 5) Metriques adaptees (AUC, F1). 6) Anomaly detection si tres desequilibre.</p></div>
+<div class="qa"><h4>Q1 : Accuracy vs F1 - quand utiliser chaque metrique ?</h4><p>L'<strong>accuracy</strong> convient quand les classes sont equilibrees. Le <strong>F1-Score</strong> convient quand elles sont desequilibrees, par exemple pour detecter une fraude presente dans seulement 0.1% des cas. Consultez aussi la matrice de confusion pour comprendre les erreurs specifiques, comme les faux positifs et les faux negatifs.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer les classes desequilibrees ?</h4><ul><li>SMOTE (oversampling synthetique).</li><li>Undersampling.</li><li>Class weight='balanced'.</li><li>Focal loss.</li><li>Metriques adaptees (AUC, F1).</li><li>Anomaly detection si tres desequilibre.</li></ul></div>
 `},
 
 {id:4,title:"Clustering",module:1,difficulty:"moyen",duration:"25 min",
@@ -347,8 +347,8 @@ labels = agg.fit_predict(X)</code></pre>
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : K-Means vs DBSCAN - quand utiliser chaque algorithme ?</h4><p><strong>K-Means</strong> : clusters spheriques, connu K, rapide. <strong>DBSCAN</strong> : formes arbitraires, detection d'outliers, pas besoin de K. DBSCAN echoue si les clusters ont des densites tres differentes. HDBSCAN resout ce probleme.</p></div>
-<div class="qa"><h4>Q2 : Comment choisir le nombre de clusters ?</h4><p>1) Elbow method (inertie). 2) Silhouette score (maximiser). 3) Gap statistic. 4) Domain knowledge. 5) Calinski-Harabasz. 6) Visualisation (t-SNE, UMAP).</p></div>
+<div class="qa"><h4>Q1 : K-Means vs DBSCAN - quand utiliser chaque algorithme ?</h4><p><strong>K-Means</strong> suppose des clusters spheriques, demande de connaitre K et reste rapide. <strong>DBSCAN</strong> detecte des formes arbitraires et des outliers sans demander K. DBSCAN echoue quand les densites des clusters sont tres differentes. HDBSCAN resout ce probleme.</p></div>
+<div class="qa"><h4>Q2 : Comment choisir le nombre de clusters ?</h4><ul><li>Elbow method (inertie).</li><li>Silhouette score (maximiser).</li><li>Gap statistic.</li><li>Domain knowledge.</li><li>Calinski-Harabasz.</li><li>Visualisation (t-SNE, UMAP).</li></ul></div>
 `},
 
 {id:5,title:"Regularisation",module:1,difficulty:"moyen",duration:"20 min",
@@ -412,7 +412,7 @@ for epoch in range(max_epochs):
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
 <div class="qa"><h4>Q1 : L1 ou L2 - lequel preferer ?</h4><p><strong>L1</strong> si vous suspectez que beaucoup de features sont inutiles (sparse model). <strong>L2</strong> si toutes les features contribuent. <strong>ElasticNet</strong> combine les deux et est souvent le meilleur choix. Commencez par L2 (defaut).</p></div>
-<div class="qa"><h4>Q2 : Comment detecter le surapprentissage ?</h4><p>1) Courbes d'apprentissage (train vs validation loss). 2) Gap entre train et test score. 3) Cross-validation. 4) Validation set independent. 5) Plot des predictions vs realite.</p></div>
+<div class="qa"><h4>Q2 : Comment detecter le surapprentissage ?</h4><ul><li>Courbes d'apprentissage (train vs validation loss).</li><li>Gap entre train et test score.</li><li>Cross-validation.</li><li>Validation set independent.</li><li>Plot des predictions vs realite.</li></ul></div>
 `},
 
 {id:6,title:"Evaluation des Modeles",module:1,difficulty:"facile",duration:"25 min",
@@ -457,8 +457,8 @@ print(f"ROC-AUC: {roc_auc_score(y_test, y_prob):.4f}")</code></pre>
 <div class="formula">Erreur totale = Biais^2 + Variance + Bruit irreductible</div>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Quand utiliser AUC vs Accuracy ?</h4><p><strong>Accuracy</strong> : classes equilibrees. <strong>AUC</strong> : classes desequilibrees, threshold independent. AUC = 0.5 = aleatoire, AUC = 1.0 = parfait. Pour les problemes de metriques specifiques (precision ou recall), utilisez les courbes precision-recall.</p></div>
-<div class="qa"><h4>Q2 : Comment valider un modele en production ?</h4><p>1) A/B testing. 2) Shadow mode (comparer sans impacter). 3) Champion/challenger. 4) Monitoring continu (data drift, performance). 5) Alertes sur degradation. 6) Regular retraining.</p></div>
+<div class="qa"><h4>Q1 : Quand utiliser AUC vs Accuracy ?</h4><p>L'<strong>accuracy</strong> convient quand les classes sont equilibrees. L'<strong>AUC</strong> convient quand elles sont desequilibrees, car elle ne depend pas du seuil de decision. Une AUC de 0.5 correspond au hasard et une AUC de 1.0 correspond au perfect. Pour des metriques specifiques comme la precision ou le rappel, utilisez les courbes precision-recall.</p></div>
+<div class="qa"><h4>Q2 : Comment valider un modele en production ?</h4><ul><li>A/B testing.</li><li>Shadow mode (comparer sans impacter).</li><li>Champion/challenger.</li><li>Monitoring continu (data drift, performance).</li><li>Alertes sur degradation.</li><li>Regular retraining.</li></ul></div>
 `},
 
 {id:7,title:"Feature Engineering",module:1,difficulty:"moyen",duration:"30 min",
@@ -525,8 +525,8 @@ importances = pd.Series(rf.feature_importances_, index=feature_names)
 importances.nlargest(10).plot(kind='barh')</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment gerer les valeurs manquantes ?</h4><p>1) <strong>MCAR</strong> (Missing Completely At Random) : imputation simple. 2) <strong>MAR</strong> (Missing At Random) : imputation conditionnelle. 3) <strong>MNAR</strong> (Missing Not At Random) : modeliser le mecanisme de manque. 4) Toujours creer un indicateur "is_missing". 5) Tree-based models gerent bien les valeurs manquantes.</p></div>
-<div class="qa"><h4>Q2 : One-Hot vs Label Encoding - lequel utiliser ?</h4><p><strong>One-Hot</strong> : categories nominales sans ordre (couleur, pays). <strong>Label</strong> : categories ordinales (petit/moyen/grand). Pour les categories a haute cardinalite (>20), utilisez Target Encoding, Frequency Encoding, ou hash encoding.</p></div>
+<div class="qa"><h4>Q1 : Comment gerer les valeurs manquantes ?</h4><ul><li><strong>MCAR</strong> (Missing Completely At Random) : imputation simple.</li><li><strong>MAR</strong> (Missing At Random) : imputation conditionnelle.</li><li><strong>MNAR</strong> (Missing Not At Random) : modeliser le mecanisme de manque.</li><li>Toujours creer un indicateur "is_missing".</li><li>Tree-based models gerent bien les valeurs manquantes.</li></ul></div>
+<div class="qa"><h4>Q2 : One-Hot vs Label Encoding - lequel utiliser ?</h4><p>Le <strong>One-Hot</strong> convient aux categories nominales sans ordre, comme la couleur ou le pays. Le <strong>Label Encoding</strong> convient aux categories ordinales, comme petit, moyen, grand. Au-dela de 20 categories, utilisez Target Encoding, Frequency Encoding ou le hash encoding.</p></div>
 `},
 
 {id:8,title:"Ensemble Methods",module:1,difficulty:"moyen",duration:"30 min",
@@ -614,8 +614,8 @@ stacking = StackingClassifier(estimators=[
 ], final_estimator=LogisticRegression())</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Bagging vs Boosting - quelle difference ?</h4><p><strong>Bagging</strong> (Random Forest) : entraine des modeles en parallele sur des echantillons bootstrap, reduit la variance. <strong>Boosting</strong> (XGBoost) : entraine sequentiellement, chaque modele corrige les erreurs du precedent, reduit le biais. Le boosting est souvent meilleur mais plus lent.</p></div>
-<div class="qa"><h4>Q2 : XGBoost vs LightGBM - lequel preferer ?</h4><p><strong>LightGBM</strong> : plus rapide, moins de memoire, meilleur pour les grandes donnees. <strong>XGBoost</strong> : plus mature, meilleur support GPU, plus de regularisation. Pour les competitions Kaggle, essayez les deux. En production, LightGBM est souvent prefere pour sa vitesse.</p></div>
+<div class="qa"><h4>Q1 : Bagging vs Boosting - quelle difference ?</h4><p>Le <strong>bagging</strong>, comme Random Forest, entraine des modeles en parallele sur des echantillons bootstrap. Il reduit la variance. Le <strong>boosting</strong>, comme XGBoost, entraine les modeles sequentiellement. Chaque modele corrige les erreurs du precedent, ce qui reduit le biais. Le boosting donne souvent de meilleurs resultats, mais il est plus lent.</p></div>
+<div class="qa"><h4>Q2 : XGBoost vs LightGBM - lequel preferer ?</h4><p><strong>LightGBM</strong> est plus rapide, consomme moins de memoire et convient mieux aux grosses donnees. <strong>XGBoost</strong> est plus mature, propose un meilleur support GPU et plus de regularisation. Essayez les deux lors de vos competitions Kaggle. En production, LightGBM est souvent prefere pour sa vitesse.</p></div>
 `},
 
 {id:9,title:"Optimisation des Hyperparametres",module:1,difficulty:"moyen",duration:"25 min",
@@ -705,8 +705,8 @@ study.optimize(objective, n_trials=100)
 print(f"Best params: {study.best_params}")</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Grid Search vs Random Search - lequel utiliser ?</h4><p><strong>Random Search</strong> : plus efficace quand certains hyperparametres sont plus importants que d'autres. <strong>Grid Search</strong> : quand l'espace de recherche est petit. Random Search est generalement prefere car il explore plus d'espace avec le meme budget de calcul.</p></div>
-<div class="qa"><h4>Q2 : Quels hyperparametres sont les plus importants ?</h4><p>Pour les modeles tree-based : <strong>learning_rate</strong>, <strong>n_estimators</strong>, <strong>max_depth</strong>. Pour les reseaux de neurones : <strong>learning rate</strong>, <strong>batch size</strong>, <strong>architecture</strong>. Commencez par ces parametres avant d'affiner les autres.</p></div>
+<div class="qa"><h4>Q1 : Grid Search vs Random Search - lequel utiliser ?</h4><p>Le <strong>Random Search</strong> est plus efficace quand certains hyperparametres comptent plus que d'autres. Le <strong>Grid Search</strong> convient quand l'espace de recherche est petit. Le Random Search explore en general plus d'espace a budget de calcul egal.</p></div>
+<div class="qa"><h4>Q2 : Quels hyperparametres sont les plus importants ?</h4><p>Pour les modeles tree-based, commencez par <strong>learning_rate</strong>, <strong>n_estimators</strong> et <strong>max_depth</strong>. Pour les reseaux de neurones, commencez par le <strong>learning rate</strong>, le <strong>batch size</strong> et l'<strong>architecture</strong>. Affinez ensuite les autres parametres.</p></div>
 `},
 
 {id:10,title:"Bias-Variance Tradeoff",module:1,difficulty:"moyen",duration:"20 min",
@@ -753,8 +753,8 @@ plt.title("Courbe d'apprentissage")</code></pre>
 <div class="formula">Lambda faible -> Bas biais, haute variance</div>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment diagnostiquer bias vs variance ?</h4><p><strong>Haut biais</strong> : les courbes train et validation convergent a une performance faible. <strong>Haute variance</strong> : grand ecart entre train et validation. Utilisez les courbes d'apprentissage et la cross-validation pour diagnostiquer.</p></div>
-<div class="qa"><h4>Q2 : Quand ajouter plus de donnees vs regulariser ?</h4><p><strong>Plus de donnees</strong> : si haute variance (overfitting). <strong>Regularisation</strong> : si haute variance et pas plus de donnees disponibles. <strong>Modele plus complexe</strong> : si haut bias (underfitting). Les donnees sont toujours preferables a la regularisation.</p></div>
+<div class="qa"><h4>Q1 : Comment diagnostiquer bias vs variance ?</h4><p>Un <strong>haut biais</strong> se voit quand les courbes d'entrainement et de validation convergent vers une performance faible. Une <strong>haute variance</strong> se voit quand l'ecart entre les deux courbes est grand. Les courbes d'apprentissage et la cross-validation permettent de faire la distinction.</p></div>
+<div class="qa"><h4>Q2 : Quand ajouter plus de donnees vs regulariser ?</h4><p>Ajoutez des donnees quand la variance est haute, donc quand le modele surapprend. Ajoutez de la regularisation quand la variance est haute mais que vous ne pouvez pas obtenir plus de donnees. Rendez le modele plus complexe quand le biais est haut, donc quand le modele sous-apprend. Les donnees restent preferables a la regularisation.</p></div>
 `},
 
 {id:11,title:"Pipelines ML",module:1,difficulty:"moyen",duration:"20 min",
@@ -806,8 +806,8 @@ loaded_pipeline = joblib.load('model_pipeline.pkl')
 predictions = loaded_pipeline.predict(X_new)</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Pourquoi utiliser des pipelines ?</h4><p>1) <strong>Prevention data leakage</strong> : fit uniquement sur train. 2) <strong>Reproductibilite</strong> : meme pretraitement. 3) <strong>Simplicité</strong> : un seul objet. 4) <strong>Deployment</strong> : serialisation facile. 5) <strong>Grid Search</strong> : sur toutes les etapes.</p></div>
-<div class="qa"><h4>Q2 : Comment deployer un modele en production ?</h4><p>1) Serialiser avec joblib/pickle. 2) API REST (FastAPI, Flask). 3) Container Docker. 4) Monitoring (latence, drift). 5) A/B testing. 6) Versioning des modeles (MLflow). 7) Feature store pour les donnees.</p></div>
+<div class="qa"><h4>Q1 : Pourquoi utiliser des pipelines ?</h4><ul><li><strong>Prevention data leakage</strong> : fit uniquement sur train.</li><li><strong>Reproductibilite</strong> : meme pretraitement.</li><li><strong>Simplicité</strong> : un seul objet.</li><li><strong>Deployment</strong> : serialisation facile.</li><li><strong>Grid Search</strong> : sur toutes les etapes.</li></ul></div>
+<div class="qa"><h4>Q2 : Comment deployer un modele en production ?</h4><ul><li>Serialiser avec joblib/pickle.</li><li>API REST (FastAPI, Flask).</li><li>Container Docker.</li><li>Monitoring (latence, drift).</li><li>A/B testing.</li><li>Versioning des modeles (MLflow).</li><li>Feature store pour les donnees.</li></ul></div>
 `},
 
 {id:12,title:"MLOps",module:1,difficulty:"difficile",duration:"30 min",
@@ -860,14 +860,14 @@ dvc run -n train \
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : MLflow vs Weights & Biases ?</h4><p><strong>MLflow</strong> : open source, self-hosted, simple, bon pour les petits projets. <strong>W&B</strong> : SaaS, plus complet (dashboards, collaboration), meilleur pour les equipes. MLflow est plus flexible, W&B est plus facile a demarrer.</p></div>
-<div class="qa"><h4>Q2 : Comment detecter le data drift en production ?</h4><p>1) KS test ou chi2 sur les distributions. 2) Comparaison des statistiques (moyenne, variance). 3) Modeles de drift detection (ADWIN, DDM). 4) Alertes automatiques. 5) Retraining periodique. 6) Feature store avec historique.</p></div>
+<div class="qa"><h4>Q1 : MLflow vs Weights & Biases ?</h4><p><strong>MLflow</strong> est open source, se deploie chez vous et convient bien aux petits projets. <strong>W&B</strong> est un SaaS plus complet, avec des dashboards et de la collaboration, pense pour les equipes. MLflow reste plus flexible. W&B est plus facile a demarrer.</p></div>
+<div class="qa"><h4>Q2 : Comment detecter le data drift en production ?</h4><ul><li>KS test ou chi2 sur les distributions.</li><li>Comparaison des statistiques (moyenne, variance).</li><li>Modeles de drift detection (ADWIN, DDM).</li><li>Alertes automatiques.</li><li>Retraining periodique.</li><li>Feature store avec historique.</li></ul></div>
 `},
 
 {id:13,title:"Introduction au Deep Learning",module:2,difficulty:"facile",duration:"20 min",
 content:`
 <h2 id="definition">Qu'est-ce que le Deep Learning ?</h2>
-<p>Le Deep Learning est un sous-ensemble du Machine Learning utilise des reseaux de neurones artificiels a couches multiples (profondes) pour apprendre des representations hierarchiques des donnees.</p>
+<p>Le Deep Learning est un sous-ensemble du Machine Learning. Il utilise des reseaux de neurones artificiels a plusieurs couches pour apprendre des representations hierarchiques des donnees.</p>
 <div class="callout"><strong>Reussite du DL :</strong> Les reseaux profonds ont revolutionne la vision par ordinateur (ImageNet), le traitement du langage (BERT, GPT), et le jeu (AlphaGo).</div>
 
 <h2 id="neurone">Le Neurone Artificiel</h2>
@@ -926,8 +926,8 @@ for batch_x, batch_y in train_loader:
     outputs = model(batch_x)</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Pourquoi ReLU est-il si populaire ?</h4><p>1) Calcul simple et rapide. 2) Resout le probleme du vanishing gradient (pour x>0). 3) Sparse activation (beaucoup de zeros). 4) Proximite biologique. Inconvenient : "dying ReLU" (neurones morts). Lecon : Lezaky ReLU est une alternative.</p></div>
-<div class="qa"><h4>Q2 : Quand utiliser le Deep Learning vs le ML classique ?</h4><p><strong>DL</strong> : donnees non structurenees (images, texte, audio), grande quantite de donnees (>10k), taches complexes. <strong>ML classique</strong> : donnees tabulaires, peu de donnees, interpretabilite necessaire, temps de calcul limite.</p></div>
+<div class="qa"><h4>Q1 : Pourquoi ReLU est-il si populaire ?</h4><ul><li>Calcul simple et rapide.</li><li>Resout le probleme du vanishing gradient pour x&gt;0.</li><li>Activation sparse, beaucoup de zeros.</li><li>Proximite biologique.</li></ul><p>L'inconvenient est la "dying ReLU", des neurones qui meurent. La Leaky ReLU est une alternative.</p></div>
+<div class="qa"><h4>Q2 : Quand utiliser le Deep Learning vs le ML classique ?</h4><p>Le <strong>Deep Learning</strong> convient aux donnees non structurenees comme les images, le texte ou l'audio. Il demande une grande quantite de donnees, plus de 10 000 exemples, et des taches complexes. Le <strong>ML classique</strong> convient aux donnees tabulaires, a de petits volumes de donnees et a des besoins d'interpretabilite ou de calcul limites.</p></div>
 `},
 
 {id:14,title:"Deep Neural Networks (DNN)",module:2,difficulty:"moyen",duration:"30 min",
@@ -981,8 +981,8 @@ optimizer.step()  # Met a jour les poids</code></pre>
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Combien de couches et de neurones ?</h4><p>Depend du probleme. Regle empirique : commencer simple, augmenter la complexite progressivement. Pour les donnees tabulaires : 2-5 couches, 64-512 neurones. Les reseaux trop profonds surapprennent avec peu de donnees. Utilisez la validation pour guider.</p></div>
-<div class="qa"><h4>Q2 : Comment initialiser les poids ?</h4><p>1) <strong>Xavier/Glorot</strong> : pour sigmoid/tanh. 2) <strong>He</strong> : pour ReLU. 3) <strong>Orthogonal</strong> : pour RNN. 4) Ne jamais initialiser a zero (symetrie). 5) BatchNorm reduit la sensibilite a l'initialisation.</p></div>
+<div class="qa"><h4>Q1 : Combien de couches et de neurones ?</h4><p>La profondeur depend du probleme. La regle empirique est de commencer simple et d'augmenter la complexite progressivement. Pour les donnees tabulaires, 2 a 5 couches de 64 a 512 neurones suffisent en general. Les reseaux trop profonds surapprennent quand les donnees sont rares. Laissez la validation guider ce choix.</p></div>
+<div class="qa"><h4>Q2 : Comment initialiser les poids ?</h4><ul><li><strong>Xavier/Glorot</strong> : pour sigmoid/tanh.</li><li><strong>He</strong> : pour ReLU.</li><li><strong>Orthogonal</strong> : pour RNN.</li><li>Ne jamais initialiser a zero (symetrie).</li><li>BatchNorm reduit la sensibilite a l'initialisation.</li></ul></div>
 `},
 
 {id:15,title:"CNN (Convolutional Neural Networks)",module:2,difficulty:"moyen",duration:"30 min",
@@ -1041,8 +1041,8 @@ resnet = models.resnet50(pretrained=True)
 resnet.fc = nn.Linear(2048, num_classes)  # Transfer learning</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Pourquoi les CNN sont-ils bons pour les images ?</h4><p>1) <strong>Localite</strong> : les filtres captent les patterns locaux. 2) <strong>Invariance par translation</strong> : le meme filtre reconnait un pattern n'importe ou. 3) <strong>Hierarchie</strong> : couches profondes = features complexes. 4) <strong>Partage de poids</strong> : meme filtre partout = moins de parametres.</p></div>
-<div class="qa"><h4>Q2 : Comment reduire la taille d'un CNN ?</h4><p>1) Depthwise separable convolutions (MobileNet). 2) Stride > 1. 3) Pooling. 4) Pointwise convolutions (1x1). 5) Knowledge distillation. 6) Quantization. 7) Pruning.</p></div>
+<div class="qa"><h4>Q1 : Pourquoi les CNN sont-ils bons pour les images ?</h4><ul><li><strong>Localite</strong> : les filtres captent les patterns locaux.</li><li><strong>Invariance par translation</strong> : le meme filtre reconnait un pattern n'importe ou.</li><li><strong>Hierarchie</strong> : couches profondes = features complexes.</li><li><strong>Partage de poids</strong> : meme filtre partout = moins de parametres.</li></ul></div>
+<div class="qa"><h4>Q2 : Comment reduire la taille d'un CNN ?</h4><ul><li>Depthwise separable convolutions (MobileNet).</li><li>Stride > 1.</li><li>Pooling.</li><li>Pointwise convolutions (1x1).</li><li>Knowledge distillation.</li><li>Quantization.</li><li>Pruning.</li></ul></div>
 `},
 
 {id:16,title:"RNN et LSTM",module:2,difficulty:"moyen",duration:"30 min",
@@ -1094,8 +1094,8 @@ content:`
 )</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : LSTM vs GRU - lequel preferer ?</h4><p><strong>GRU</strong> : plus rapide, moins de parametres, bon pour les sequences courtes. <strong>LSTM</strong> : plus puissant pour les dependances a long terme. En pratique, les deux sont proches. Essayez les deux et validez. Pour les sequences tres longues, les Transformers sont prefers.</p></div>
-<div class="qa"><h4>Q2 : Les RNN sont-ils morts ?</h4><p>Les RNN classiques sont remplaces par les Transformers pour la plupart des taches. Mais les RNN restent utiles pour : streaming temps reel, sequences tres longues, faible latence, generation de texte character-level. Les State Space Models (Mamba) sont la nouvelle alternative.</p></div>
+<div class="qa"><h4>Q1 : LSTM vs GRU - lequel preferer ?</h4><p>Le <strong>GRU</strong> est plus rapide, a moins de parametres et convient aux sequences courtes. Le <strong>LSTM</strong> est plus puissant sur les dependances a long terme. En pratique, les deux restent proches : essayez les deux et validez. Pour les sequences tres longues, les Transformers restent preferes.</p></div>
+<div class="qa"><h4>Q2 : Les RNN sont-ils morts ?</h4><p>Les Transformers ont remplace les RNN classiques pour la plupart des taches. Les RNN restent utiles pour le streaming en temps reel, les sequences tres longues, la faible latence et la generation de texte au niveau des caracteres. Les State Space Models, comme Mamba, sont une alternative recente.</p></div>
 `},
 
 {id:17,title:"Architecture Transformer",module:2,difficulty:"difficile",duration:"30 min",
@@ -1177,7 +1177,7 @@ class SelfAttention(nn.Module):
         return x + self.pe[:, :x.size(1)]</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Pourquoi l'attention est-elle si efficace ?</h4><p>1) <strong>Parallelisation</strong> : contrairement aux RNN, l'attention est parallele. 2) <strong>Dependances longues</strong> : chemin direct entre n'importe quels tokens. 3) <strong>Interpretabilite</strong> : on visualise les poids d'attention. 4) <strong>Flexibilite</strong> : adaptable a beaucoup de taches.</p></div>
+<div class="qa"><h4>Q1 : Pourquoi l'attention est-elle si efficace ?</h4><ul><li><strong>Parallelisation</strong> : contrairement aux RNN, l'attention est parallele.</li><li><strong>Dependances longues</strong> : chemin direct entre n'importe quels tokens.</li><li><strong>Interpretabilite</strong> : on visualise les poids d'attention.</li><li><strong>Flexibilite</strong> : adaptable a beaucoup de taches.</li></ul></div>
 <div class="qa"><h4>Q2 : Quelle est la complexite de l'attention ?</h4><p>O(n^2 * d) en temps et memoire, ou n est la longueur de la sequence et d la dimension. Solutions pour les sequences longues : Flash Attention, Sparse Attention, Longformer, Linformer. En pratique, la limite est ~2k tokens sans optimisation.</p></div>
 `},
 
@@ -1237,8 +1237,8 @@ model = AutoModelForSequenceClassification.from_pretrained(
 )</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Feature extraction vs Fine-tuning - quand utiliser chaque approche ?</h4><p><strong>Feature extraction</strong> : peu de donnees, tache similaire a l'original, rapide. <strong>Fine-tuning</strong> : assez de donnees, tache differente, meilleure performance. Commencez par feature extraction, puis fine-tune si necessaire.</p></div>
-<div class="qa"><h4>Q2 : Comment choisir le modele pre-entraine ?</h4><p>1) Domaine similaire (medical, legal). 2) Taille (plus petit = plus rapide). 3) Performance sur benchmarks. 4) Communaute et documentation. 5) Benchmark rapide sur vos donnees. En NLP : BERT, RoBERTa, DeBERTa. En Vision : ResNet, EfficientNet, ViT.</p></div>
+<div class="qa"><h4>Q1 : Feature extraction vs Fine-tuning - quand utiliser chaque approche ?</h4><p>La <strong>feature extraction</strong> convient quand vous avez peu de donnees, une tache proche de la tache d'origine et un besoin de rapidite. Le <strong>fine-tuning</strong> convient quand vous avez assez de donnees et une tache differente, pour un meilleur resultat. Commencez par la feature extraction. Passez au fine-tuning si necessaire.</p></div>
+<div class="qa"><h4>Q2 : Comment choisir le modele pre-entraine ?</h4><ul><li>Domaine similaire : medical, legal.</li><li>Taille : plus petit veut dire plus rapide.</li><li>Performance sur benchmarks.</li><li>Communaute et documentation.</li><li>Benchmark rapide sur vos donnees.</li></ul><p>En NLP : BERT, RoBERTa, DeBERTa. En vision : ResNet, EfficientNet, ViT.</p></div>
 `},
 
 {id:19,title:"Regularisation en Deep Learning",module:2,difficulty:"moyen",duration:"25 min",
@@ -1298,7 +1298,7 @@ train_transform = transforms.Compose([
 ])</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Dropout en inference - pourquoi le desactiver ?</h4><p>En inference, on veut des predictions deterministes. En entrainement, le Dropout regularise en forçant le reseau a ne pas dependre de neurones specifiques. En inference, tous les neurones sont actifs mais leurs sorties sont ponderees par le taux de dropout (scaling).</p></div>
+<div class="qa"><h4>Q1 : Dropout en inference - pourquoi le desactiver ?</h4><p>A l'entrainement, le Dropout empeche le reseau de dependre de neurones specifiques. En inference, on veut des predictions deterministes. Tous les neurones sont alors actifs et leurs sorties sont ponderees par le taux de dropout.</p></div>
 <div class="qa"><h4>Q2 : BatchNorm en inference - comment ca marche ?</h4><p>En entrainement, BatchNorm calcule la moyenne et variance du batch. En inference, il utilise les statistiques mobiles (running mean, running variance) calculees pendant l'entrainement. C'est pour ça qu'on fait model.eval() avant l'inference.</p></div>
 `},
 
@@ -1352,8 +1352,8 @@ for batch_x, batch_y in train_loader:
     scaler.update()</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Adam vs SGD - lequel preferer ?</h4><p><strong>Adam</strong> : converge plus vite, moins sensible au LR, bon par defaut. <strong>SGD+momentum</strong> : meilleur generalisation, plus de controle. En pratique, Adam est recommande pour commencer, SGD pour affiner. AdamW est souvent le meilleur compromis.</p></div>
-<div class="qa"><h4>Q2 : Comment gerer un entrainement qui diverge ?</h4><p>1) Reduire le learning rate. 2) Gradient clipping. 3) Verifier les donnees (normalisation). 4) BatchNorm. 5) Initialisation des poids. 6) Architecture plus simple. 7) Mixed precision.</p></div>
+<div class="qa"><h4>Q1 : Adam vs SGD - lequel preferer ?</h4><p><strong>Adam</strong> converge plus vite, est moins sensible au learning rate et constitue le bon choix par defaut. Le <strong>SGD avec momentum</strong> donne une meilleure generalisation et offre plus de controle. Commencez avec Adam, puis affinez avec SGD. <strong>AdamW</strong> offre souvent le meilleur compromis.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer un entrainement qui diverge ?</h4><ul><li>Reduire le learning rate.</li><li>Gradient clipping.</li><li>Verifier les donnees (normalisation).</li><li>BatchNorm.</li><li>Initialisation des poids.</li><li>Architecture plus simple.</li><li>Mixed precision.</li></ul></div>
 `},
 
 {id:21,title:"GAN (Generative Adversarial Networks)",module:2,difficulty:"difficile",duration:"30 min",
@@ -1435,8 +1435,8 @@ for epoch in range(epochs):
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Mode collapse - c'est quoi et comment l'eviter ?</h4><p>Le <strong>mode collapse</strong> est quand le generateur ne produit qu'un seul type de sortie. Solutions : 1) Batch discrimination. 2) Unrolling discriminator. 3) Feature matching. 4) WGAN-GP. 5) Progressive growing.</p></div>
-<div class="qa"><h4>Q2 : GAN vs VAE - quand utiliser chaque approche ?</h4><p><strong>GAN</strong> : images tres realistes, mais mode collapse, pas de似然. <strong>VAE</strong> : generation plus stable, espace latent interpretable, mais images moins nettes. Les GANs sont preferes pour la generation d'images, les VAE pour l'interpolation et l'embedding.</p></div>
+<div class="qa"><h4>Q1 : Mode collapse - c'est quoi et comment l'eviter ?</h4><p>Le <strong>mode collapse</strong> se produit quand le generateur ne produit qu'un seul type de sortie.</p><ul><li>Batch discrimination.</li><li>Unrolling discriminator.</li><li>Feature matching.</li><li>WGAN-GP.</li><li>Progressive growing.</li></ul></div>
+<div class="qa"><h4>Q2 : GAN vs VAE - quand utiliser chaque approche ?</h4><p>Les <strong>GAN</strong> produisent des images tres realistes, mais ils souffrent de mode collapse et n'ont pas de vraisemblance explicite. Les <strong>VAE</strong> generent de facon plus stable et offrent un espace latent interpretable, mais leurs images sont moins nettes. Les GAN restent preferes pour la generation d'images. Les VAE conviennent mieux a l'interpolation et a l'embedding.</p></div>
 `},
 
 {id:22,title:"Autoencoders et VAE",module:2,difficulty:"difficile",duration:"25 min",
@@ -1521,8 +1521,8 @@ def vae_loss(recon_x, x, mu, logvar):
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Autoencoder vs PCA ?</h4><p><strong>PCA</strong> : lineaire, interpretable, unique. <strong>Autoencoder</strong> : non-lineaire, plus puissant, flexible. Un autoencoder avec une seule couche cachee et fonction d'identite est equivalent a la PCA. Les couches additionnelles permettent de capturer des patterns non-lineaires.</p></div>
-<div class="qa"><h4>Q2 : Comment utiliser un VAE pour la generation ?</h4><p>1) Entraîner le VAE sur les donnees. 2) Encoder pour obtenir mu et logvar. 3) Echantillonner z ~ N(mu, sigma). 4) Decoder z pour generer. 5) Pour de nouvelles donnees, echantillonner z ~ N(0,1) et decoder. L'espace latent est continu et regulier.</p></div>
+<div class="qa"><h4>Q1 : Autoencoder vs PCA ?</h4><p>La <strong>PCA</strong> est lineaire, interpretable et produit une solution unique. L'<strong>autoencoder</strong> est non lineaire, plus puissant et plus flexible. Un autoencoder a une seule couche cachee et une fonction d'identite est equivalent a la PCA. Les couches supplementaires permettent de capturer des patterns non lineaires.</p></div>
+<div class="qa"><h4>Q2 : Comment utiliser un VAE pour la generation ?</h4><ul><li>Entraîner le VAE sur les donnees.</li><li>Encoder pour obtenir mu et logvar.</li><li>Echantillonner z ~ N(mu, sigma).</li><li>Decoder z pour generer.</li><li>Pour de nouvelles donnees, echantillonner z ~ N(0,1) et decoder.</li></ul><p>L'espace latent est continu et regulier.</p></div>
 `},
 
 {id:23,title:"NLP Fondamentaux",module:3,difficulty:"facile",duration:"25 min",
@@ -1579,8 +1579,8 @@ X = vectorizer.fit_transform(corpus)
 print(X.toarray())</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : BPE vs WordPiece - quelle difference ?</h4><p><strong>BPE</strong> (Byte Pair Encoding) : fusionne les paires de tokens les plus frequentes. Utilisé par GPT. <strong>WordPiece</strong> : similaire mais utilise la vraisemblance. Utilisé par BERT. Les deux sont des methodes de tokenization sous-mots qui gerent bien les mots hors-vocabulaire.</p></div>
-<div class="qa"><h4>Q2 : Pourquoi les embeddings sont-ils importants ?</h4><p>Les embeddings representent les mots comme des vecteurs denses ou les mots similaires sont proches dans l'espace vectoriel. Ils capturent la semantique, les relations syntaxiques, et permettent le transfert de connaissances. Les embeddings pre-entraines (Word2Vec, GloVe) sont un excellent point de depart.</p></div>
+<div class="qa"><h4>Q1 : BPE vs WordPiece - quelle difference ?</h4><p><strong>BPE</strong>, pour Byte Pair Encoding, fusionne les paires de tokens les plus frequentes. C'est la methode utilisee par GPT. <strong>WordPiece</strong> fonctionne de facon similaire mais maximise la vraisemblance. C'est la methode utilisee par BERT. Ce sont deux methodes de tokenization sous-mots qui gerent bien les mots hors vocabulaire.</p></div>
+<div class="qa"><h4>Q2 : Pourquoi les embeddings sont-ils importants ?</h4><p>Les embeddings representent les mots par des vecteurs denses. Les mots similaires se retrouvent proches dans l'espace vectoriel. Ils capturent ainsi la semantique et les relations syntaxiques, et permettent le transfert de connaissances. Les embeddings pre-entraines, comme Word2Vec ou GloVe, sont un bon point de depart.</p></div>
 `},
 
 {id:24,title:"Transformers en NLP",module:3,difficulty:"moyen",duration:"30 min",
@@ -1645,8 +1645,8 @@ trainer = Trainer(
 trainer.train()</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : BERT vs GPT - quand utiliser chaque modele ?</h4><p><strong>BERT</strong> : taches de comprehension (classification, NER, Q&A). <strong>GPT</strong> : taches de generation (text completion, summarization, dialogue). BERT est bidirectionnel (voit tout le contexte). GPT est autoregressif (gauche a droite).</p></div>
-<div class="qa"><h4>Q2 : Comment gerer les sequences longues ?</h4><p>1) Truncation intelligente. 2) Sliding window. 3) Longformer/BigBird (attention sparse). 4) Flash Attention. 5) Chunking et aggregation. 6) Model distillation pour des sequences plus courtes.</p></div>
+<div class="qa"><h4>Q1 : BERT vs GPT - quand utiliser chaque modele ?</h4><p><strong>BERT</strong> traite les taches de comprehension : classification, NER et question-reponse. <strong>GPT</strong> traite les taches de generation : completion de texte, resume et dialogue. BERT est bidirectionnel et voit tout le contexte. GPT est autoregressif et genere de gauche a droite.</p></div>
+<div class="qa"><h4>Q2 : Comment gerer les sequences longues ?</h4><ul><li>Truncation intelligente.</li><li>Sliding window.</li><li>Longformer/BigBird (attention sparse).</li><li>Flash Attention.</li><li>Chunking et aggregation.</li><li>Model distillation pour des sequences plus courtes.</li></ul></div>
 `},
 
 {id:25,title:"Fine-tuning de LLMs",module:3,difficulty:"difficile",duration:"30 min",
@@ -1716,8 +1716,8 @@ model = AutoModelForCausalLM.from_pretrained(
 )</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Full fine-tuning vs LoRA - lequel preferer ?</h4><p><strong>LoRA</strong> : moins de memoire, plus rapide, moins de surapprentissage. <strong>Full fine-tuning</strong> : meilleure performance si beaucoup de donnees. LoRA est le defaut recommande. Augmentez le rank (r) pour plus de capacite.</p></div>
-<div class="qa"><h4>Q2 : Comment preparer les donnees pour le fine-tuning ?</h4><p>1) Format instruction-response. 2) Qualite > quantite (10k-100k exemples). 3) Diversite des prompts. 4) Nettoyage et dedoublonnage. 5) Validation sur des cas limites. 6) Evaluer avant/apres avec des metrics specifiques.</p></div>
+<div class="qa"><h4>Q1 : Full fine-tuning vs LoRA - lequel preferer ?</h4><p><strong>LoRA</strong> consomme moins de memoire, est plus rapide et risque moins le surapprentissage. Le <strong>full fine-tuning</strong> donne de meilleurs resultats quand vous disposez de beaucoup de donnees. LoRA est le choix recommande par defaut. Augmentez le rank r pour gagner en capacite.</p></div>
+<div class="qa"><h4>Q2 : Comment preparer les donnees pour le fine-tuning ?</h4><ul><li>Format instruction-response.</li><li>Qualite > quantite (10k-100k exemples).</li><li>Diversite des prompts.</li><li>Nettoyage et dedoublonnage.</li><li>Validation sur des cas limites.</li><li>Evaluer avant/apres avec des metrics specifiques.</li></ul></div>
 `},
 
 {id:26,title:"RAG (Retrieval-Augmented Generation)",module:3,difficulty:"difficile",duration:"30 min",
@@ -1793,8 +1793,8 @@ def rag_query(question, k=3):
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : RAG vs Fine-tuning - quand utiliser chaque approche ?</h4><p><strong>RAG</strong> : donnees changeantes, besoin de sources, reduct hallucinations. <strong>Fine-tuning</strong> : style/specifique, raisonnement complexe, pas de sources externes. Le RAG est souvent le meilleur point de depart. Combinez les deux pour de meilleurs resultats.</p></div>
-<div class="qa"><h4>Q2 : Comment evaluer la qualite d'un systeme RAG ?</h4><p>1) <strong>Retrieval precision</strong> : les chunks recuperes sont-ils pertinents ? 2) <strong>Retrieval recall</strong> : tous les chunks pertinents sont-ils recuperes ? 3) <strong>Answer relevancy</strong> : la reponse correspond-elle a la question ? 4) <strong>Faithfulness</strong> : la reponse est-elle fidele aux sources ?</p></div>
+<div class="qa"><h4>Q1 : RAG vs Fine-tuning - quand utiliser chaque approche ?</h4><p>Le <strong>RAG</strong> convient aux donnees changeantes et au besoin de sources, et il reduit les hallucinations. Le <strong>fine-tuning</strong> convient au style, au cas particulier et au raisonnement complexe, mais il n'apporte pas de sources externes. Commencez par le RAG, souvent le meilleur point de depart. Combinez les deux si besoin.</p></div>
+<div class="qa"><h4>Q2 : Comment evaluer la qualite d'un systeme RAG ?</h4><ul><li><strong>Retrieval precision</strong> : les chunks recuperes sont-ils pertinents ?</li><li><strong>Retrieval recall</strong> : tous les chunks pertinents sont-ils recuperes ?</li><li><strong>Answer relevancy</strong> : la reponse correspond-elle a la question ?</li><li><strong>Faithfulness</strong> : la reponse est-elle fidele aux sources ?</li></ul></div>
 `},
 
 {id:27,title:"Prompt Engineering",module:3,difficulty:"moyen",duration:"20 min",
@@ -1848,8 +1848,8 @@ response = client.chat.completions.create(
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Few-shot vs Fine-tuning - quand utiliser chaque approche ?</h4><p><strong>Few-shot</strong> : pas de donnees d'entrainement, taches simples, prototypage rapide. <strong>Fine-tuning</strong> : performance maximale, taches complexes, cout a l'execution faible. Le few-shot est le meilleur point de depart.</p></div>
-<div class="qa"><h4>Q2 : Comment evaluer la qualite des prompts ?</h4><p>1) Metriques specifiques (accuracy, F1). 2) Eval humain. 3) Tests unitaires pour prompts. 4) A/B testing. 5) Robustesse aux variations. 6) Cout vs performance. 7) Latence.</p></div>
+<div class="qa"><h4>Q1 : Few-shot vs Fine-tuning - quand utiliser chaque approche ?</h4><p>Le <strong>few-shot</strong> ne demande aucune donnee d'entrainement. Il convient aux taches simples et au prototypage rapide. Le <strong>fine-tuning</strong> donne la performance maximale sur des taches complexes, avec un cout d'execution faible. Commencez par le few-shot.</p></div>
+<div class="qa"><h4>Q2 : Comment evaluer la qualite des prompts ?</h4><ul><li>Metriques specifiques (accuracy, F1).</li><li>Eval humain.</li><li>Tests unitaires pour prompts.</li><li>A/B testing.</li><li>Robustesse aux variations.</li><li>Cout vs performance.</li><li>Latence.</li></ul></div>
 `},
 
 {id:28,title:"Alignement IA",module:3,difficulty:"difficile",duration:"30 min",
@@ -1905,8 +1905,8 @@ dpo_trainer = DPOTrainer(
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : RLHF vs DPO - lequel preferer ?</h4><p><strong>DPO</strong> : plus simple, pas de reward model, plus stable, moins de cout. <strong>RLHF</strong> : plus flexible, meilleur pour les taches complexes. DPO est le defaut recommande. RLHF reste utile pour les cas specialises.</p></div>
-<div class="qa"><h4>Q2 : Comment evaluer l'alignement d'un LLM ?</h4><p>1) <strong>Helpfulness</strong> : les reponses sont-elles utiles ? 2) <strong>Harmlessness</strong> : les reponses sont-elles sure ? 3) <strong>Honesty</strong> : les reponses sont-elles fideles ? 4) Benchmarks (MT-Bench, AlpacaEval). 5) Eval humain. 6) Red teaming.</p></div>
+<div class="qa"><h4>Q1 : RLHF vs DPO - lequel preferer ?</h4><p><strong>DPO</strong> est plus simple : pas de reward model, plus de stabilite et moins de cout. <strong>RLHF</strong> est plus flexible et convient mieux aux taches complexes. DPO est le choix recommande par defaut. RLHF reste utile pour les cas specialises.</p></div>
+<div class="qa"><h4>Q2 : Comment evaluer l'alignement d'un LLM ?</h4><ul><li><strong>Helpfulness</strong> : les reponses sont-elles utiles ?</li><li><strong>Harmlessness</strong> : les reponses sont-elles sure ?</li><li><strong>Honesty</strong> : les reponses sont-elles fideles ?</li><li>Benchmarks (MT-Bench, AlpacaEval).</li><li>Eval humain.</li><li>Red teaming.</li></ul></div>
 `},
 
 {id:29,title:"Evaluation des LLMs",module:3,difficulty:"moyen",duration:"25 min",
@@ -1950,8 +1950,8 @@ scores = scorer.score(reference, generated)</code></pre>
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Perplexite vs BLEU - que mesurent-ils ?</h4><p><strong>Perplexite</strong> : qualite du modele de langage (probabiliste). <strong>BLEU</strong> : similarite avec des references humaines (traduction). La perplexite est une metrique intrinseque, BLEU est extrinseque. Pour les LLMs, on utilise aussi des benchmarks specifiques (MMLU, HumanEval).</p></div>
-<div class="qa"><h4>Q2 : Comment evaluer un LLM sur des cas limites ?</h4><p>1) Red teaming systematique. 2) Tests de securite. 3) Biais de genre/race. 4) Hallucinations. 5) Raisonnement logique. 6) Connaissance de niche. 7) Resistance aux attaques (jailbreaks).</p></div>
+<div class="qa"><h4>Q1 : Perplexite vs BLEU - que mesurent-ils ?</h4><p>La <strong>perplexite</strong> mesure la qualite probabiliste d'un modele de langage. <strong>BLEU</strong> mesure la similarite avec des references humaines, typiquement en traduction. La perplexite est une metrique intrinseque. BLEU est extrinseque. Pour les LLM, on utilise aussi des benchmarks specifiques comme MMLU ou HumanEval.</p></div>
+<div class="qa"><h4>Q2 : Comment evaluer un LLM sur des cas limites ?</h4><ul><li>Red teaming systematique.</li><li>Tests de securite.</li><li>Biais de genre/race.</li><li>Hallucinations.</li><li>Raisonnement logique.</li><li>Connaissance de niche.</li><li>Resistance aux attaques (jailbreaks).</li></ul></div>
 `},
 
 {id:30,title:"Deploiement de LLMs",module:3,difficulty:"difficile",duration:"30 min",
@@ -1994,7 +1994,7 @@ model = AutoModelForCausalLM.from_pretrained(
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
 <div class="qa"><h4>Q1 : vLLM vs TGI - lequel utiliser ?</h4><p><strong>vLLM</strong> : PagedAttention, batching continu, tres rapide. <strong>TGI</strong> : Docker-ready, HuggingFace ecosystem, bon pour les deploiements simples. vLLM est generalement plus performant. TGI est plus simple a deployer.</p></div>
-<div class="qa"><h4>Q2 : Comment reduire le cout d'inference des LLMs ?</h4><p>1) Quantization (INT8, INT4). 2) Model distillation. 3) Pruning. 4) Batch optimization. 5) Caching. 6) GPU inferieurs pour les petits modèles. 7) Selection du modele selon la difficulte de la tache.</p></div>
+<div class="qa"><h4>Q2 : Comment reduire le cout d'inference des LLMs ?</h4><ul><li>Quantization (INT8, INT4).</li><li>Model distillation.</li><li>Pruning.</li><li>Batch optimization.</li><li>Caching.</li><li>GPU inferieurs pour les petits modèles.</li><li>Selection du modele selon la difficulte de la tache.</li></ul></div>
 `},
 
 {id:31,title:"Agents IA",module:3,difficulty:"difficile",duration:"30 min",
@@ -2052,8 +2052,8 @@ memory = ConversationBufferMemory(return_messages=True)
 memory = ConversationSummaryMemory(llm=llm)</code></pre>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : ReAct vs Plan-and-Execute - lequel preferer ?</h4><p><strong>ReAct</strong> : simple, iteratif, bon pour les taches simples. <strong>Plan-and-Execute</strong> : planifie d'abord, puis execute, bon pour les taches complexes. En pratique, combinez les deux : planifiez grossierment, executez avec ReAct.</p></div>
-<div class="qa"><h4>Q2 : Comment evaluer un agent IA ?</h4><<p>1) <strong>Taux de reussite</strong> : completion de la tache. 2) <strong>Nombre d'etapes</strong> : efficacite. 3) <strong>Cout</strong> : tokens utilises. 4) <strong>Latence</strong> : temps de reponse. 5) <strong>Robustesse</strong> : gestion des erreurs. 6) <strong>Securite</strong> : pas d'actions dangereuses.</p></div>
+<div class="qa"><h4>Q1 : ReAct vs Plan-and-Execute - lequel preferer ?</h4><p><strong>ReAct</strong> est simple et iteratif, et convient aux taches simples. <strong>Plan-and-Execute</strong> planifie d'abord puis execute, ce qui convient aux taches complexes. En pratique, combinez les deux : planifiez grossierment, puis executez avec ReAct.</p></div>
+<div class="qa"><h4>Q2 : Comment evaluer un agent IA ?</h4><ul><li><strong>Taux de reussite</strong> : completion de la tache.</li><li><strong>Nombre d'etapes</strong> : efficacite.</li><li><strong>Cout</strong> : tokens utilises.</li><li><strong>Latence</strong> : temps de reponse.</li><li><strong>Robustesse</strong> : gestion des erreurs.</li><li><strong>Securite</strong> : pas d'actions dangereuses.</li></ul></div>
 `},
 
 {id:32,title:"Ethique et Securite IA",module:3,difficulty:"moyen",duration:"25 min",
@@ -2100,8 +2100,8 @@ print(f"Statistical Parity Diff: {metric.statistical_parity_difference():.3f}")<
 </ul>
 
 <h2 id="interview">Questions d'entretien frequentes</h2>
-<div class="qa"><h4>Q1 : Comment detecter et mitiger les biais dans un modele ?</h4><p>1) Analyser les donnees (representation par groupe). 2) Metriques de fairness (demographic parity, equalized odds). 3) Pre-processing (re-echantillonnage). 4) In-processing (constraints d'equite). 5) Post-processing (ajustement des seuils). 6) Monitoring continu.</p></div>
-<div class="qa"><h4>Q2 : Comment securiser un LLM en production ?</h4><p>1) Input validation (filtrage des prompts). 2) Output filtering (contenu dangereux). 3) Rate limiting. 4) Monitoring des patterns d'attaque. 5) Red teaming regulier. 6) Patching des vulnerabilites. 7) Documentation des risques.</p></div>
+<div class="qa"><h4>Q1 : Comment detecter et mitiger les biais dans un modele ?</h4><ul><li>Analyser les donnees (representation par groupe).</li><li>Metriques de fairness (demographic parity, equalized odds).</li><li>Pre-processing (re-echantillonnage).</li><li>In-processing (constraints d'equite).</li><li>Post-processing (ajustement des seuils).</li><li>Monitoring continu.</li></ul></div>
+<div class="qa"><h4>Q2 : Comment securiser un LLM en production ?</h4><ul><li>Input validation (filtrage des prompts).</li><li>Output filtering (contenu dangereux).</li><li>Rate limiting.</li><li>Monitoring des patterns d'attaque.</li><li>Red teaming regulier.</li><li>Patching des vulnerabilites.</li><li>Documentation des risques.</li></ul></div>
 `}
 ];
 
