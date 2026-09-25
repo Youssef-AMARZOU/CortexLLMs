@@ -70,7 +70,7 @@ code{font-family:'JetBrains Mono',monospace;color:#a5f3fc}
 </style>
 </head>
 <body>
-<header class="header"><nav class="nav"><a href="/" class="logo">CortexLLMs<span>.io</span></a><div class="nav-links"><a href="/">Accueil</a><a href="pages/ai-engineering.html">Ingenierie IA</a><a href="pages/devops.html">DevOps</a><a href="pages/system-design.html">System Design</a><a href="pages/dsa.html" class="active">DSA</a><a href="pages/entreprises.html">Entreprises</a></div></nav></header>
+<header class="header"><nav class="nav"><a href="../index.html" class="logo">CortexLLMs<span>.io</span></a><div class="nav-links"><a href="../index.html">Accueil</a><a href="ai-engineering.html">Ingenierie IA</a><a href="devops.html">DevOps</a><a href="system-design.html">System Design</a><a href="dsa.html" class="active">DSA</a><a href="entreprises.html">Entreprises</a></div></nav></header>
 
 <div class="container">
 <main>
@@ -1831,7 +1831,7 @@ function init(){
   if(!lesson){document.getElementById('lesson-content').innerHTML='<p>Lecon non trouvee.</p>';return}
   const mod=getModuleForLesson(id);
   
-  document.getElementById('breadcrumb').innerHTML=`<a href="/">Accueil</a> / <a href="pages/dsa.html">DSA</a> / Module ${mod.id} / ${lesson.title}`;
+  document.getElementById('breadcrumb').innerHTML=`<a href="../index.html">Accueil</a> / <a href="dsa.html">DSA</a> / Module ${mod.id} / ${lesson.title}`;
   document.getElementById('lesson-title').textContent=lesson.title;
   document.getElementById('lesson-meta').innerHTML=`
     <span class="meta-item">Module ${mod.id} : ${mod.name}</span>
